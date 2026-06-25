@@ -42,6 +42,14 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   drift_dev: ^2.20.0
   build_runner: ^2.4.12
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/branding/otic_logo.png"
+  adaptive_icon_background: "#0A6E6E"
+  adaptive_icon_foreground: "assets/branding/otic_logo.png"
 
 flutter:
   uses-material-design: true
