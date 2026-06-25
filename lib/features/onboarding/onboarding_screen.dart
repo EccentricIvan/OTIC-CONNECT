@@ -19,7 +19,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _nameController = TextEditingController();
   String? _role;
   String? _location;
-  final Set<String> _interests = {};
   bool _saving = false;
 
   @override
@@ -36,7 +35,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       );
       return;
     }
-    if (_page < 2) {
+    if (_page < 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOut,
@@ -63,31 +62,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     await prefs.setString('user_name', _nameController.text.trim());
     if (_role != null) await prefs.setString('user_role', _role!);
     if (_location != null) await prefs.setString('user_location', _location!);
-    await prefs.setStringList('user_interests', _interests.toList());
     ref.read(hasProfileProvider.notifier).state = true;
     if (mounted) context.go('/');
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark
-                ? const [
-                    Color(0xFF0F172A),
-                    Color(0xFF1E293B),
-                    Color(0xFF0F172A)
-                  ]
-                : const [
-                    Color(0xFFFFF1F2),
-                    Color(0xFFFFF7F5),
-                    Color(0xFFF0FDFA)
-                  ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.bgTop, AppColors.bgBottom],
           ),
         ),
         child: SafeArea(
@@ -98,7 +86,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
-                    3,
+                    2,
                     (i) => AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -126,12 +114,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       location: _location,
                       onRole: (r) => setState(() => _role = r),
                       onLocation: (l) => setState(() => _location = l),
-                    ),
-                    _InterestsPage(
-                      selected: _interests,
-                      onToggle: (s) => setState(() => _interests.contains(s)
-                          ? _interests.remove(s)
-                          : _interests.add(s)),
                     ),
                   ],
                 ),
@@ -161,7 +143,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : Text(_page < 2
+                            : Text(_page < 1
                                 ? 'Continue'
                                 : 'Start your journey'),
                       ),
@@ -356,122 +338,3 @@ class _RolePage extends StatelessWidget {
   }
 }
 
-class _InterestsPage extends StatelessWidget {
-  const _InterestsPage({required this.selected, required this.onToggle});
-  final Set<String> selected;
-  final void Function(String) onToggle;
-
-  static const _topics = [
-    ('Business & Entrepreneurship', Icons.trending_up, Color(0xFFF59E0B)),
-    ('Agriculture & Farming', Icons.grass, Color(0xFF22C55E)),
-    ('Financial Literacy', Icons.account_balance, Color(0xFF0EA5E9)),
-    ('Digital Skills', Icons.computer, Color(0xFF6366F1)),
-    ('Health & Nutrition', Icons.favorite, Color(0xFFEC4899)),
-    ('Crafts & Artisan Work', Icons.palette, Color(0xFFD946EF)),
-    ('Education & Training', Icons.school, Color(0xFF4F46E5)),
-    ('Market Access', Icons.storefront, Color(0xFFEA580C)),
-    ('Savings & Investment', Icons.savings, Color(0xFF14B8A6)),
-    ('Leadership', Icons.emoji_events, Color(0xFF7C3AED)),
-    ('Food Processing', Icons.restaurant, Color(0xFFF97316)),
-    ('Childcare & Family', Icons.child_care, Color(0xFFF472B6)),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'What are you interested in?',
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Pick as many as you like. We\'ll personalise your experience.',
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 3,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 1.1,
-              children: _topics.map((t) {
-                final isSelected = selected.contains(t.$1);
-                final color = t.$3;
-                return GestureDetector(
-                  onTap: () => onToggle(t.$1),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? color.withValues(alpha: 0.14)
-                          : color.withValues(alpha: 0.06),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: isSelected
-                            ? color
-                            : color.withValues(alpha: 0.18),
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          t.$2,
-                          color: isSelected
-                              ? color
-                              : color.withValues(alpha: 0.72),
-                          size: 26,
-                        ),
-                        const SizedBox(height: 6),
-                        Padding(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          child: Text(
-                            t.$1,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.normal,
-                              color: isSelected
-                                  ? color
-                                  : Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.color,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

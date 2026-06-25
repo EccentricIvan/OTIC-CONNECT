@@ -11,409 +11,144 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
-        brightness: Brightness.light,
-        surface: const Color(0xFFFFFFFF),
-        onSurface: const Color(0xFF1C1917),
-        onSurfaceVariant: const Color(0xFF78716C),
-        outline: const Color(0xFFF5E6E0),
-        surfaceContainerHighest: const Color(0xFFFFF1F2),
-      ),
-      scaffoldBackgroundColor: const Color(0xFFFFF7F5),
-      hintColor: const Color(0xFFA8A29E),
-      dividerColor: const Color(0xFFF5E6E0),
-    );
-
-    final textTheme = base.textTheme.apply(fontFamily: _font);
-
-    return base.copyWith(
-      textTheme: textTheme.copyWith(
-        displayLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 32,
-          fontWeight: FontWeight.w700,
-          color: const Color(0xFF1C1917),
-          height: 1.15,
-          letterSpacing: -0.5,
-        ),
-        headlineLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-          color: const Color(0xFF1C1917),
-        ),
-        headlineSmall: const TextStyle(
-          fontFamily: _font,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF1C1917),
-        ),
-        titleLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF1C1917),
-        ),
-        titleMedium: const TextStyle(
-          fontFamily: _font,
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFF1C1917),
-        ),
-        bodyLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 16,
-          color: const Color(0xFF78716C),
-          height: 1.6,
-        ),
-        bodyMedium: const TextStyle(
-          fontFamily: _font,
-          fontSize: 14,
-          color: const Color(0xFF78716C),
-          height: 1.5,
-        ),
-        labelLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.surface,
-        elevation: 0,
-        scrolledUnderElevation: 1,
-        shadowColor: AppColors.border,
-        centerTitle: false,
-        titleTextStyle: TextStyle(
-          fontFamily: _font,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: const Color(0xFF1C1917),
-        ),
-        iconTheme: IconThemeData(color: AppColors.textPrimary),
-      ),
-      cardTheme: CardThemeData(
-        color: AppColors.surface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.border),
-        ),
-        clipBehavior: Clip.antiAlias,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          textStyle: const TextStyle(
-            fontFamily: _font,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.textPrimary,
-          side: const BorderSide(color: AppColors.border),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          textStyle: const TextStyle(
-            fontFamily: _font,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
-        ),
-        hintStyle: const TextStyle(
-          fontFamily: _font,
-          color: AppColors.textHint,
-          fontSize: 15,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: AppColors.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        shadowColor: AppColors.border,
-        indicatorColor: AppColors.primary.withValues(alpha: 0.12),
-        iconTheme: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: AppColors.primary, size: 22);
-          }
-          return const IconThemeData(color: const Color(0xFF78716C), size: 22);
-        }),
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return const TextStyle(
-              fontFamily: _font,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
-            );
-          }
-          return const TextStyle(
-            fontFamily: _font,
-            fontSize: 11,
-            color: const Color(0xFF78716C),
-          );
-        }),
-      ),
-      navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: AppColors.surface,
-        selectedIconTheme: const IconThemeData(color: AppColors.primary),
-        unselectedIconTheme:
-            const IconThemeData(color: AppColors.textSecondary),
-        indicatorColor: AppColors.primary.withValues(alpha: 0.12),
-        labelType: NavigationRailLabelType.selected,
-        selectedLabelTextStyle: const TextStyle(
-          fontFamily: _font,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: AppColors.primary,
-        ),
-        unselectedLabelTextStyle: const TextStyle(
-          fontFamily: _font,
-          fontSize: 12,
-          color: const Color(0xFF78716C),
-        ),
-      ),
-      dividerTheme: const DividerThemeData(
-        color: AppColors.border,
-        thickness: 1,
-        space: 1,
-      ),
-    );
-  }
-
-  static ThemeData get dark {
-    final base = ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
         brightness: Brightness.dark,
-        surface: const Color(0xFF1E293B),
-        onSurface: const Color(0xFFF1F5F9),
-        onSurfaceVariant: const Color(0xFF94A3B8),
-        outline: const Color(0xFF334155),
-        surfaceContainerHighest: const Color(0xFF253347),
+        surface: AppColors.surfaceDark,
+        onSurface: Colors.white,
+        onSurfaceVariant: const Color(0xCCFFFFFF),
+        outline: AppColors.border,
       ),
-      scaffoldBackgroundColor: const Color(0xFF0F172A),
-      hintColor: const Color(0xFF64748B),
-      dividerColor: const Color(0xFF334155),
+      scaffoldBackgroundColor: Colors.transparent,
+      hintColor: AppColors.textHint,
+      dividerColor: AppColors.border,
     );
 
-    final textTheme = base.textTheme.apply(fontFamily: _font);
+    final textTheme = base.textTheme.apply(
+      fontFamily: _font,
+      bodyColor: Colors.white,
+      displayColor: Colors.white,
+    );
 
     return base.copyWith(
       textTheme: textTheme.copyWith(
         displayLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 32,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFFF1F5F9),
-          height: 1.15,
-          letterSpacing: -0.5,
+          fontFamily: _font, fontSize: 32, fontWeight: FontWeight.w700,
+          color: Colors.white, height: 1.15, letterSpacing: -0.5,
         ),
         headlineLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFFF1F5F9),
+          fontFamily: _font, fontSize: 24, fontWeight: FontWeight.w700,
+          color: Colors.white,
         ),
         headlineSmall: const TextStyle(
-          fontFamily: _font,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFFF1F5F9),
+          fontFamily: _font, fontSize: 18, fontWeight: FontWeight.w600,
+          color: Colors.white,
         ),
         titleLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFFF1F5F9),
+          fontFamily: _font, fontSize: 16, fontWeight: FontWeight.w600,
+          color: Colors.white,
         ),
         titleMedium: const TextStyle(
-          fontFamily: _font,
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: Color(0xFFF1F5F9),
+          fontFamily: _font, fontSize: 15, fontWeight: FontWeight.w500,
+          color: Colors.white,
         ),
         bodyLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 16,
-          color: Color(0xFF94A3B8),
-          height: 1.6,
+          fontFamily: _font, fontSize: 16, color: Color(0xCCFFFFFF), height: 1.6,
         ),
         bodyMedium: const TextStyle(
-          fontFamily: _font,
-          fontSize: 14,
-          color: Color(0xFF94A3B8),
-          height: 1.5,
+          fontFamily: _font, fontSize: 14, color: Color(0xCCFFFFFF), height: 1.5,
         ),
         labelLarge: const TextStyle(
-          fontFamily: _font,
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
+          fontFamily: _font, fontSize: 14, fontWeight: FontWeight.w600,
+          color: Colors.white,
         ),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF1E293B),
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        scrolledUnderElevation: 1,
-        shadowColor: Color(0xFF334155),
+        scrolledUnderElevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
-          fontFamily: _font,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFFF1F5F9),
+          fontFamily: _font, fontSize: 18, fontWeight: FontWeight.w700,
+          color: Colors.white,
         ),
-        iconTheme: IconThemeData(color: Color(0xFFF1F5F9)),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       cardTheme: CardThemeData(
-        color: const Color(0xFF1E293B).withValues(alpha: 0.85),
+        color: const Color(0x22FFFFFF),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-              color: const Color(0xFF475569).withValues(alpha: 0.3)),
+          side: const BorderSide(color: Color(0x18FFFFFF)),
         ),
         clipBehavior: Clip.antiAlias,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.accent,
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           textStyle: const TextStyle(
-            fontFamily: _font,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontFamily: _font, fontSize: 14, fontWeight: FontWeight.w600,
           ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFFF1F5F9),
-          side: BorderSide(
-              color: const Color(0xFF475569).withValues(alpha: 0.3)),
+          foregroundColor: Colors.white,
+          side: const BorderSide(color: Color(0x44FFFFFF)),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           textStyle: const TextStyle(
-            fontFamily: _font,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontFamily: _font, fontSize: 14, fontWeight: FontWeight.w500,
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFF1E293B).withValues(alpha: 0.7),
+        fillColor: const Color(0x22FFFFFF),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(
-              color: const Color(0xFF475569).withValues(alpha: 0.3)),
+          borderSide: const BorderSide(color: Color(0x33FFFFFF)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(
-              color: const Color(0xFF475569).withValues(alpha: 0.3)),
+          borderSide: const BorderSide(color: Color(0x33FFFFFF)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderSide: const BorderSide(color: AppColors.accent, width: 2),
         ),
-        hintStyle: const TextStyle(
-          fontFamily: _font,
-          color: Color(0xFF64748B),
-          fontSize: 15,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        hintStyle: const TextStyle(fontFamily: _font, color: Color(0x66FFFFFF), fontSize: 15),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: const Color(0xFF0F172A).withValues(alpha: 0.95),
+        backgroundColor: const Color(0xFF083E3E),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        shadowColor: const Color(0xFF334155),
-        indicatorColor: AppColors.primary.withValues(alpha: 0.15),
-        indicatorShape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        indicatorColor: AppColors.accent.withValues(alpha: 0.2),
+        indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: AppColors.primary, size: 22);
+            return const IconThemeData(color: AppColors.accent, size: 24);
           }
-          return const IconThemeData(color: Color(0xFF94A3B8), size: 22);
+          return const IconThemeData(color: Color(0x99FFFFFF), size: 24);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return const TextStyle(
-              fontFamily: _font,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+              fontFamily: _font, fontSize: 11, fontWeight: FontWeight.w600,
+              color: AppColors.accent,
             );
           }
-          return const TextStyle(
-            fontFamily: _font,
-            fontSize: 11,
-            color: Color(0xFF94A3B8),
-          );
+          return const TextStyle(fontFamily: _font, fontSize: 11, color: Color(0x99FFFFFF));
         }),
       ),
-      navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: const Color(0xFF1E293B),
-        selectedIconTheme: const IconThemeData(color: AppColors.primary),
-        unselectedIconTheme: const IconThemeData(color: Color(0xFF94A3B8)),
-        indicatorColor: AppColors.primary.withValues(alpha: 0.2),
-        labelType: NavigationRailLabelType.selected,
-        selectedLabelTextStyle: const TextStyle(
-          fontFamily: _font,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: AppColors.primary,
-        ),
-        unselectedLabelTextStyle: const TextStyle(
-          fontFamily: _font,
-          fontSize: 12,
-          color: Color(0xFF94A3B8),
-        ),
-      ),
       dividerTheme: const DividerThemeData(
-        color: Color(0xFF334155),
-        thickness: 1,
-        space: 1,
+        color: Color(0x22FFFFFF), thickness: 1, space: 1,
       ),
     );
   }
+
+  static ThemeData get dark => light;
 }
