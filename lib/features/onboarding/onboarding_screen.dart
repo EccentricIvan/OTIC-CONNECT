@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/router/app_router.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -56,8 +58,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Future<void> _finish() async {
     if (_saving) return;
     setState(() => _saving = true);
-    // TODO: save profile to local database + optional cloud sync
-    await Future.delayed(const Duration(milliseconds: 500));
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('has_profile', true);
+    await prefs.setString('user_name', _nameController.text.trim());
+    if (_role != null) await prefs.setString('user_role', _role!);
+    if (_location != null) await prefs.setString('user_location', _location!);
+    await prefs.setStringList('user_interests', _interests.toList());
+    ref.read(hasProfileProvider.notifier).state = true;
     if (mounted) context.go('/');
   }
 
@@ -77,9 +84,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     Color(0xFF0F172A)
                   ]
                 : const [
-                    Color(0xFFF0FDFA),
-                    Color(0xFFF8FAFC),
-                    Color(0xFFFFF1F2)
+                    Color(0xFFFFF1F2),
+                    Color(0xFFFFF7F5),
+                    Color(0xFFF0FDFA)
                   ],
           ),
         ),
@@ -182,16 +189,11 @@ class _WelcomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 12),
-          Container(
+          Image.asset(
+            'assets/branding/otic_logo.png',
             width: 56,
             height: 56,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, Color(0xFF5EEAD4)],
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(Icons.hub, color: Colors.white, size: 28),
+            fit: BoxFit.contain,
           ),
           const SizedBox(height: 16),
           Text(

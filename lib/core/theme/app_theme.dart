@@ -13,14 +13,14 @@ class AppTheme {
         seedColor: AppColors.primary,
         brightness: Brightness.light,
         surface: const Color(0xFFFFFFFF),
-        onSurface: const Color(0xFF0F172A),
-        onSurfaceVariant: const Color(0xFF64748B),
-        outline: const Color(0xFFE2E8F0),
-        surfaceContainerHighest: const Color(0xFFF1F5F9),
+        onSurface: const Color(0xFF1C1917),
+        onSurfaceVariant: const Color(0xFF78716C),
+        outline: const Color(0xFFF5E6E0),
+        surfaceContainerHighest: const Color(0xFFFFF1F2),
       ),
-      scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-      hintColor: const Color(0xFF94A3B8),
-      dividerColor: const Color(0xFFE2E8F0),
+      scaffoldBackgroundColor: const Color(0xFFFFF7F5),
+      hintColor: const Color(0xFFA8A29E),
+      dividerColor: const Color(0xFFF5E6E0),
     );
 
     final textTheme = base.textTheme.apply(fontFamily: _font);
@@ -31,7 +31,7 @@ class AppTheme {
           fontFamily: _font,
           fontSize: 32,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: const Color(0xFF1C1917),
           height: 1.15,
           letterSpacing: -0.5,
         ),
@@ -39,36 +39,36 @@ class AppTheme {
           fontFamily: _font,
           fontSize: 24,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: const Color(0xFF1C1917),
         ),
         headlineSmall: const TextStyle(
           fontFamily: _font,
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: const Color(0xFF1C1917),
         ),
         titleLarge: const TextStyle(
           fontFamily: _font,
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: const Color(0xFF1C1917),
         ),
         titleMedium: const TextStyle(
           fontFamily: _font,
           fontSize: 15,
           fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
+          color: const Color(0xFF1C1917),
         ),
         bodyLarge: const TextStyle(
           fontFamily: _font,
           fontSize: 16,
-          color: AppColors.textSecondary,
+          color: const Color(0xFF78716C),
           height: 1.6,
         ),
         bodyMedium: const TextStyle(
           fontFamily: _font,
           fontSize: 14,
-          color: AppColors.textSecondary,
+          color: const Color(0xFF78716C),
           height: 1.5,
         ),
         labelLarge: const TextStyle(
@@ -87,7 +87,7 @@ class AppTheme {
           fontFamily: _font,
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: const Color(0xFF1C1917),
         ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
@@ -164,7 +164,7 @@ class AppTheme {
           if (states.contains(WidgetState.selected)) {
             return const IconThemeData(color: AppColors.primary, size: 22);
           }
-          return const IconThemeData(color: AppColors.textSecondary, size: 22);
+          return const IconThemeData(color: const Color(0xFF78716C), size: 22);
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
@@ -178,7 +178,7 @@ class AppTheme {
           return const TextStyle(
             fontFamily: _font,
             fontSize: 11,
-            color: AppColors.textSecondary,
+            color: const Color(0xFF78716C),
           );
         }),
       ),
@@ -198,7 +198,7 @@ class AppTheme {
         unselectedLabelTextStyle: const TextStyle(
           fontFamily: _font,
           fontSize: 12,
-          color: AppColors.textSecondary,
+          color: const Color(0xFF78716C),
         ),
       ),
       dividerTheme: const DividerThemeData(

@@ -130,16 +130,11 @@ class _SideNav extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Container(
+                Image.asset(
+                  'assets/branding/otic_logo.png',
                   width: 36,
                   height: 36,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primary, Color(0xFF5EEAD4)],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.hub, color: Colors.white, size: 20),
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -245,17 +240,11 @@ class _AppDrawer extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 28, 16, 8),
           child: Row(
             children: [
-              Container(
+              Image.asset(
+                'assets/branding/otic_logo.png',
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, Color(0xFF5EEAD4)],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child:
-                    const Icon(Icons.hub, color: Colors.white, size: 22),
+                fit: BoxFit.contain,
               ),
               const SizedBox(width: 12),
               Text(

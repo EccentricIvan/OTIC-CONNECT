@@ -21,25 +21,16 @@ import '../../shared/widgets/app_shell.dart';
 final _rootKey = GlobalKey<NavigatorState>();
 final _shellKey = GlobalKey<NavigatorState>();
 
-final hasProfileProvider = FutureProvider<bool>((ref) async {
-  // TODO: check local database for existing profile
+final hasProfileProvider = StateProvider<bool>((ref) {
+  // Synchronous — reads SharedPreferences at startup via the notifier
   return false;
 });
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final hasProfile = ref.watch(hasProfileProvider);
   return GoRouter(
     navigatorKey: _rootKey,
-    initialLocation: '/',
-    redirect: (context, state) async {
-      if (state.matchedLocation == '/onboarding') return null;
-      try {
-        final hasProfile = await ref.read(hasProfileProvider.future);
-        if (!hasProfile) return '/onboarding';
-      } catch (_) {
-        return '/onboarding';
-      }
-      return null;
-    },
+    initialLocation: hasProfile ? '/' : '/onboarding',
     routes: [
       GoRoute(
         path: '/onboarding',

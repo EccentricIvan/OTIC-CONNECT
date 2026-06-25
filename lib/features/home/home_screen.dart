@@ -14,17 +14,11 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Container(
+            Image.asset(
+              'assets/branding/otic_logo.png',
               width: 32,
               height: 32,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, Color(0xFF5EEAD4)],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child:
-                  const Icon(Icons.hub, color: Colors.white, size: 18),
+              fit: BoxFit.contain,
             ),
             const SizedBox(width: 10),
             const Text('Otic Connect'),

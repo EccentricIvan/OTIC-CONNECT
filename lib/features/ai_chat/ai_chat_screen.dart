@@ -45,16 +45,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            Container(
+            Image.asset(
+              'assets/branding/otic_logo.png',
               width: 28,
               height: 28,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, Color(0xFF5EEAD4)],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.chat, color: Colors.white, size: 16),
+              fit: BoxFit.contain,
             ),
             const SizedBox(width: 10),
             const Text('AI Assistant'),
