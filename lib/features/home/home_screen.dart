@@ -67,7 +67,7 @@ class _AppBar extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           const Text(
-            'Otic Connect',
+            'Otic She Connect',
             style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white,
             ),

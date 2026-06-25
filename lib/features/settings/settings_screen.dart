@@ -107,7 +107,7 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.info_outline),
-                      title: const Text('Otic Connect'),
+                      title: const Text('Otic She Connect'),
                       subtitle: const Text('Version 1.0.0'),
                     ),
                     ListTile(

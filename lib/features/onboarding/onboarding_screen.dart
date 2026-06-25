@@ -179,7 +179,7 @@ class _WelcomePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Welcome to\nOtic Connect',
+            'Welcome to\nOtic She Connect',
             style: Theme.of(context).textTheme.displayLarge,
           ),
           const SizedBox(height: 10),

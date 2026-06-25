@@ -130,7 +130,7 @@ class _SideNav extends StatelessWidget {
               children: [
                 Image.asset('assets/branding/otic_logo.png', width: 36, height: 36, fit: BoxFit.contain),
                 const SizedBox(width: 10),
-                const Text('Otic Connect', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                const Text('Otic She Connect', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
               ],
             ),
           ),
@@ -207,7 +207,7 @@ class _AppDrawer extends StatelessWidget {
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Otic Connect', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
+                      Text('Otic She Connect', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
                       Text('Connecting Women to Opportunity', style: TextStyle(fontSize: 11, color: Color(0x88FFFFFF))),
                     ],
                   ),
