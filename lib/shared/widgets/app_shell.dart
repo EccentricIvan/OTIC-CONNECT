@@ -145,25 +145,28 @@ class _SideNav extends StatelessWidget {
                 final selected = selectedIndex == i;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: ListTile(
-                    dense: true,
-                    selected: selected,
-                    selectedTileColor: AppColors.accent.withValues(alpha: 0.15),
-                    leading: Icon(
-                      selected ? dest.selectedIcon : dest.icon,
-                      color: selected ? AppColors.accent : const Color(0x99FFFFFF),
-                      size: 20,
-                    ),
-                    title: Text(
-                      dest.label,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      dense: true,
+                      selected: selected,
+                      selectedTileColor: AppColors.accent.withValues(alpha: 0.15),
+                      leading: Icon(
+                        selected ? dest.selectedIcon : dest.icon,
                         color: selected ? AppColors.accent : const Color(0x99FFFFFF),
+                        size: 20,
                       ),
+                      title: Text(
+                        dest.label,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                          color: selected ? AppColors.accent : const Color(0x99FFFFFF),
+                        ),
+                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      onTap: () => context.go(dest.path),
                     ),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    onTap: () => context.go(dest.path),
                   ),
                 );
               },
@@ -221,26 +224,29 @@ class _AppDrawer extends StatelessWidget {
                 itemBuilder: (context, i) {
                   final dest = destinations[i];
                   final selected = selectedIndex == i;
-                  return ListTile(
-                    dense: true,
-                    selected: selected,
-                    selectedTileColor: AppColors.accent.withValues(alpha: 0.15),
-                    leading: Icon(
-                      selected ? dest.selectedIcon : dest.icon,
-                      color: selected ? AppColors.accent : const Color(0x99FFFFFF),
-                      size: 20,
-                    ),
-                    title: Text(
-                      dest.label,
-                      style: TextStyle(
-                        fontSize: 14, color: selected ? AppColors.accent : const Color(0xCCFFFFFF),
-                        fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                  return Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      dense: true,
+                      selected: selected,
+                      selectedTileColor: AppColors.accent.withValues(alpha: 0.15),
+                      leading: Icon(
+                        selected ? dest.selectedIcon : dest.icon,
+                        color: selected ? AppColors.accent : const Color(0x99FFFFFF),
+                        size: 20,
                       ),
+                      title: Text(
+                        dest.label,
+                        style: TextStyle(
+                          fontSize: 14, color: selected ? AppColors.accent : const Color(0xCCFFFFFF),
+                          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                        ),
+                      ),
+                      onTap: () {
+                        context.go(dest.path);
+                        Navigator.pop(context);
+                      },
                     ),
-                    onTap: () {
-                      context.go(dest.path);
-                      Navigator.pop(context);
-                    },
                   );
                 },
               ),

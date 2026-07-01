@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/router/app_router.dart';
+import '../../core/l10n/app_strings.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -28,14 +29,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
+  String _t(String key) => S.tr(context, ref, key);
+
   void _next() {
-    if (_page == 0 && _nameController.text.trim().isEmpty) {
+    if (_page == 1 && _nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your name')),
+        SnackBar(content: Text(_t('please_enter_name'))),
       );
       return;
     }
-    if (_page < 1) {
+    if (_page < 2) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOut,
@@ -86,7 +89,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
-                    2,
+                    3,
                     (i) => AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -108,12 +111,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   onPageChanged: (i) => setState(() => _page = i),
                   children: [
-                    _WelcomePage(controller: _nameController),
+                    _LanguagePage(ref: ref),
+                    _WelcomePage(controller: _nameController, t: _t),
                     _RolePage(
                       selected: _role,
                       location: _location,
                       onRole: (r) => setState(() => _role = r),
                       onLocation: (l) => setState(() => _location = l),
+                      t: _t,
                     ),
                   ],
                 ),
@@ -126,7 +131,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: _back,
-                          child: const Text('Back'),
+                          child: Text(_t('back')),
                         ),
                       ),
                     if (_page > 0) const SizedBox(width: 12),
@@ -143,9 +148,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : Text(_page < 1
-                                ? 'Continue'
-                                : 'Start your journey'),
+                            : Text(_page < 2
+                                ? _t('continue_btn')
+                                : _t('start_journey')),
                       ),
                     ),
                   ],
@@ -159,9 +164,113 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 }
 
+class _LanguagePage extends StatelessWidget {
+  const _LanguagePage({required this.ref});
+  final WidgetRef ref;
+
+  @override
+  Widget build(BuildContext context) {
+    final currentLocale = ref.watch(localeProvider);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          Image.asset(
+            'assets/branding/otic_logo.png',
+            width: 56, height: 56, fit: BoxFit.contain,
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Choose your language',
+            style: TextStyle(
+              fontSize: 28, fontWeight: FontWeight.w700,
+              color: Colors.white, height: 1.2,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Londa olulimi lwo · Chagua lugha yako',
+            style: TextStyle(fontSize: 14, color: Color(0x99FFFFFF), height: 1.5),
+          ),
+          const SizedBox(height: 28),
+          ...AppLocale.values.map((locale) {
+            final isSelected = currentLocale == locale;
+            return GestureDetector(
+              onTap: () => ref.read(localeProvider.notifier).set(locale),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.primary.withValues(alpha: 0.12)
+                      : const Color(0x12FFFFFF),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.primary
+                        : const Color(0x22FFFFFF),
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Text(locale.flag, style: const TextStyle(fontSize: 28)),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            locale.label,
+                            style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w600,
+                              color: isSelected ? AppColors.primary : Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            locale.code,
+                            style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isSelected)
+                      Container(
+                        width: 28, height: 28,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.check, color: Colors.white, size: 18),
+                      )
+                    else
+                      Container(
+                        width: 28, height: 28,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0x44FFFFFF), width: 2),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
 class _WelcomePage extends StatelessWidget {
-  const _WelcomePage({required this.controller});
+  const _WelcomePage({required this.controller, required this.t});
   final TextEditingController controller;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -173,19 +282,16 @@ class _WelcomePage extends StatelessWidget {
           const SizedBox(height: 12),
           Image.asset(
             'assets/branding/otic_logo.png',
-            width: 56,
-            height: 56,
-            fit: BoxFit.contain,
+            width: 56, height: 56, fit: BoxFit.contain,
           ),
           const SizedBox(height: 16),
           Text(
-            'Welcome to\nOtic She Connect',
+            t('welcome_to'),
             style: Theme.of(context).textTheme.displayLarge,
           ),
           const SizedBox(height: 10),
           Text(
-            'Your digital companion for learning, earning, growing, and thriving. '
-            'Works online and offline — your progress is always safe.',
+            t('welcome_desc'),
             style: TextStyle(
               color: Theme.of(context).textTheme.bodyMedium?.color,
               height: 1.6,
@@ -193,7 +299,7 @@ class _WelcomePage extends StatelessWidget {
           ),
           const SizedBox(height: 28),
           Text(
-            "What's your name?",
+            t('whats_your_name'),
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 10),
@@ -201,9 +307,9 @@ class _WelcomePage extends StatelessWidget {
             controller: controller,
             autofocus: true,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              hintText: 'Enter your name',
-              prefixIcon: Icon(Icons.person_outline),
+            decoration: InputDecoration(
+              hintText: t('enter_your_name'),
+              prefixIcon: const Icon(Icons.person_outline),
             ),
           ),
         ],
@@ -218,19 +324,21 @@ class _RolePage extends StatelessWidget {
     required this.location,
     required this.onRole,
     required this.onLocation,
+    required this.t,
   });
   final String? selected;
   final String? location;
   final void Function(String?) onRole;
   final void Function(String?) onLocation;
+  final String Function(String) t;
 
-  static const _roles = [
-    ('Entrepreneur', Icons.rocket_launch, 'I run or want to start a business'),
-    ('Farmer', Icons.agriculture, 'I work in agriculture or agribusiness'),
-    ('Student', Icons.school, 'I am currently studying or in training'),
-    ('Job Seeker', Icons.work_outline, 'I am looking for employment'),
-    ('Community Leader', Icons.groups, 'I lead or organize in my community'),
-    ('Artisan / Creator', Icons.palette, 'I create handmade goods or crafts'),
+  List<(String, String, IconData, String)> get _roles => [
+    ('role_entrepreneur', 'role_entrepreneur_desc', Icons.rocket_launch, 'Entrepreneur'),
+    ('role_farmer', 'role_farmer_desc', Icons.agriculture, 'Farmer'),
+    ('role_student', 'role_student_desc', Icons.school, 'Student'),
+    ('role_job_seeker', 'role_job_seeker_desc', Icons.work_outline, 'Job Seeker'),
+    ('role_leader', 'role_leader_desc', Icons.groups, 'Community Leader'),
+    ('role_artisan', 'role_artisan_desc', Icons.palette, 'Artisan / Creator'),
   ];
 
   @override
@@ -241,24 +349,24 @@ class _RolePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 12),
-          Text('About you',
+          Text(t('about_you'),
               style: Theme.of(context).textTheme.headlineLarge),
           const SizedBox(height: 6),
           Text(
-            'This helps us personalise your experience with relevant opportunities and resources.',
+            t('about_you_desc'),
             style: TextStyle(
               color: Theme.of(context).textTheme.bodyMedium?.color,
               height: 1.5,
             ),
           ),
           const SizedBox(height: 20),
-          Text('What best describes you?',
+          Text(t('what_describes_you'),
               style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
           ..._roles.map((r) {
-            final isSelected = selected == r.$1;
+            final isSelected = selected == r.$4;
             return GestureDetector(
-              onTap: () => onRole(selected == r.$1 ? null : r.$1),
+              onTap: () => onRole(selected == r.$4 ? null : r.$4),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 margin: const EdgeInsets.only(bottom: 10),
@@ -278,7 +386,7 @@ class _RolePage extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      r.$2,
+                      r.$3,
                       color: isSelected
                           ? AppColors.primary
                           : Theme.of(context).hintColor,
@@ -290,19 +398,16 @@ class _RolePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            r.$1,
+                            t(r.$1),
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: isSelected
                                   ? AppColors.primary
-                                  : Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.color,
+                                  : Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                           ),
                           Text(
-                            r.$3,
+                            t(r.$2),
                             style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context).hintColor,
@@ -320,15 +425,15 @@ class _RolePage extends StatelessWidget {
             );
           }),
           const SizedBox(height: 16),
-          Text('Where are you based?',
+          Text(t('where_based'),
               style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 10),
           TextField(
             onChanged: onLocation,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              hintText: 'e.g. Kampala, Mukono, Mbale',
-              prefixIcon: Icon(Icons.location_on_outlined),
+            decoration: InputDecoration(
+              hintText: t('location_hint'),
+              prefixIcon: const Icon(Icons.location_on_outlined),
             ),
           ),
           const SizedBox(height: 20),
@@ -337,4 +442,3 @@ class _RolePage extends StatelessWidget {
     );
   }
 }
-

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_provider.dart';
+import '../../core/l10n/app_strings.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -9,9 +10,12 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final locale = ref.watch(localeProvider);
+
+    String t(String key) => S.tr(context, ref, key);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(t('settings'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Align(
@@ -22,7 +26,7 @@ class SettingsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _SettingsSection(
-                  title: 'Appearance',
+                  title: t('appearance'),
                   children: [
                     _ThemeTile(
                       currentMode: themeMode,
@@ -33,27 +37,30 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 _SettingsSection(
-                  title: 'Language',
+                  title: t('language'),
                   children: [
-                    ListTile(
-                      leading: const Icon(Icons.language),
-                      title: const Text('App Language'),
-                      subtitle: const Text('English'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.translate),
-                      title: const Text('Content Language'),
-                      subtitle: const Text('English, Luganda'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {},
-                    ),
+                    ...AppLocale.values.map((l) {
+                      final isSelected = locale == l;
+                      return Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: Text(l.flag, style: const TextStyle(fontSize: 22)),
+                          title: Text(l.label),
+                          subtitle: Text(l.code),
+                          trailing: isSelected
+                              ? const Icon(Icons.check_circle, color: AppColors.primary, size: 22)
+                              : null,
+                          selected: isSelected,
+                          selectedTileColor: AppColors.primary.withValues(alpha: 0.08),
+                          onTap: () => ref.read(localeProvider.notifier).set(l),
+                        ),
+                      );
+                    }),
                   ],
                 ),
                 const SizedBox(height: 16),
                 _SettingsSection(
-                  title: 'Data & Sync',
+                  title: t('data_sync'),
                   children: [
                     SwitchListTile(
                       secondary: const Icon(Icons.cloud_sync),
@@ -63,25 +70,31 @@ class SettingsScreen extends ConsumerWidget {
                       value: true,
                       onChanged: (v) {},
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.download),
-                      title: const Text('Download content for offline'),
-                      subtitle: const Text('Last synced: Today'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {},
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        leading: const Icon(Icons.download),
+                        title: const Text('Download content for offline'),
+                        subtitle: const Text('Last synced: Today'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {},
+                      ),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.storage),
-                      title: const Text('Storage usage'),
-                      subtitle: const Text('45 MB used'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {},
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        leading: const Icon(Icons.storage),
+                        title: const Text('Storage usage'),
+                        subtitle: const Text('45 MB used'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {},
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 _SettingsSection(
-                  title: 'Notifications',
+                  title: t('notifications'),
                   children: [
                     SwitchListTile(
                       secondary: const Icon(Icons.notifications),
@@ -103,24 +116,30 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 _SettingsSection(
-                  title: 'About',
+                  title: t('about'),
                   children: [
-                    ListTile(
-                      leading: const Icon(Icons.info_outline),
-                      title: const Text('Otic She Connect'),
-                      subtitle: const Text('Version 1.0.0'),
+                    const ListTile(
+                      leading: Icon(Icons.info_outline),
+                      title: Text('Otic She Connect'),
+                      subtitle: Text('Version 1.0.0'),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.description_outlined),
-                      title: const Text('Terms of Service'),
-                      trailing: const Icon(Icons.open_in_new, size: 16),
-                      onTap: () {},
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        leading: const Icon(Icons.description_outlined),
+                        title: const Text('Terms of Service'),
+                        trailing: const Icon(Icons.open_in_new, size: 16),
+                        onTap: () {},
+                      ),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.shield_outlined),
-                      title: const Text('Privacy Policy'),
-                      trailing: const Icon(Icons.open_in_new, size: 16),
-                      onTap: () {},
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        leading: const Icon(Icons.shield_outlined),
+                        title: const Text('Privacy Policy'),
+                        trailing: const Icon(Icons.open_in_new, size: 16),
+                        onTap: () {},
+                      ),
                     ),
                   ],
                 ),
@@ -149,7 +168,7 @@ class _SettingsSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
@@ -190,7 +209,7 @@ class _ThemeTile extends StatelessWidget {
         selected: {currentMode},
         onSelectionChanged: (s) => onChanged(s.first),
         showSelectedIcon: false,
-        style: ButtonStyle(
+        style: const ButtonStyle(
           visualDensity: VisualDensity.compact,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),

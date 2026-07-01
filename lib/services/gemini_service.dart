@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'api_config.dart';
 
 class GeminiService {
-  static const _model = 'gemini-2.0-flash';
+  static const _model = 'gemini-2.0-flash-lite';
   static const _baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
 
   static const _systemPrompt = '''You are Otic She Connect AI Assistant — a warm, supportive, and knowledgeable companion for women in Sub-Saharan Africa.
@@ -46,6 +46,10 @@ Guidelines:
         'maxOutputTokens': 512,
       },
     });
+
+    if (ApiConfig.geminiKey.isEmpty) {
+      return 'API key not configured. Run with: flutter run --dart-define=GEMINI_API_KEY=your_key';
+    }
 
     try {
       final response = await http.post(

@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.oticgroup.otic_connect"
-        minSdk = 21
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")

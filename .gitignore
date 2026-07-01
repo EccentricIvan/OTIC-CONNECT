@@ -43,3 +43,7 @@ Thumbs.db
 
 # Coverage
 coverage/
+
+# Environment / secrets
+.env
+*.env
