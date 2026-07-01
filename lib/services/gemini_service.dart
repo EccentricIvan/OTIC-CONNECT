@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import 'api_config.dart';
 
 class GeminiService {
-  static const _model = 'gemini-2.0-flash-lite';
-  static const _baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
+  static const _model = 'llama-3.3-70b-versatile';
+  static const _baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
   static const _systemPrompt = '''You are Otic She Connect AI Assistant — a warm, supportive, and knowledgeable companion for women in Sub-Saharan Africa.
 
@@ -29,44 +29,37 @@ Guidelines:
   final List<Map<String, dynamic>> _history = [];
 
   Future<String> sendMessage(String message) async {
-    _history.add({
-      'role': 'user',
-      'parts': [{'text': message}],
-    });
-
-    final url = Uri.parse('$_baseUrl/$_model:generateContent?key=${ApiConfig.geminiKey}');
-
-    final body = jsonEncode({
-      'system_instruction': {
-        'parts': [{'text': _systemPrompt}],
-      },
-      'contents': _history,
-      'generationConfig': {
-        'temperature': 0.7,
-        'maxOutputTokens': 512,
-      },
-    });
-
-    if (ApiConfig.geminiKey.isEmpty) {
-      return 'API key not configured. Run with: flutter run --dart-define=GEMINI_API_KEY=your_key';
+    if (ApiConfig.groqKey.isEmpty) {
+      return 'API key not configured. Please contact support.';
     }
+
+    _history.add({'role': 'user', 'content': message});
+
+    final messages = [
+      {'role': 'system', 'content': _systemPrompt},
+      ..._history,
+    ];
 
     try {
       final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: body,
+        Uri.parse(_baseUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${ApiConfig.groqKey}',
+        },
+        body: jsonEncode({
+          'model': _model,
+          'messages': messages,
+          'temperature': 0.7,
+          'max_tokens': 512,
+        }),
       ).timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final text = data['candidates']?[0]?['content']?['parts']?[0]?['text'] ?? 'I could not generate a response. Please try again.';
+        final text = data['choices']?[0]?['message']?['content'] ?? 'I could not generate a response. Please try again.';
 
-        _history.add({
-          'role': 'model',
-          'parts': [{'text': text}],
-        });
-
+        _history.add({'role': 'assistant', 'content': text});
         return text;
       } else {
         final error = jsonDecode(response.body);
