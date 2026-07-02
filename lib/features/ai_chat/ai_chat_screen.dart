@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/l10n/app_strings.dart';
 import '../../services/gemini_service.dart';
 
-class AiChatScreen extends StatefulWidget {
+class AiChatScreen extends ConsumerStatefulWidget {
   const AiChatScreen({super.key});
 
   @override
-  State<AiChatScreen> createState() => _AiChatScreenState();
+  ConsumerState<AiChatScreen> createState() => _AiChatScreenState();
 }
 
-class _AiChatScreenState extends State<AiChatScreen> {
+class _AiChatScreenState extends ConsumerState<AiChatScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
-  final _gemini = GeminiService();
+  final _groq = GeminiService();
   bool _isLoading = false;
+  late List<_ChatMessage> _messages;
+  bool _initialized = false;
 
-  final _messages = <_ChatMessage>[
-    _ChatMessage(
-      'Hello! I\'m your AI assistant from Otic She Connect. I can help you with '
-      'business advice, farming tips, health information, financial guidance, '
-      'and much more. What would you like to know?',
-      false,
-    ),
-  ];
+  String _t(String key) => S.tr(context, ref, key);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _messages = [_ChatMessage(_t('ai_greeting'), false)];
+    }
+  }
 
   @override
   void dispose() {
@@ -54,7 +60,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
     _controller.clear();
     _scrollToBottom();
 
-    final response = await _gemini.sendMessage(text);
+    final response = await _groq.sendMessage(text);
 
     setState(() {
       _messages.add(_ChatMessage(response, false));
@@ -63,8 +69,18 @@ class _AiChatScreenState extends State<AiChatScreen> {
     _scrollToBottom();
   }
 
+  void _clearChat() {
+    _groq.clearHistory();
+    setState(() {
+      _messages.clear();
+      _messages.add(_ChatMessage(_t('chat_cleared'), false));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.watch(localeProvider);
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -78,20 +94,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              _ChatAppBar(onClear: () {
-                _gemini.clearHistory();
-                setState(() {
-                  _messages.clear();
-                  _messages.add(_ChatMessage(
-                    'Chat cleared! How can I help you?',
-                    false,
-                  ));
-                });
-              }),
+              _ChatAppBar(onClear: _clearChat, t: _t),
               _SuggestedTopics(onTap: (topic) {
                 _controller.text = topic;
                 _send();
-              }),
+              }, t: _t),
               Expanded(
                 child: ListView.builder(
                   controller: _scrollController,
@@ -100,7 +107,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   itemCount: _messages.length + (_isLoading ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (_isLoading && index == 0) {
-                      return const _TypingIndicator();
+                      return _TypingIndicator(t: _t);
                     }
                     final msgIndex = _isLoading ? index - 1 : index;
                     final msg = _messages[_messages.length - 1 - msgIndex];
@@ -112,6 +119,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                 controller: _controller,
                 onSend: _send,
                 isLoading: _isLoading,
+                t: _t,
               ),
             ],
           ),
@@ -122,8 +130,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
 }
 
 class _ChatAppBar extends StatelessWidget {
-  const _ChatAppBar({required this.onClear});
+  const _ChatAppBar({required this.onClear, required this.t});
   final VoidCallback onClear;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -131,17 +140,28 @@ class _ChatAppBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Row(
         children: [
-          Image.asset(
-            'assets/branding/otic_logo.png',
-            width: 28, height: 28, fit: BoxFit.contain,
+          Container(
+            width: 38, height: 38,
+            decoration: BoxDecoration(
+              color: AppColors.chatColor.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(color: AppColors.chatColor.withValues(alpha: 0.3)),
+            ),
+            child: const Icon(Icons.smart_toy_rounded, color: AppColors.chatColor, size: 20),
           ),
           const SizedBox(width: 10),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('AI Assistant', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
-                Text('Powered by Gemini', style: TextStyle(fontSize: 11, color: Color(0x88FFFFFF))),
+                const Text(
+                  'AI Assistant',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+                ),
+                Text(
+                  t('powered_by_groq'),
+                  style: const TextStyle(fontSize: 11, color: Color(0x88FFFFFF)),
+                ),
               ],
             ),
           ),
@@ -153,12 +173,12 @@ class _ChatAppBar extends StatelessWidget {
                 color: const Color(0x22FFFFFF),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.refresh, size: 14, color: Color(0xAAFFFFFF)),
-                  SizedBox(width: 4),
-                  Text('New chat', style: TextStyle(fontSize: 12, color: Color(0xAAFFFFFF))),
+                  const Icon(Icons.refresh_rounded, size: 14, color: Color(0xAAFFFFFF)),
+                  const SizedBox(width: 4),
+                  Text(t('new_chat'), style: const TextStyle(fontSize: 12, color: Color(0xAAFFFFFF))),
                 ],
               ),
             ),
@@ -170,29 +190,30 @@ class _ChatAppBar extends StatelessWidget {
 }
 
 class _SuggestedTopics extends StatelessWidget {
-  const _SuggestedTopics({required this.onTap});
+  const _SuggestedTopics({required this.onTap, required this.t});
   final void Function(String) onTap;
-
-  static const _topics = [
-    'How do I start a small business?',
-    'Tips for saving money',
-    'Best crops for my region',
-    'How to sell online',
-  ];
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
+    final topics = [
+      t('topic_business_q'),
+      t('topic_savings_q'),
+      t('topic_farming_q'),
+      t('topic_sell_online_q'),
+    ];
+
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
-        itemCount: _topics.length,
+        itemCount: topics.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, i) {
           return GestureDetector(
-            onTap: () => onTap(_topics[i]),
+            onTap: () => onTap(topics[i]),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
@@ -201,7 +222,7 @@ class _SuggestedTopics extends StatelessWidget {
                 border: Border.all(color: const Color(0x22FFFFFF)),
               ),
               child: Text(
-                _topics[i],
+                topics[i],
                 style: const TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
               ),
             ),
@@ -213,7 +234,8 @@ class _SuggestedTopics extends StatelessWidget {
 }
 
 class _TypingIndicator extends StatelessWidget {
-  const _TypingIndicator();
+  const _TypingIndicator({required this.t});
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -238,9 +260,9 @@ class _TypingIndicator extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            const Text(
-              'Thinking...',
-              style: TextStyle(fontSize: 13, color: Color(0x88FFFFFF), fontStyle: FontStyle.italic),
+            Text(
+              t('thinking'),
+              style: const TextStyle(fontSize: 13, color: Color(0x88FFFFFF), fontStyle: FontStyle.italic),
             ),
           ],
         ),
@@ -288,10 +310,11 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _ChatInput extends StatelessWidget {
-  const _ChatInput({required this.controller, required this.onSend, required this.isLoading});
+  const _ChatInput({required this.controller, required this.onSend, required this.isLoading, required this.t});
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isLoading;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -312,11 +335,11 @@ class _ChatInput extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 style: const TextStyle(color: Colors.white, fontSize: 14),
-                decoration: const InputDecoration(
-                  hintText: 'Ask anything...',
-                  hintStyle: TextStyle(color: Color(0x66FFFFFF)),
+                decoration: InputDecoration(
+                  hintText: t('ask_anything'),
+                  hintStyle: const TextStyle(color: Color(0x66FFFFFF)),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
                 onSubmitted: (_) => onSend(),
                 textInputAction: TextInputAction.send,
@@ -331,6 +354,12 @@ class _ChatInput extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isLoading ? const Color(0x22FFFFFF) : AppColors.accent,
                 borderRadius: BorderRadius.circular(14),
+                boxShadow: isLoading ? null : [
+                  BoxShadow(
+                    color: AppColors.accent.withValues(alpha: 0.4),
+                    blurRadius: 8, offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Icon(
                 Icons.send_rounded,

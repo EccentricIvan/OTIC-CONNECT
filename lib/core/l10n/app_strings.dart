@@ -500,5 +500,360 @@ class S {
       AppLocale.lg: 'Nlowooza...',
       AppLocale.sw: 'Nafikiri...',
     },
+
+    // ── Learn screen ──
+    'knowledge_is_power': {
+      AppLocale.en: 'Knowledge is power',
+      AppLocale.lg: 'Amagezi ge Amaanyi',
+      AppLocale.sw: 'Maarifa ni nguvu',
+    },
+    'knowledge_is_power_desc': {
+      AppLocale.en: 'Practical courses designed for women — from digital skills to business management, all in your language.',
+      AppLocale.lg: 'Amasomo ag\'obukwatirivu ga bakazi — okuva mu bukugu bw\'ekikompyuta okutuuka mu kulabirira obusubuzi, byonna mu lulimi lwo.',
+      AppLocale.sw: 'Kozi za vitendo zilizoundwa kwa wanawake — kutoka ujuzi wa kidijitali hadi usimamizi wa biashara, zote kwa lugha yako.',
+    },
+    'browse_topics': {
+      AppLocale.en: 'Browse Topics',
+      AppLocale.lg: 'Noonyereza Ebyagenda',
+      AppLocale.sw: 'Vinjari Mada',
+    },
+    'practical_skills_sub': {
+      AppLocale.en: 'Practical skills for everyday life',
+      AppLocale.lg: 'Obukugu obw\'okukozesa buli lunaku',
+      AppLocale.sw: 'Ujuzi wa vitendo kwa maisha ya kila siku',
+    },
+    'ai_learning_assistant': {
+      AppLocale.en: 'AI Learning Assistant',
+      AppLocale.lg: 'Omuyambi w\'Okusoma wa AI',
+      AppLocale.sw: 'Msaidizi wa AI wa Kujifunza',
+    },
+    'ai_learning_desc': {
+      AppLocale.en: 'Ask any question and get instant help',
+      AppLocale.lg: 'Buuza ekibuuzo kyonna ofune obuyambi mangu',
+      AppLocale.sw: 'Uliza swali lolote na upate msaada wa haraka',
+    },
+    'ask_ai_assistant': {
+      AppLocale.en: 'Ask AI Assistant',
+      AppLocale.lg: 'Buuza Omuyambi wa AI',
+      AppLocale.sw: 'Uliza Msaidizi wa AI',
+    },
+    'ask_ai_assistant_desc': {
+      AppLocale.en: 'Get personalised answers on business, farming, health, and more',
+      AppLocale.lg: 'Funa ennyini z\'obukwatirivu ku busubuzi, bulimi, obulamu, n\'ebirala',
+      AppLocale.sw: 'Pata majibu ya kibinafsi kuhusu biashara, kilimo, afya, na zaidi',
+    },
+    'lessons': {
+      AppLocale.en: 'lessons',
+      AppLocale.lg: 'amasomo',
+      AppLocale.sw: 'masomo',
+    },
+    'in_progress': {
+      AppLocale.en: 'In Progress',
+      AppLocale.lg: 'Mu Entambula',
+      AppLocale.sw: 'Inaendelea',
+    },
+    'cat_digital': {
+      AppLocale.en: 'Digital Skills',
+      AppLocale.lg: 'Obukugu bw\'Ekikompyuta',
+      AppLocale.sw: 'Ujuzi wa Kidijitali',
+    },
+    'cat_digital_desc': {
+      AppLocale.en: 'Computers, internet, and mobile basics',
+      AppLocale.lg: 'Ebyekikompyuta, mutimbagano, n\'omukono gw\'ettelefooni',
+      AppLocale.sw: 'Kompyuta, intaneti, na misingi ya simu',
+    },
+    'cat_finance_lit': {
+      AppLocale.en: 'Financial Literacy',
+      AppLocale.lg: 'Okumanya Ensimbi',
+      AppLocale.sw: 'Elimu ya Fedha',
+    },
+    'cat_finance_lit_desc': {
+      AppLocale.en: 'Budgeting, savings, and money management',
+      AppLocale.lg: 'Okubala ensimbi, okuterekawo, n\'okulabirira ensimbi',
+      AppLocale.sw: 'Bajeti, akiba, na usimamizi wa pesa',
+    },
+    'cat_entrepreneur': {
+      AppLocale.en: 'Entrepreneurship',
+      AppLocale.lg: 'Obusubuzi',
+      AppLocale.sw: 'Ujasiriamali',
+    },
+    'cat_entrepreneur_desc': {
+      AppLocale.en: 'Start and grow your business',
+      AppLocale.lg: 'Tandika era okule obusubuzi bwo',
+      AppLocale.sw: 'Anza na kukua biashara yako',
+    },
+    'cat_agri': {
+      AppLocale.en: 'Agriculture',
+      AppLocale.lg: 'Obulimi',
+      AppLocale.sw: 'Kilimo',
+    },
+    'cat_agri_desc': {
+      AppLocale.en: 'Modern farming techniques and agribusiness',
+      AppLocale.lg: 'Enkolagana ez\'obulimi obupya n\'obusubuzi bw\'ebyobulimi',
+      AppLocale.sw: 'Mbinu za kisasa za kilimo na biashara ya kilimo',
+    },
+    'cat_health_nut': {
+      AppLocale.en: 'Health & Nutrition',
+      AppLocale.lg: 'Obulamu n\'Ebyokulya',
+      AppLocale.sw: 'Afya na Lishe',
+    },
+    'cat_health_nut_desc': {
+      AppLocale.en: 'Family health, nutrition, and wellness',
+      AppLocale.lg: 'Obulamu bw\'oluganda, ebyokulya, n\'emirembe',
+      AppLocale.sw: 'Afya ya familia, lishe, na ustawi',
+    },
+    'cat_leadership': {
+      AppLocale.en: 'Leadership',
+      AppLocale.lg: 'Obukulu',
+      AppLocale.sw: 'Uongozi',
+    },
+    'cat_leadership_desc': {
+      AppLocale.en: 'Community leadership and advocacy skills',
+      AppLocale.lg: 'Obukulu bw\'ekibiina n\'obukugu bw\'okwogera',
+      AppLocale.sw: 'Uongozi wa jamii na ujuzi wa utetezi',
+    },
+
+    // ── Marketplace screen ──
+    'sell_products': {
+      AppLocale.en: 'Sell your products & services',
+      AppLocale.lg: 'Tunda ebintu byo n\'empeereza zo',
+      AppLocale.sw: 'Uza bidhaa na huduma zako',
+    },
+    'sell_products_desc': {
+      AppLocale.en: 'Connect with buyers in your community and beyond. List your products, set prices, and grow your business.',
+      AppLocale.lg: 'Kolagana n\'abaagula mu kibiina kyo n\'ebirala. Wandiika ebintu byo, teekawo emiwendo, era okule obusubuzi bwo.',
+      AppLocale.sw: 'Unganika na wanunuzi katika jamii yako na zaidi. Orodhesha bidhaa zako, weka bei, na kukua biashara yako.',
+    },
+    'list_product_btn': {
+      AppLocale.en: 'List a Product',
+      AppLocale.lg: 'Wandiika Ekintu',
+      AppLocale.sw: 'Orodhesha Bidhaa',
+    },
+    'categories': {
+      AppLocale.en: 'Categories',
+      AppLocale.lg: 'Emitono',
+      AppLocale.sw: 'Makundi',
+    },
+    'browse_products': {
+      AppLocale.en: 'Browse products and services',
+      AppLocale.lg: 'Noonyereza ebintu n\'empeereza',
+      AppLocale.sw: 'Vinjari bidhaa na huduma',
+    },
+    'featured_listings': {
+      AppLocale.en: 'Featured Listings',
+      AppLocale.lg: 'Ebintu Ebyasinguliriziddwa',
+      AppLocale.sw: 'Orodha Zilizoangaziwa',
+    },
+    'popular_products_desc': {
+      AppLocale.en: 'Popular products from women in your area',
+      AppLocale.lg: 'Ebintu ebisinganyiziddwa okuva ku bakazi mu kifo kyo',
+      AppLocale.sw: 'Bidhaa maarufu kutoka kwa wanawake eneo lako',
+    },
+    'see_all': {
+      AppLocale.en: 'See all',
+      AppLocale.lg: 'Laba byonna',
+      AppLocale.sw: 'Ona yote',
+    },
+    'cat_crafts': {
+      AppLocale.en: 'Crafts',
+      AppLocale.lg: 'Ebikozesebwa emikono',
+      AppLocale.sw: 'Ufundi',
+    },
+    'cat_food_drink': {
+      AppLocale.en: 'Food & Drink',
+      AppLocale.lg: 'Ebyokulya n\'Okunywa',
+      AppLocale.sw: 'Chakula na Vinywaji',
+    },
+    'cat_fashion': {
+      AppLocale.en: 'Fashion',
+      AppLocale.lg: 'Engoye',
+      AppLocale.sw: 'Mitindo',
+    },
+    'cat_beauty': {
+      AppLocale.en: 'Beauty',
+      AppLocale.lg: 'Obuwanguzi',
+      AppLocale.sw: 'Urembo',
+    },
+    'cat_services': {
+      AppLocale.en: 'Services',
+      AppLocale.lg: 'Empeereza',
+      AppLocale.sw: 'Huduma',
+    },
+
+    // ── Mentorship screen ──
+    'grow_with_guidance': {
+      AppLocale.en: 'Grow with guidance',
+      AppLocale.lg: 'Kula n\'Amagezi',
+      AppLocale.sw: 'Kua kwa mwongozo',
+    },
+    'grow_with_guidance_desc': {
+      AppLocale.en: 'Every successful woman had someone who believed in her. Find your mentor or become one.',
+      AppLocale.lg: 'Omukazi buli omu eyakuwerera yaali n\'omuntu eyamwesiga. Noonyereza omuyambi wo oba gwa obenga.',
+      AppLocale.sw: 'Kila mwanamke aliyefanikiwa alikuwa na mtu aliyemwamini. Tafuta mshauri wako au uwe mmoja.',
+    },
+    'find_mentor_title': {
+      AppLocale.en: 'Find a Mentor',
+      AppLocale.lg: 'Noonyereza Omuyambi',
+      AppLocale.sw: 'Tafuta Mshauri',
+    },
+    'find_mentor_desc': {
+      AppLocale.en: 'Connect with experienced women who can guide you',
+      AppLocale.lg: 'Kolagana n\'abakazi ab\'obutegefu abasobola okukuyongereza',
+      AppLocale.sw: 'Unganika na wanawake wenye uzoefu wanaoweza kukuongoza',
+    },
+    'become_mentor_title': {
+      AppLocale.en: 'Become a Mentor',
+      AppLocale.lg: 'Gwa Omuyambi',
+      AppLocale.sw: 'Kuwa Mshauri',
+    },
+    'become_mentor_desc': {
+      AppLocale.en: 'Share your experience and uplift others',
+      AppLocale.lg: 'Gabana obutegefu bwo era oyinze abalala',
+      AppLocale.sw: 'Shiriki uzoefu wako na inua wengine',
+    },
+    'connect_btn': {
+      AppLocale.en: 'Connect',
+      AppLocale.lg: 'Kolagana',
+      AppLocale.sw: 'Unganika',
+    },
+    'apply_to_mentor': {
+      AppLocale.en: 'Apply to Mentor',
+      AppLocale.lg: 'Saba Okuba Omuyambi',
+      AppLocale.sw: 'Omba Kuwa Mshauri',
+    },
+    'share_knowledge': {
+      AppLocale.en: 'Share your knowledge',
+      AppLocale.lg: 'Gabana Amagezi go',
+      AppLocale.sw: 'Shiriki maarifa yako',
+    },
+    'share_knowledge_desc': {
+      AppLocale.en: 'Help other women grow by sharing your skills and experience. Being a mentor is one of the most impactful things you can do.',
+      AppLocale.lg: 'Yamba abakazi abalala okukula nga ogabana obukugu bwo n\'obutegefu bwo. Okuba omuyambi kye kimu mu bintu ebimu ebyongeza ennyo.',
+      AppLocale.sw: 'Saidia wanawake wengine kukua kwa kushiriki ujuzi na uzoefu wako. Kuwa mshauri ni moja ya mambo yenye athari zaidi unayoweza kufanya.',
+    },
+    'yrs_experience': {
+      AppLocale.en: 'yrs experience',
+      AppLocale.lg: 'emyaka gy\'obutegefu',
+      AppLocale.sw: 'miaka ya uzoefu',
+    },
+
+    // ── Health screen ──
+    'your_health_matters': {
+      AppLocale.en: 'Your health matters',
+      AppLocale.lg: 'Obulamu bwo bwa muvubuka',
+      AppLocale.sw: 'Afya yako ni muhimu',
+    },
+    'your_health_matters_desc': {
+      AppLocale.en: 'Access trusted health information and connect with services in your community.',
+      AppLocale.lg: 'Funa amakwate g\'obulamu ag\'okwesiga era okolagane n\'empeereza mu kibiina kyo.',
+      AppLocale.sw: 'Pata habari za afya za kuaminika na unganike na huduma katika jamii yako.',
+    },
+    'health_resources': {
+      AppLocale.en: 'Health Resources',
+      AppLocale.lg: 'Ebikwatira ku Obulamu',
+      AppLocale.sw: 'Rasilimali za Afya',
+    },
+    'trusted_health_desc': {
+      AppLocale.en: 'Trusted information for you and your family',
+      AppLocale.lg: 'Amakwate ag\'okwesiga ku lwenyo n\'oluganda lwo',
+      AppLocale.sw: 'Habari za kuaminika kwako na familia yako',
+    },
+    'maternal_health': {
+      AppLocale.en: 'Maternal Health',
+      AppLocale.lg: 'Obulamu bw\'Omuzadde',
+      AppLocale.sw: 'Afya ya Uzazi',
+    },
+    'maternal_health_desc': {
+      AppLocale.en: 'Pregnancy, postnatal care, and family planning',
+      AppLocale.lg: 'Okubeerawo, okukuuma omuzadde, n\'okutegekereza oluganda',
+      AppLocale.sw: 'Ujauzito, huduma baada ya kuzaa, na upangaji uzazi',
+    },
+    'nutrition_guide': {
+      AppLocale.en: 'Nutrition Guide',
+      AppLocale.lg: 'Ebiragiro by\'Ebyokulya',
+      AppLocale.sw: 'Mwongozo wa Lishe',
+    },
+    'nutrition_guide_desc': {
+      AppLocale.en: 'Healthy eating for you and your children',
+      AppLocale.lg: 'Okulya obulungi ku lwenyo n\'abaana bo',
+      AppLocale.sw: 'Ulaji bora kwako na watoto wako',
+    },
+    'child_health': {
+      AppLocale.en: 'Child Health',
+      AppLocale.lg: 'Obulamu bw\'Omwana',
+      AppLocale.sw: 'Afya ya Mtoto',
+    },
+    'child_health_desc': {
+      AppLocale.en: 'Immunisation, common illnesses, and child care',
+      AppLocale.lg: 'Enkangavvulo, emikungulu egy\'omukutu, n\'okukuuma abaana',
+      AppLocale.sw: 'Chanjo, magonjwa ya kawaida, na utunzaji wa mtoto',
+    },
+    'mental_wellness': {
+      AppLocale.en: 'Mental Wellness',
+      AppLocale.lg: 'Emirembe gw\'Omutima',
+      AppLocale.sw: 'Afya ya Akili',
+    },
+    'mental_wellness_desc': {
+      AppLocale.en: 'Stress management, self-care, and emotional support',
+      AppLocale.lg: 'Okukuuma ettima, okwekuuma, n\'obuyambi bw\'emirembe',
+      AppLocale.sw: 'Usimamizi wa msongo, kujitunza, na msaada wa kihisia',
+    },
+    'nearby_services_title': {
+      AppLocale.en: 'Nearby Services',
+      AppLocale.lg: 'Empeereza Eziri Kumpi',
+      AppLocale.sw: 'Huduma Zilizo Karibu',
+    },
+    'nearby_services_sub': {
+      AppLocale.en: 'Health facilities and services in your area',
+      AppLocale.lg: 'Ebitalo n\'empeereza z\'obulamu mu kifo kyo',
+      AppLocale.sw: 'Vituo vya afya na huduma eneo lako',
+    },
+    'get_directions': {
+      AppLocale.en: 'Directions',
+      AppLocale.lg: 'Ekkubo',
+      AppLocale.sw: 'Elekeo',
+    },
+    'km_away': {
+      AppLocale.en: 'km away',
+      AppLocale.lg: 'km ewala',
+      AppLocale.sw: 'km mbali',
+    },
+
+    // ── AI Chat screen ──
+    'powered_by_groq': {
+      AppLocale.en: 'Powered by Groq · Llama 3.3',
+      AppLocale.lg: 'Yakozesebwa Groq · Llama 3.3',
+      AppLocale.sw: 'Inayotumia Groq · Llama 3.3',
+    },
+    'ai_greeting': {
+      AppLocale.en: 'Hello! I\'m your AI assistant from Otic She Connect. I can help you with business advice, farming tips, health information, financial guidance, and much more. What would you like to know?',
+      AppLocale.lg: 'Oli otya! Nze omuyambi wo wa AI okuva ku Otic She Connect. Nsobola okukuyamba n\'amagezi g\'obusubuzi, ebyobulimi, amakwate g\'obulamu, ebiragiro by\'ensimbi, n\'ebirala bingi. Oyagala okumanya ki?',
+      AppLocale.sw: 'Habari! Mimi ni msaidizi wako wa AI kutoka Otic She Connect. Ninaweza kukusaidia na ushauri wa biashara, vidokezo vya kilimo, habari za afya, mwongozo wa fedha, na mengi zaidi. Ungependa kujua nini?',
+    },
+    'chat_cleared': {
+      AppLocale.en: 'Chat cleared! How can I help you?',
+      AppLocale.lg: 'Emboozi esaziddwa! Nsobola kukuyamba otya?',
+      AppLocale.sw: 'Mazungumzo yamesafishwa! Ninawezaje kukusaidia?',
+    },
+    'topic_business_q': {
+      AppLocale.en: 'How do I start a small business?',
+      AppLocale.lg: 'Ndinda otya obusubuzi obuto?',
+      AppLocale.sw: 'Nianzisheje biashara ndogo vipi?',
+    },
+    'topic_savings_q': {
+      AppLocale.en: 'Tips for saving money',
+      AppLocale.lg: 'Amagezi g\'okuterekawo ensimbi',
+      AppLocale.sw: 'Vidokezo vya kuweka akiba',
+    },
+    'topic_farming_q': {
+      AppLocale.en: 'Best crops for my region',
+      AppLocale.lg: 'Ebimera ebirungi mu kitundu kyange',
+      AppLocale.sw: 'Mazao bora kwa eneo langu',
+    },
+    'topic_sell_online_q': {
+      AppLocale.en: 'How to sell online',
+      AppLocale.lg: 'Otunda otya ku mutimbagano',
+      AppLocale.sw: 'Jinsi ya kuuza mtandaoni',
+    },
   };
 }

@@ -1,100 +1,130 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
-import '../../shared/widgets/section_header.dart';
-import '../../shared/widgets/feature_card.dart';
+import '../../core/l10n/app_strings.dart';
 
-class LearnHubScreen extends StatelessWidget {
+class LearnHubScreen extends ConsumerWidget {
   const LearnHubScreen({super.key});
 
-  static const _categories = [
-    _Category('Digital Skills', 'Computers, internet, and mobile basics',
-        Icons.computer, AppColors.skillsColor, 8),
-    _Category('Financial Literacy', 'Budgeting, savings, and money management',
-        Icons.account_balance, AppColors.financeColor, 6),
-    _Category('Entrepreneurship', 'Start and grow your business',
-        Icons.rocket_launch, AppColors.earnColor, 10),
-    _Category('Agriculture', 'Modern farming techniques and agribusiness',
-        Icons.agriculture, AppColors.healthColor, 7),
-    _Category('Health & Nutrition', 'Family health, nutrition, and wellness',
-        Icons.favorite, AppColors.thriveColor, 5),
-    _Category('Leadership', 'Community leadership and advocacy skills',
-        Icons.emoji_events, AppColors.growColor, 4),
-  ];
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(localeProvider);
+    String t(String key) => S.tr(context, ref, key);
+
+    final categories = [
+      _Cat(t('cat_digital'), t('cat_digital_desc'), Icons.computer, AppColors.skillsColor, 8),
+      _Cat(t('cat_finance_lit'), t('cat_finance_lit_desc'), Icons.account_balance, AppColors.financeColor, 6),
+      _Cat(t('cat_entrepreneur'), t('cat_entrepreneur_desc'), Icons.rocket_launch, AppColors.earnColor, 10),
+      _Cat(t('cat_agri'), t('cat_agri_desc'), Icons.agriculture, AppColors.healthColor, 7),
+      _Cat(t('cat_health_nut'), t('cat_health_nut_desc'), Icons.favorite, AppColors.thriveColor, 5),
+      _Cat(t('cat_leadership'), t('cat_leadership_desc'), Icons.emoji_events, AppColors.growColor, 4),
+    ];
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Learn')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _LearnHero(),
-                const SizedBox(height: 24),
-                const SectionHeader(
-                  title: 'Browse Topics',
-                  subtitle: 'Practical skills for everyday life',
-                ),
-                const SizedBox(height: 12),
-                ..._categories.map(
-                  (c) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: FeatureCard(
-                      title: c.title,
-                      subtitle: c.subtitle,
-                      icon: c.icon,
-                      color: c.color,
-                      onTap: () {},
-                      trailing: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: c.color.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '${c.lessonCount} lessons',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: c.color,
-                          ),
-                        ),
-                      ),
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _LearnAppBar(t: t),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    _LearnHero(t: t),
+                    const SizedBox(height: 24),
+                    _SectionLabel(t('browse_topics')),
+                    const SizedBox(height: 4),
+                    Text(
+                      t('practical_skills_sub'),
+                      style: const TextStyle(fontSize: 13, color: Color(0x88FFFFFF)),
                     ),
-                  ),
+                    const SizedBox(height: 14),
+                    ...categories.map((c) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _CategoryCard(cat: c, t: t),
+                    )),
+                    const SizedBox(height: 16),
+                    _SectionLabel(t('ai_learning_assistant')),
+                    const SizedBox(height: 4),
+                    Text(
+                      t('ai_learning_desc'),
+                      style: const TextStyle(fontSize: 13, color: Color(0x88FFFFFF)),
+                    ),
+                    const SizedBox(height: 14),
+                    _AiCard(t: t, onTap: () => context.go('/ai-chat')),
+                    const SizedBox(height: 32),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                const SectionHeader(
-                  title: 'AI Learning Assistant',
-                  subtitle: 'Ask any question and get instant help',
-                ),
-                const SizedBox(height: 12),
-                FeatureCard(
-                  title: 'Ask AI Assistant',
-                  subtitle:
-                      'Get personalised answers on business, farming, health, and more',
-                  icon: Icons.chat,
-                  color: AppColors.primary,
-                  onTap: () => context.go('/ai-chat'),
-                ),
-                const SizedBox(height: 32),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
 
+class _LearnAppBar extends StatelessWidget {
+  const _LearnAppBar({required this.t});
+  final String Function(String) t;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+      child: Row(
+        children: [
+          Container(
+            width: 40, height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0x18FFFFFF),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0x12FFFFFF)),
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
+              onPressed: () => context.go('/'),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  t('learn'),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
+                ),
+                Text(
+                  t('learn_desc'),
+                  style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF)),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 40, height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.learnColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.menu_book_rounded, color: AppColors.learnColor, size: 22),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _LearnHero extends StatelessWidget {
+  const _LearnHero({required this.t});
+  final String Function(String) t;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -104,13 +134,12 @@ class _LearnHero extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.learnColor.withValues(alpha: 0.12),
-            AppColors.learnColor.withValues(alpha: 0.04),
+            AppColors.learnColor.withValues(alpha: 0.2),
+            AppColors.skillsColor.withValues(alpha: 0.1),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-            color: AppColors.learnColor.withValues(alpha: 0.15)),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.learnColor.withValues(alpha: 0.25)),
       ),
       child: Row(
         children: [
@@ -119,27 +148,37 @@ class _LearnHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Knowledge is power',
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  t('knowledge_is_power'),
+                  style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.w700,
+                    color: Colors.white, height: 1.2,
+                  ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Text(
-                  'Access practical courses designed for women — from digital skills to business management, all in your language.',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  t('knowledge_is_power_desc'),
+                  style: const TextStyle(fontSize: 13, color: Color(0xAAFFFFFF), height: 1.5),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    _StatChip(Icons.menu_book_rounded, '6 ${t("courses")}', AppColors.learnColor),
+                    const SizedBox(width: 8),
+                    _StatChip(Icons.star_rounded, '450 ${t("points")}', AppColors.earnColor),
+                  ],
                 ),
               ],
             ),
           ),
           const SizedBox(width: 16),
           Container(
-            width: 56,
-            height: 56,
+            width: 60, height: 60,
             decoration: BoxDecoration(
-              color: AppColors.learnColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(16),
+              color: AppColors.learnColor.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: AppColors.learnColor.withValues(alpha: 0.3)),
             ),
-            child: const Icon(Icons.menu_book,
-                color: AppColors.learnColor, size: 28),
+            child: const Icon(Icons.menu_book_rounded, color: AppColors.learnColor, size: 30),
           ),
         ],
       ),
@@ -147,12 +186,203 @@ class _LearnHero extends StatelessWidget {
   }
 }
 
-class _Category {
-  const _Category(
-      this.title, this.subtitle, this.icon, this.color, this.lessonCount);
+class _StatChip extends StatelessWidget {
+  const _StatChip(this.icon, this.label, this.color);
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 4),
+          Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+class _CategoryCard extends StatelessWidget {
+  const _CategoryCard({required this.cat, required this.t});
+  final _Cat cat;
+  final String Function(String) t;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0x12FFFFFF),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0x15FFFFFF)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48, height: 48,
+              decoration: BoxDecoration(
+                color: cat.color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(cat.icon, color: cat.color, size: 24),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    cat.title,
+                    style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    cat.subtitle,
+                    style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(3),
+                          child: LinearProgressIndicator(
+                            value: 0,
+                            minHeight: 3,
+                            backgroundColor: const Color(0x20FFFFFF),
+                            valueColor: AlwaysStoppedAnimation<Color>(cat.color),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        '${cat.count} ${t("lessons")}',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: cat.color),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(Icons.chevron_right_rounded, color: const Color(0x55FFFFFF), size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AiCard extends StatelessWidget {
+  const _AiCard({required this.t, required this.onTap});
+  final String Function(String) t;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.chatColor.withValues(alpha: 0.2),
+              AppColors.primary.withValues(alpha: 0.1),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.chatColor.withValues(alpha: 0.25)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 52, height: 52,
+              decoration: BoxDecoration(
+                color: AppColors.chatColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.chatColor.withValues(alpha: 0.4),
+                    blurRadius: 10, offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.chat_rounded, color: Colors.white, size: 26),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    t('ask_ai_assistant'),
+                    style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    t('ask_ai_assistant_desc'),
+                    style: const TextStyle(fontSize: 12, color: Color(0xAAFFFFFF), height: 1.4),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: AppColors.chatColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text.toUpperCase(),
+      style: const TextStyle(
+        fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.2,
+        color: Color(0x77FFFFFF),
+      ),
+    );
+  }
+}
+
+class _Cat {
+  const _Cat(this.title, this.subtitle, this.icon, this.color, this.count);
   final String title;
   final String subtitle;
   final IconData icon;
   final Color color;
-  final int lessonCount;
+  final int count;
 }
