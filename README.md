@@ -1,16 +1,26 @@
-# otic_connect
+# Otic She Connect
 
-A new Flutter project.
+An offline-first, AI-powered digital empowerment app for women in
+Sub-Saharan Africa, built with Flutter. Runs on Android, Windows, and Web.
 
-## Getting Started
+## Pillars
+- **Learn** — courses, digital skills, financial literacy
+- **Earn** — marketplace, financial hub, business tools
+- **Grow** — mentorship, jobs, skills training
+- **Thrive** — health, community, wellbeing
 
-This project is a starting point for a Flutter application.
+## Getting started
 
-A few resources to get you started if this is your first Flutter project:
+```
+flutter pub get
+flutter run -d windows   # or: -d android, -d chrome
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+To build a release APK:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+flutter build apk --release --split-per-abi
+```
+
+See [CLAUDE.md](CLAUDE.md) for architecture, the design system, and
+navigation structure.
