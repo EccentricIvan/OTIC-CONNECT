@@ -29,7 +29,7 @@ class MarketplaceScreen extends ConsumerWidget {
                     const SizedBox(height: 24),
                     _SectionLabel(t('categories')),
                     const SizedBox(height: 4),
-                    Text(t('browse_products'), style: const TextStyle(fontSize: 13, color: Color(0x88FFFFFF))),
+                    Text(t('browse_products'), style: const TextStyle(fontSize: 13, color: AppColors.textHint)),
                     const SizedBox(height: 14),
                     _CategoriesGrid(t: t),
                     const SizedBox(height: 24),
@@ -41,7 +41,7 @@ class MarketplaceScreen extends ConsumerWidget {
                             children: [
                               _SectionLabel(t('featured_listings')),
                               const SizedBox(height: 2),
-                              Text(t('popular_products_desc'), style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF))),
+                              Text(t('popular_products_desc'), style: const TextStyle(fontSize: 12, color: AppColors.textHint)),
                             ],
                           ),
                         ),
@@ -81,13 +81,13 @@ class _MarketAppBar extends StatelessWidget {
           Container(
             width: 40, height: 40,
             decoration: BoxDecoration(
-              color: const Color(0x18FFFFFF),
+              color: const Color(0x183A2E29),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0x12FFFFFF)),
+              border: Border.all(color: const Color(0x123A2E29)),
             ),
             child: IconButton(
               padding: EdgeInsets.zero,
-              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
+              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary, size: 20),
               onPressed: () => context.go('/'),
             ),
           ),
@@ -98,11 +98,11 @@ class _MarketAppBar extends StatelessWidget {
               children: [
                 Text(
                   t('marketplace'),
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
                 Text(
                   t('earn_desc'),
-                  style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF)),
+                  style: const TextStyle(fontSize: 12, color: AppColors.textHint),
                 ),
               ],
             ),
@@ -174,7 +174,7 @@ class _MarketHero extends StatelessWidget {
                 child: Text(
                   t('sell_products'),
                   style: const TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white, height: 1.2,
+                    fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary, height: 1.2,
                   ),
                 ),
               ),
@@ -183,7 +183,7 @@ class _MarketHero extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             t('sell_products_desc'),
-            style: const TextStyle(fontSize: 13, color: Color(0xAAFFFFFF), height: 1.5),
+            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.5),
           ),
           const SizedBox(height: 16),
           GestureDetector(
@@ -262,7 +262,7 @@ class _CategoriesGrid extends StatelessWidget {
                 Text(
                   c.$1,
                   style: const TextStyle(
-                    fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xCCFFFFFF),
+                    fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
@@ -295,9 +295,9 @@ class _FeaturedListings extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0x12FFFFFF),
+            color: const Color(0x123A2E29),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0x15FFFFFF)),
+            border: Border.all(color: const Color(0x153A2E29)),
           ),
           child: Row(
             children: [
@@ -316,10 +316,10 @@ class _FeaturedListings extends StatelessWidget {
                   children: [
                     Text(
                       l.title,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                     ),
                     const SizedBox(height: 3),
-                    Text(l.seller, style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF))),
+                    Text(l.seller, style: const TextStyle(fontSize: 12, color: AppColors.textHint)),
                   ],
                 ),
               ),
@@ -361,7 +361,7 @@ class _SectionLabel extends StatelessWidget {
       text.toUpperCase(),
       style: const TextStyle(
         fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.2,
-        color: Color(0x77FFFFFF),
+        color: AppColors.textHint,
       ),
     );
   }

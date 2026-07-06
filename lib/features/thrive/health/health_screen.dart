@@ -42,7 +42,7 @@ class HealthScreen extends ConsumerWidget {
                     const SizedBox(height: 24),
                     _SectionLabel(t('health_resources')),
                     const SizedBox(height: 4),
-                    Text(t('trusted_health_desc'), style: const TextStyle(fontSize: 13, color: Color(0x88FFFFFF))),
+                    Text(t('trusted_health_desc'), style: const TextStyle(fontSize: 13, color: AppColors.textHint)),
                     const SizedBox(height: 14),
                     ...resources.map((r) => Padding(
                       padding: const EdgeInsets.only(bottom: 10),
@@ -51,7 +51,7 @@ class HealthScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     _SectionLabel(t('nearby_services_title')),
                     const SizedBox(height: 4),
-                    Text(t('nearby_services_sub'), style: const TextStyle(fontSize: 13, color: Color(0x88FFFFFF))),
+                    Text(t('nearby_services_sub'), style: const TextStyle(fontSize: 13, color: AppColors.textHint)),
                     const SizedBox(height: 14),
                     ...nearby.map((f) => Padding(
                       padding: const EdgeInsets.only(bottom: 10),
@@ -82,13 +82,13 @@ class _HealthAppBar extends StatelessWidget {
           Container(
             width: 40, height: 40,
             decoration: BoxDecoration(
-              color: const Color(0x18FFFFFF),
+              color: const Color(0x183A2E29),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0x12FFFFFF)),
+              border: Border.all(color: const Color(0x123A2E29)),
             ),
             child: IconButton(
               padding: EdgeInsets.zero,
-              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
+              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary, size: 20),
               onPressed: () => context.go('/'),
             ),
           ),
@@ -99,11 +99,11 @@ class _HealthAppBar extends StatelessWidget {
               children: [
                 Text(
                   t('health'),
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
                 Text(
                   t('thrive_desc'),
-                  style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF)),
+                  style: const TextStyle(fontSize: 12, color: AppColors.textHint),
                 ),
               ],
             ),
@@ -152,13 +152,13 @@ class _HealthHero extends StatelessWidget {
                   t('your_health_matters'),
                   style: const TextStyle(
                     fontSize: 20, fontWeight: FontWeight.w700,
-                    color: Colors.white, height: 1.2,
+                    color: AppColors.textPrimary, height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   t('your_health_matters_desc'),
-                  style: const TextStyle(fontSize: 13, color: Color(0xAAFFFFFF), height: 1.5),
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.5),
                 ),
                 const SizedBox(height: 14),
                 Row(
@@ -224,9 +224,9 @@ class _ResourceCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0x12FFFFFF),
+          color: const Color(0x123A2E29),
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0x15FFFFFF)),
+          border: Border.all(color: const Color(0x153A2E29)),
         ),
         child: Row(
           children: [
@@ -245,19 +245,19 @@ class _ResourceCard extends StatelessWidget {
                 children: [
                   Text(
                     resource.title,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     resource.subtitle,
-                    style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF)),
+                    style: const TextStyle(fontSize: 12, color: AppColors.textHint),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: const Color(0x55FFFFFF), size: 20),
+            Icon(Icons.chevron_right_rounded, color: const Color(0x553A2E29), size: 20),
           ],
         ),
       ),
@@ -275,9 +275,9 @@ class _FacilityCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0x12FFFFFF),
+        color: const Color(0x123A2E29),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x15FFFFFF)),
+        border: Border.all(color: const Color(0x153A2E29)),
       ),
       child: Row(
         children: [
@@ -296,16 +296,16 @@ class _FacilityCard extends StatelessWidget {
               children: [
                 Text(
                   facility.name,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 3),
                 Row(
                   children: [
                     Text(
                       facility.type,
-                      style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF)),
+                      style: const TextStyle(fontSize: 12, color: AppColors.textHint),
                     ),
-                    const Text('  ·  ', style: TextStyle(fontSize: 12, color: Color(0x44FFFFFF))),
+                    const Text('  ·  ', style: TextStyle(fontSize: 12, color: Color(0x443A2E29))),
                     Icon(Icons.location_on_rounded, size: 11, color: facility.color.withValues(alpha: 0.7)),
                     const SizedBox(width: 2),
                     Text(
@@ -344,7 +344,7 @@ class _SectionLabel extends StatelessWidget {
       text.toUpperCase(),
       style: const TextStyle(
         fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.2,
-        color: Color(0x77FFFFFF),
+        color: AppColors.textHint,
       ),
     );
   }

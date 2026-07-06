@@ -131,12 +131,12 @@ class _HomeAppBar extends StatelessWidget {
               children: [
                 Text(
                   '$greeting,',
-                  style: const TextStyle(fontSize: 13, color: Color(0x99FFFFFF)),
+                  style: const TextStyle(fontSize: 13, color: AppColors.textHint),
                 ),
                 Text(
                   userName,
                   style: const TextStyle(
-                    fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white,
+                    fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -165,11 +165,11 @@ class _IconBtn extends StatelessWidget {
       child: Container(
         width: 40, height: 40,
         decoration: BoxDecoration(
-          color: const Color(0x18FFFFFF),
+          color: const Color(0x183A2E29),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0x12FFFFFF)),
+          border: Border.all(color: const Color(0x123A2E29)),
         ),
-        child: Icon(icon, color: const Color(0xCCFFFFFF), size: 20),
+        child: Icon(icon, color: AppColors.textSecondary, size: 20),
       ),
     );
   }
@@ -216,7 +216,7 @@ class _HeroBanner extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0x22FFFFFF)),
+        border: Border.all(color: const Color(0x223A2E29)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,13 +261,13 @@ class _HeroBanner extends StatelessWidget {
             t('hero_title'),
             style: const TextStyle(
               fontSize: 26, fontWeight: FontWeight.w700,
-              color: Colors.white, height: 1.2, letterSpacing: -0.3,
+              color: AppColors.textPrimary, height: 1.2, letterSpacing: -0.3,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             t('hero_subtitle'),
-            style: const TextStyle(fontSize: 13, color: Color(0xAAFFFFFF), height: 1.5),
+            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.5),
           ),
           const SizedBox(height: 16),
           GestureDetector(
@@ -312,9 +312,9 @@ class _DailyTip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0x15FFFFFF),
+        color: const Color(0x153A2E29),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x15FFFFFF)),
+        border: Border.all(color: const Color(0x153A2E29)),
       ),
       child: Row(
         children: [
@@ -342,7 +342,7 @@ class _DailyTip extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   tip.$1,
-                  style: const TextStyle(fontSize: 13, color: Color(0xCCFFFFFF), height: 1.4),
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.4),
                 ),
               ],
             ),
@@ -363,7 +363,7 @@ class _SectionLabel extends StatelessWidget {
       text,
       style: const TextStyle(
         fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.2,
-        color: Color(0x77FFFFFF),
+        color: AppColors.textHint,
       ),
     );
   }
@@ -377,7 +377,7 @@ class _ProgressRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       _ProgressItem(t('courses'), '3', Icons.menu_book_rounded, AppColors.learnColor, 0.35),
-      _ProgressItem(t('points'), '450', Icons.star_rounded, AppColors.earnColor, 0.60),
+      _ProgressItem(t('points'), '450', Icons.star_rounded, AppColors.gold, 0.60),
       _ProgressItem(t('streak'), '7d', Icons.local_fire_department, AppColors.accent, 0.70),
     ];
 
@@ -388,9 +388,9 @@ class _ProgressRow extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 4),
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0x12FFFFFF),
+              color: const Color(0x123A2E29),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0x12FFFFFF)),
+              border: Border.all(color: const Color(0x123A2E29)),
             ),
             child: Column(
               children: [
@@ -412,7 +412,7 @@ class _ProgressRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   item.label,
-                  style: const TextStyle(fontSize: 11, color: Color(0x88FFFFFF)),
+                  style: const TextStyle(fontSize: 11, color: AppColors.textHint),
                 ),
                 const SizedBox(height: 8),
                 ClipRRect(
@@ -420,7 +420,7 @@ class _ProgressRow extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: item.progress,
                     minHeight: 4,
-                    backgroundColor: const Color(0x15FFFFFF),
+                    backgroundColor: const Color(0x153A2E29),
                     valueColor: AlwaysStoppedAnimation<Color>(item.color),
                   ),
                 ),
@@ -496,7 +496,7 @@ class _QuickActions extends StatelessWidget {
                     a.label,
                     style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.w600,
-                      color: Color(0xCCFFFFFF),
+                      color: AppColors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -572,13 +572,13 @@ class _PillarCards extends StatelessWidget {
                 Text(
                   p.label,
                   style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white,
+                    fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   p.subtitle,
-                  style: const TextStyle(fontSize: 11, color: Color(0x99FFFFFF)),
+                  style: const TextStyle(fontSize: 11, color: AppColors.textHint),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -644,7 +644,7 @@ class _ServicesGrid extends StatelessWidget {
                 i.label,
                 style: const TextStyle(
                   fontSize: 11, fontWeight: FontWeight.w500,
-                  color: Color(0xBBFFFFFF),
+                  color: AppColors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

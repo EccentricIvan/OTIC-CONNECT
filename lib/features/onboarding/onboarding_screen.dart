@@ -187,13 +187,13 @@ class _LanguagePage extends StatelessWidget {
             'Choose your language',
             style: TextStyle(
               fontSize: 28, fontWeight: FontWeight.w700,
-              color: Colors.white, height: 1.2,
+              color: AppColors.textPrimary, height: 1.2,
             ),
           ),
           const SizedBox(height: 4),
           const Text(
             'Londa olulimi lwo · Chagua lugha yako',
-            style: TextStyle(fontSize: 14, color: Color(0x99FFFFFF), height: 1.5),
+            style: TextStyle(fontSize: 14, color: AppColors.textHint, height: 1.5),
           ),
           const SizedBox(height: 28),
           ...AppLocale.values.map((locale) {
@@ -207,12 +207,12 @@ class _LanguagePage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primary.withValues(alpha: 0.12)
-                      : const Color(0x12FFFFFF),
+                      : const Color(0x123A2E29),
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(
                     color: isSelected
                         ? AppColors.primary
-                        : const Color(0x22FFFFFF),
+                        : const Color(0x223A2E29),
                     width: isSelected ? 2 : 1,
                   ),
                 ),
@@ -228,13 +228,13 @@ class _LanguagePage extends StatelessWidget {
                             locale.label,
                             style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.w600,
-                              color: isSelected ? AppColors.primary : Colors.white,
+                              color: isSelected ? AppColors.primary : AppColors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             locale.code,
-                            style: const TextStyle(fontSize: 12, color: Color(0x88FFFFFF)),
+                            style: const TextStyle(fontSize: 12, color: AppColors.textHint),
                           ),
                         ],
                       ),
@@ -253,7 +253,7 @@ class _LanguagePage extends StatelessWidget {
                         width: 28, height: 28,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0x44FFFFFF), width: 2),
+                          border: Border.all(color: const Color(0x443A2E29), width: 2),
                         ),
                       ),
                   ],

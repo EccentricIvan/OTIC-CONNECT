@@ -156,11 +156,11 @@ class _ChatAppBar extends StatelessWidget {
               children: [
                 const Text(
                   'AI Assistant',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                 ),
                 Text(
                   t('powered_by_groq'),
-                  style: const TextStyle(fontSize: 11, color: Color(0x88FFFFFF)),
+                  style: const TextStyle(fontSize: 11, color: AppColors.textHint),
                 ),
               ],
             ),
@@ -170,15 +170,15 @@ class _ChatAppBar extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0x22FFFFFF),
+                color: const Color(0x223A2E29),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.refresh_rounded, size: 14, color: Color(0xAAFFFFFF)),
+                  const Icon(Icons.refresh_rounded, size: 14, color: AppColors.textSecondary),
                   const SizedBox(width: 4),
-                  Text(t('new_chat'), style: const TextStyle(fontSize: 12, color: Color(0xAAFFFFFF))),
+                  Text(t('new_chat'), style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                 ],
               ),
             ),
@@ -217,13 +217,13 @@ class _SuggestedTopics extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0x22FFFFFF),
+                color: const Color(0x223A2E29),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0x22FFFFFF)),
+                border: Border.all(color: const Color(0x223A2E29)),
               ),
               child: Text(
                 topics[i],
-                style: const TextStyle(fontSize: 12, color: Color(0xCCFFFFFF)),
+                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ),
           );
@@ -245,9 +245,9 @@ class _TypingIndicator extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0x22FFFFFF),
+          color: const Color(0x223A2E29),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0x18FFFFFF)),
+          border: Border.all(color: const Color(0x183A2E29)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -262,7 +262,7 @@ class _TypingIndicator extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               t('thinking'),
-              style: const TextStyle(fontSize: 13, color: Color(0x88FFFFFF), fontStyle: FontStyle.italic),
+              style: const TextStyle(fontSize: 13, color: AppColors.textHint, fontStyle: FontStyle.italic),
             ),
           ],
         ),
@@ -287,19 +287,19 @@ class _MessageBubble extends StatelessWidget {
           maxWidth: MediaQuery.sizeOf(context).width * 0.78,
         ),
         decoration: BoxDecoration(
-          color: isUser ? AppColors.accent : const Color(0x22FFFFFF),
+          color: isUser ? AppColors.accent : const Color(0x223A2E29),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
             bottomLeft: Radius.circular(isUser ? 16 : 4),
             bottomRight: Radius.circular(isUser ? 4 : 16),
           ),
-          border: isUser ? null : Border.all(color: const Color(0x18FFFFFF)),
+          border: isUser ? null : Border.all(color: const Color(0x183A2E29)),
         ),
         child: Text(
           message.text,
           style: TextStyle(
-            color: isUser ? Colors.white : const Color(0xDDFFFFFF),
+            color: isUser ? Colors.white : AppColors.textSecondary,
             fontSize: 14,
             height: 1.5,
           ),
@@ -321,23 +321,23 @@ class _ChatInput extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(16, 8, 16, MediaQuery.of(context).padding.bottom + 8),
       decoration: const BoxDecoration(
-        color: Color(0xFF083E3E),
-        border: Border(top: BorderSide(color: Color(0x22FFFFFF))),
+        color: AppColors.surface,
+        border: Border(top: BorderSide(color: Color(0x223A2E29))),
       ),
       child: Row(
         children: [
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0x22FFFFFF),
+                color: const Color(0x223A2E29),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: TextField(
                 controller: controller,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                 decoration: InputDecoration(
                   hintText: t('ask_anything'),
-                  hintStyle: const TextStyle(color: Color(0x66FFFFFF)),
+                  hintStyle: const TextStyle(color: AppColors.textHint),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
@@ -352,7 +352,7 @@ class _ChatInput extends StatelessWidget {
             child: Container(
               width: 44, height: 44,
               decoration: BoxDecoration(
-                color: isLoading ? const Color(0x22FFFFFF) : AppColors.accent,
+                color: isLoading ? const Color(0x223A2E29) : AppColors.accent,
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: isLoading ? null : [
                   BoxShadow(
@@ -363,7 +363,7 @@ class _ChatInput extends StatelessWidget {
               ),
               child: Icon(
                 Icons.send_rounded,
-                color: isLoading ? const Color(0x44FFFFFF) : Colors.white,
+                color: isLoading ? const Color(0x443A2E29) : Colors.white,
                 size: 20,
               ),
             ),

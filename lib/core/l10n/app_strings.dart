@@ -512,6 +512,16 @@ class S {
       AppLocale.lg: 'Amasomo ag\'obukwatirivu ga bakazi — okuva mu bukugu bw\'ekikompyuta okutuuka mu kulabirira obusubuzi, byonna mu lulimi lwo.',
       AppLocale.sw: 'Kozi za vitendo zilizoundwa kwa wanawake — kutoka ujuzi wa kidijitali hadi usimamizi wa biashara, zote kwa lugha yako.',
     },
+    'next_milestone': {
+      AppLocale.en: 'Next milestone',
+      AppLocale.lg: 'Ekigendererwa Ekiddako',
+      AppLocale.sw: 'Lengo linalofuata',
+    },
+    'featured_courses': {
+      AppLocale.en: 'Featured Courses',
+      AppLocale.lg: 'Amasomo Agasingayo',
+      AppLocale.sw: 'Kozi Maalum',
+    },
     'browse_topics': {
       AppLocale.en: 'Browse Topics',
       AppLocale.lg: 'Noonyereza Ebyagenda',
