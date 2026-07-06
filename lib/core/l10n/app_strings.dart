@@ -5,7 +5,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum AppLocale {
   en('English', 'EN', '🇬🇧'),
   lg('Luganda', 'LG', '🇺🇬'),
-  sw('Kiswahili', 'SW', '🇰🇪');
+  sw('Kiswahili', 'SW', '🇰🇪'),
+
+  // Additional Ugandan local languages
+  ach('Acholi', 'ACH', '🇺🇬'),
+  alz('Alur', 'ALZ', '🇺🇬'),
+  cgg('Rukiga', 'CGG', '🇺🇬'),
+  teo('Ateso', 'TEO', '🇺🇬'),
+  xog('Lusoga', 'XOG', '🇺🇬'),
+  lgg('Lugbara', 'LGG', '🇺🇬'),
+  myx('Lumasaba', 'MYX', '🇺🇬'),
+  nyn('Runyankole', 'NYN', '🇺🇬'),
+  nyo('Runyoro', 'NYO', '🇺🇬'),
+  ttj('Rutooro', 'TTJ', '🇺🇬'),
+  laj('Lango', 'LAJ', '🇺🇬'),
+  kdj('Karamojong', 'KDJ', '🇺🇬'),
+  kdi('Kumam', 'KDI', '🇺🇬'),
+  adh('Jopadhola', 'ADH', '🇺🇬'),
+  mhi("Ma'di", 'MHI', '🇺🇬'),
+  lsm('Samia', 'LSM', '🇺🇬'),
+  kpz('Kupsabiny', 'KPZ', '🇺🇬');
 
   const AppLocale(this.label, this.code, this.flag);
   final String label;
