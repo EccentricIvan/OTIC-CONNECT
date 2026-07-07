@@ -48,3 +48,20 @@ coverage/
 # Environment / secrets
 .env
 *.env
+# Python / AI backend
+.venv/
+venv/
+AI_BACKEND/venv/
+__pycache__/
+AI_BACKEND/**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node backend
+node_modules/
+BACKEND/node_modules/
+
+# Local AI/backend secrets
+AI_BACKEND/.env
+AI_BACKEND/*.env
