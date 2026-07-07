@@ -76,3 +76,44 @@ around this — don't remove it without verifying a same-drive build first.
 - Women-centered: tailored onboarding, relevant content
 - Accessible: low-bandwidth, low-spec device friendly
 - Localised: support for Luganda, Swahili, and local context
+
+## Localization status
+`lib/core/l10n/app_strings.dart` defines `AppLocale` and the `_strings`
+lookup table (`S.tr`, with safe fallback: `locale → English → raw key`).
+- **Fully translated**: English (`en`), Luganda (`lg`), Kiswahili (`sw`)
+- **Enum entries added, not yet translated** (merged via PR #1 from
+  `esianaemmah-dev`, 2026-07-06): Acholi, Alur, Rukiga, Ateso, Lusoga,
+  Lugbara, Lumasaba, Runyankole, Runyoro, Rutooro, Lango, Karamojong,
+  Kumam, Jopadhola, Ma'di, Samia, Kupsabiny — these currently render in
+  English until someone fills in their `_strings` entries
+
+## Open collaborator PRs (as of 2026-07-07, not yet merged)
+From `esianaemmah-dev`, both CI-green, pick up here next session:
+- **PR #2** "Keep AI chat responses in selected language" — touches
+  `lib/features/ai_chat/ai_chat_screen.dart`, `lib/services/gemini_service.dart`
+  (the Groq client), `.github/workflows/build.yml`, and adds
+  `docs/PHASE1_LOCAL_LANGUAGE_TRANSLATION_MATRIX.md`
+- **PR #3** "Add Groq-powered local language AI backend" — adds a new
+  standalone Python/FastAPI service under `AI_BACKEND/` (routes, services,
+  translation schema) as a separate microservice, not yet wired into the
+  Flutter app. This is a significant architectural addition — review scope
+  and integration plan before merging.
+
+## APK distribution (manual release flow)
+CI (`.github/workflows/build.yml`) builds split-per-abi release APKs on
+every push/PR to `main` via `flutter build apk --release --split-per-abi`,
+using the `GROQ_API_KEY` repo secret. Artifacts land as run artifacts
+(`otic-connect-v<run>-arm64` / `-arm32`), not automatically published.
+To hand someone a phone-installable build:
+1. `gh run download <run-id> -n otic-connect-v<run>-arm64 -D <dir>`
+2. Zip the APK before distributing — Android Chrome silently kills direct
+   `.apk` browser downloads (flagged as a risky file type); a `.zip`
+   wrapper avoids this and gets extracted + installed manually
+3. Upload both the raw `.apk` and the `.zip` to the standing GitHub
+   Release tag **`otic-connect-v6`** with `gh release upload ... --clobber`
+   so the download links stay stable across rebuilds:
+   - `https://github.com/EccentricIvan/OTIC-CONNECT/releases/download/otic-connect-v6/OticConnect-arm64.zip`
+   - `https://github.com/EccentricIvan/OTIC-CONNECT/releases/download/otic-connect-v6/OticConnect-arm64.apk`
+
+**Windows local build note**: `E:\dev\flutter\bin` is not on default PATH
+on this machine; prepend it before running `flutter` commands.
