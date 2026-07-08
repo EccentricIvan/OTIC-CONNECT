@@ -8,7 +8,4 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     language: str
-    original_message: str
-    english_message: str
-    english_response: str
-    final_response: str
+    response: str
