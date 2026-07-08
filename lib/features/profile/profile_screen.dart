@@ -14,9 +14,7 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Profile'),
-        actions: [
-          IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
-        ],
+        actions: [IconButton(icon: const Icon(Icons.edit), onPressed: () {})],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -78,16 +76,14 @@ class _ProfileHeader extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.15)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 36,
             backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-            child: const Icon(Icons.person,
-                color: AppColors.primary, size: 36),
+            child: const Icon(Icons.person, color: AppColors.primary, size: 36),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -101,7 +97,9 @@ class _ProfileHeader extends StatelessWidget {
                 const SizedBox(height: 4),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.earnColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -118,8 +116,11 @@ class _ProfileHeader extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.location_on,
-                        size: 14, color: Theme.of(context).hintColor),
+                    Icon(
+                      Icons.location_on,
+                      size: 14,
+                      color: Theme.of(context).hintColor,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       location ?? 'Location not set',
@@ -143,10 +144,10 @@ class _StatsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stats = [
-      _Stat('Courses', '3', AppColors.learnColor),
-      _Stat('Points', '450', AppColors.earnColor),
-      _Stat('Streak', '7 days', AppColors.healthColor),
-      _Stat('Badges', '5', AppColors.growColor),
+      const _Stat('Courses', '3', AppColors.learnColor),
+      const _Stat('Points', '450', AppColors.earnColor),
+      const _Stat('Streak', '7 days', AppColors.healthColor),
+      const _Stat('Badges', '5', AppColors.growColor),
     ];
 
     return Row(
@@ -214,8 +215,10 @@ class _ProgressCards extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(p.$1,
-                          style: Theme.of(context).textTheme.titleMedium),
+                      child: Text(
+                        p.$1,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     ),
                     Text(
                       '${(p.$2 * 100).round()}%',

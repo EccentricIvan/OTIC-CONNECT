@@ -5,26 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum AppLocale {
   en('English', 'EN'),
   lg('Luganda', 'LG'),
-  sw('Kiswahili', 'SW'),
-
-  // Additional Ugandan local languages
-  ach('Acholi', 'ACH'),
-  alz('Alur', 'ALZ'),
-  cgg('Rukiga', 'CGG'),
-  teo('Ateso', 'TEO'),
-  xog('Lusoga', 'XOG'),
-  lgg('Lugbara', 'LGG'),
-  myx('Lumasaba', 'MYX'),
-  nyn('Runyankole', 'NYN'),
-  nyo('Runyoro', 'NYO'),
-  ttj('Rutooro', 'TTJ'),
-  laj('Lango', 'LAJ'),
-  kdj('Karamojong', 'KDJ'),
-  kdi('Kumam', 'KDI'),
-  adh('Jopadhola', 'ADH'),
-  mhi("Ma'di", 'MHI'),
-  lsm('Samia', 'LSM'),
-  kpz('Kupsabiny', 'KPZ');
+  sw('Kiswahili', 'SW');
 
   const AppLocale(this.label, this.code);
   final String label;
@@ -40,7 +21,9 @@ class LocaleNotifier extends StateNotifier<AppLocale> {
 
   void set(AppLocale locale) {
     state = locale;
-    SharedPreferences.getInstance().then((p) => p.setString('app_locale', locale.name));
+    SharedPreferences.getInstance().then(
+      (p) => p.setString('app_locale', locale.name),
+    );
   }
 
   void loadFromPrefs(String? saved) {
@@ -108,9 +91,12 @@ class S {
       AppLocale.sw: 'Kuwezesha safari\nyako ya kidijitali',
     },
     'hero_subtitle': {
-      AppLocale.en: 'Learn, Earn, Grow & Thrive — your path to opportunity starts here.',
-      AppLocale.lg: 'Soma, Funa, Kukula & Terera — ekkubo lyo ery\'emikisa litandikira wano.',
-      AppLocale.sw: 'Jifunze, Pata, Kua & Stawi — njia yako ya fursa inaanzia hapa.',
+      AppLocale.en:
+          'Learn, Earn, Grow & Thrive — your path to opportunity starts here.',
+      AppLocale.lg:
+          'Soma, Funa, Kukula & Terera — ekkubo lyo ery\'emikisa litandikira wano.',
+      AppLocale.sw:
+          'Jifunze, Pata, Kua & Stawi — njia yako ya fursa inaanzia hapa.',
     },
     'continue_learning': {
       AppLocale.en: 'Continue Learning',
@@ -164,16 +150,8 @@ class S {
       AppLocale.lg: 'Soma',
       AppLocale.sw: 'Jifunze',
     },
-    'earn': {
-      AppLocale.en: 'Earn',
-      AppLocale.lg: 'Funa',
-      AppLocale.sw: 'Pata',
-    },
-    'grow': {
-      AppLocale.en: 'Grow',
-      AppLocale.lg: 'Kukula',
-      AppLocale.sw: 'Kua',
-    },
+    'earn': {AppLocale.en: 'Earn', AppLocale.lg: 'Funa', AppLocale.sw: 'Pata'},
+    'grow': {AppLocale.en: 'Grow', AppLocale.lg: 'Kukula', AppLocale.sw: 'Kua'},
     'thrive': {
       AppLocale.en: 'Thrive',
       AppLocale.lg: 'Terera',
@@ -266,7 +244,7 @@ class S {
     'ai_chat': {
       AppLocale.en: 'AI Chat',
       AppLocale.lg: 'Yogera ne AI',
-      AppLocale.sw: 'Soga na AI',
+      AppLocale.sw: 'Zungumza na AI',
     },
     'home': {
       AppLocale.en: 'Home',
@@ -311,29 +289,44 @@ class S {
       AppLocale.sw: 'Kidokezo cha Ujuzi',
     },
     'tip_save': {
-      AppLocale.en: 'Save at least 10% of your income each week — small amounts grow fast!',
-      AppLocale.lg: 'Tereka watoowozo 10% ey\'ensimbi zo buli wiiki — ebitono bikula mangu!',
-      AppLocale.sw: 'Weka akiba angalau 10% ya mapato yako kila wiki — kiasi kidogo hukua haraka!',
+      AppLocale.en:
+          'Save at least 10% of your income each week — small amounts grow fast!',
+      AppLocale.lg:
+          'Tereka watoowozo 10% ey\'ensimbi zo buli wiiki — ebitono bikula mangu!',
+      AppLocale.sw:
+          'Weka akiba angalau 10% ya mapato yako kila wiki — kiasi kidogo hukua haraka!',
     },
     'tip_sacco': {
-      AppLocale.en: 'Join a local savings group (SACCO) to access loans and build credit.',
-      AppLocale.lg: 'Yingira mu kibiina ky\'okuterekawo (SACCO) ofune ebbanja era ozimbe okwesigwa.',
-      AppLocale.sw: 'Jiunge na kikundi cha akiba (SACCO) kupata mikopo na kujenga sifa ya mkopo.',
+      AppLocale.en:
+          'Join a local savings group (SACCO) to access loans and build credit.',
+      AppLocale.lg:
+          'Yingira mu kibiina ky\'okuterekawo (SACCO) ofune ebbanja era ozimbe okwesigwa.',
+      AppLocale.sw:
+          'Jiunge na kikundi cha akiba (SACCO) kupata mikopo na kujenga sifa ya mkopo.',
     },
     'tip_photos': {
-      AppLocale.en: 'Take photos of your products in natural light for better online sales.',
-      AppLocale.lg: 'Kuba ebifaananyi by\'ebyobusubuzi byo mu musana ogw\'obutonde ofune okutunda obulungi.',
-      AppLocale.sw: 'Piga picha za bidhaa zako kwenye mwanga wa asili kwa mauzo bora mtandaoni.',
+      AppLocale.en:
+          'Take photos of your products in natural light for better online sales.',
+      AppLocale.lg:
+          'Kuba ebifaananyi by\'ebyobusubuzi byo mu musana ogw\'obutonde ofune okutunda obulungi.',
+      AppLocale.sw:
+          'Piga picha za bidhaa zako kwenye mwanga wa asili kwa mauzo bora mtandaoni.',
     },
     'tip_water': {
-      AppLocale.en: 'Drink at least 8 glasses of water daily for better health and energy.',
-      AppLocale.lg: 'Okunywa watoowozo gilasi 8 ez\'amazzi buli lunaku olw\'obulamu obulungi n\'amaanyi.',
-      AppLocale.sw: 'Kunywa angalau glasi 8 za maji kila siku kwa afya na nishati bora.',
+      AppLocale.en:
+          'Drink at least 8 glasses of water daily for better health and energy.',
+      AppLocale.lg:
+          'Okunywa watoowozo gilasi 8 ez\'amazzi buli lunaku olw\'obulamu obulungi n\'amaanyi.',
+      AppLocale.sw:
+          'Kunywa angalau glasi 8 za maji kila siku kwa afya na nishati bora.',
     },
     'tip_digital': {
-      AppLocale.en: 'Practice one new digital skill each week — consistency beats speed.',
-      AppLocale.lg: 'Gezaako obukugu bw\'ekikompyuta obuggya buli wiiki — okugoberera kusinga okwanguyiriza.',
-      AppLocale.sw: 'Fanya mazoezi ya ujuzi mpya wa kidijitali kila wiki — uthabiti unashinda kasi.',
+      AppLocale.en:
+          'Practice one new digital skill each week — consistency beats speed.',
+      AppLocale.lg:
+          'Gezaako obukugu bw\'ekikompyuta obuggya buli wiiki — okugoberera kusinga okwanguyiriza.',
+      AppLocale.sw:
+          'Fanya mazoezi ya ujuzi mpya wa kidijitali kila wiki — uthabiti unashinda kasi.',
     },
 
     // ── Onboarding ──
@@ -343,9 +336,12 @@ class S {
       AppLocale.sw: 'Karibu kwenye\nOtic She Connect',
     },
     'welcome_desc': {
-      AppLocale.en: 'Your digital companion for learning, earning, growing, and thriving. Works online and offline — your progress is always safe.',
-      AppLocale.lg: 'Munno wo ow\'ekikompyuta okusoma, okufuna, okukula, n\'okuterera. Akola ku mutimbagano ne bw\'otaba — entambula yo etereka.',
-      AppLocale.sw: 'Mwenzako wa kidijitali wa kujifunza, kupata, kukua, na kustawi. Inafanya kazi mtandaoni na nje — maendeleo yako ni salama daima.',
+      AppLocale.en:
+          'Your digital companion for learning, earning, growing, and thriving. Works online and offline — your progress is always safe.',
+      AppLocale.lg:
+          'Munno wo ow\'ekikompyuta okusoma, okufuna, okukula, n\'okuterera. Akola ku mutimbagano ne bw\'otaba — entambula yo etereka.',
+      AppLocale.sw:
+          'Mwenzako wa kidijitali wa kujifunza, kupata, kukua, na kustawi. Inafanya kazi mtandaoni na nje — maendeleo yako ni salama daima.',
     },
     'whats_your_name': {
       AppLocale.en: "What's your name?",
@@ -378,9 +374,12 @@ class S {
       AppLocale.sw: 'Kuhusu wewe',
     },
     'about_you_desc': {
-      AppLocale.en: 'This helps us personalise your experience with relevant opportunities and resources.',
-      AppLocale.lg: 'Kino kituyamba okukukolera ebikugyanira mu mbeera n\'ebyobulamu.',
-      AppLocale.sw: 'Hii inatusaidia kubinafsisha uzoefu wako na fursa na rasilimali zinazofaa.',
+      AppLocale.en:
+          'This helps us personalise your experience with relevant opportunities and resources.',
+      AppLocale.lg:
+          'Kino kituyamba okukukolera ebikugyanira mu mbeera n\'ebyobulamu.',
+      AppLocale.sw:
+          'Hii inatusaidia kubinafsisha uzoefu wako na fursa na rasilimali zinazofaa.',
     },
     'what_describes_you': {
       AppLocale.en: 'What best describes you?',
@@ -526,9 +525,12 @@ class S {
       AppLocale.sw: 'Maarifa ni nguvu',
     },
     'knowledge_is_power_desc': {
-      AppLocale.en: 'Practical courses designed for women — from digital skills to business management, all in your language.',
-      AppLocale.lg: 'Amasomo ag\'obukwatirivu ga bakazi — okuva mu bukugu bw\'ekikompyuta okutuuka mu kulabirira obusubuzi, byonna mu lulimi lwo.',
-      AppLocale.sw: 'Kozi za vitendo zilizoundwa kwa wanawake — kutoka ujuzi wa kidijitali hadi usimamizi wa biashara, zote kwa lugha yako.',
+      AppLocale.en:
+          'Practical courses designed for women — from digital skills to business management, all in your language.',
+      AppLocale.lg:
+          'Amasomo ag\'obukwatirivu ga bakazi — okuva mu bukugu bw\'ekikompyuta okutuuka mu kulabirira obusubuzi, byonna mu lulimi lwo.',
+      AppLocale.sw:
+          'Kozi za vitendo zilizoundwa kwa wanawake — kutoka ujuzi wa kidijitali hadi usimamizi wa biashara, zote kwa lugha yako.',
     },
     'next_milestone': {
       AppLocale.en: 'Next milestone',
@@ -566,9 +568,12 @@ class S {
       AppLocale.sw: 'Uliza Msaidizi wa AI',
     },
     'ask_ai_assistant_desc': {
-      AppLocale.en: 'Get personalised answers on business, farming, health, and more',
-      AppLocale.lg: 'Funa ennyini z\'obukwatirivu ku busubuzi, bulimi, obulamu, n\'ebirala',
-      AppLocale.sw: 'Pata majibu ya kibinafsi kuhusu biashara, kilimo, afya, na zaidi',
+      AppLocale.en:
+          'Get personalised answers on business, farming, health, and more',
+      AppLocale.lg:
+          'Funa ennyini z\'obukwatirivu ku busubuzi, bulimi, obulamu, n\'ebirala',
+      AppLocale.sw:
+          'Pata majibu ya kibinafsi kuhusu biashara, kilimo, afya, na zaidi',
     },
     'lessons': {
       AppLocale.en: 'lessons',
@@ -648,9 +653,12 @@ class S {
       AppLocale.sw: 'Uza bidhaa na huduma zako',
     },
     'sell_products_desc': {
-      AppLocale.en: 'Connect with buyers in your community and beyond. List your products, set prices, and grow your business.',
-      AppLocale.lg: 'Kolagana n\'abaagula mu kibiina kyo n\'ebirala. Wandiika ebintu byo, teekawo emiwendo, era okule obusubuzi bwo.',
-      AppLocale.sw: 'Unganika na wanunuzi katika jamii yako na zaidi. Orodhesha bidhaa zako, weka bei, na kukua biashara yako.',
+      AppLocale.en:
+          'Connect with buyers in your community and beyond. List your products, set prices, and grow your business.',
+      AppLocale.lg:
+          'Kolagana n\'abaagula mu kibiina kyo n\'ebirala. Wandiika ebintu byo, teekawo emiwendo, era okule obusubuzi bwo.',
+      AppLocale.sw:
+          'Unganika na wanunuzi katika jamii yako na zaidi. Orodhesha bidhaa zako, weka bei, na kukua biashara yako.',
     },
     'list_product_btn': {
       AppLocale.en: 'List a Product',
@@ -715,9 +723,12 @@ class S {
       AppLocale.sw: 'Kua kwa mwongozo',
     },
     'grow_with_guidance_desc': {
-      AppLocale.en: 'Every successful woman had someone who believed in her. Find your mentor or become one.',
-      AppLocale.lg: 'Omukazi buli omu eyakuwerera yaali n\'omuntu eyamwesiga. Noonyereza omuyambi wo oba gwa obenga.',
-      AppLocale.sw: 'Kila mwanamke aliyefanikiwa alikuwa na mtu aliyemwamini. Tafuta mshauri wako au uwe mmoja.',
+      AppLocale.en:
+          'Every successful woman had someone who believed in her. Find your mentor or become one.',
+      AppLocale.lg:
+          'Omukazi buli omu eyakuwerera yaali n\'omuntu eyamwesiga. Noonyereza omuyambi wo oba gwa obenga.',
+      AppLocale.sw:
+          'Kila mwanamke aliyefanikiwa alikuwa na mtu aliyemwamini. Tafuta mshauri wako au uwe mmoja.',
     },
     'find_mentor_title': {
       AppLocale.en: 'Find a Mentor',
@@ -726,7 +737,8 @@ class S {
     },
     'find_mentor_desc': {
       AppLocale.en: 'Connect with experienced women who can guide you',
-      AppLocale.lg: 'Kolagana n\'abakazi ab\'obutegefu abasobola okukuyongereza',
+      AppLocale.lg:
+          'Kolagana n\'abakazi ab\'obutegefu abasobola okukuyongereza',
       AppLocale.sw: 'Unganika na wanawake wenye uzoefu wanaoweza kukuongoza',
     },
     'become_mentor_title': {
@@ -755,9 +767,12 @@ class S {
       AppLocale.sw: 'Shiriki maarifa yako',
     },
     'share_knowledge_desc': {
-      AppLocale.en: 'Help other women grow by sharing your skills and experience. Being a mentor is one of the most impactful things you can do.',
-      AppLocale.lg: 'Yamba abakazi abalala okukula nga ogabana obukugu bwo n\'obutegefu bwo. Okuba omuyambi kye kimu mu bintu ebimu ebyongeza ennyo.',
-      AppLocale.sw: 'Saidia wanawake wengine kukua kwa kushiriki ujuzi na uzoefu wako. Kuwa mshauri ni moja ya mambo yenye athari zaidi unayoweza kufanya.',
+      AppLocale.en:
+          'Help other women grow by sharing your skills and experience. Being a mentor is one of the most impactful things you can do.',
+      AppLocale.lg:
+          'Yamba abakazi abalala okukula nga ogabana obukugu bwo n\'obutegefu bwo. Okuba omuyambi kye kimu mu bintu ebimu ebyongeza ennyo.',
+      AppLocale.sw:
+          'Saidia wanawake wengine kukua kwa kushiriki ujuzi na uzoefu wako. Kuwa mshauri ni moja ya mambo yenye athari zaidi unayoweza kufanya.',
     },
     'yrs_experience': {
       AppLocale.en: 'yrs experience',
@@ -772,9 +787,12 @@ class S {
       AppLocale.sw: 'Afya yako ni muhimu',
     },
     'your_health_matters_desc': {
-      AppLocale.en: 'Access trusted health information and connect with services in your community.',
-      AppLocale.lg: 'Funa amakwate g\'obulamu ag\'okwesiga era okolagane n\'empeereza mu kibiina kyo.',
-      AppLocale.sw: 'Pata habari za afya za kuaminika na unganike na huduma katika jamii yako.',
+      AppLocale.en:
+          'Access trusted health information and connect with services in your community.',
+      AppLocale.lg:
+          'Funa amakwate g\'obulamu ag\'okwesiga era okolagane n\'empeereza mu kibiina kyo.',
+      AppLocale.sw:
+          'Pata habari za afya za kuaminika na unganike na huduma katika jamii yako.',
     },
     'health_resources': {
       AppLocale.en: 'Health Resources',
@@ -854,9 +872,12 @@ class S {
       AppLocale.sw: 'Inayotumia Groq · Llama 3.3',
     },
     'ai_greeting': {
-      AppLocale.en: 'Hello! I\'m your AI assistant from Otic She Connect. I can help you with business advice, farming tips, health information, financial guidance, and much more. What would you like to know?',
-      AppLocale.lg: 'Oli otya! Nze omuyambi wo wa AI okuva ku Otic She Connect. Nsobola okukuyamba n\'amagezi g\'obusubuzi, ebyobulimi, amakwate g\'obulamu, ebiragiro by\'ensimbi, n\'ebirala bingi. Oyagala okumanya ki?',
-      AppLocale.sw: 'Habari! Mimi ni msaidizi wako wa AI kutoka Otic She Connect. Ninaweza kukusaidia na ushauri wa biashara, vidokezo vya kilimo, habari za afya, mwongozo wa fedha, na mengi zaidi. Ungependa kujua nini?',
+      AppLocale.en:
+          'Hello! I\'m your AI assistant from Otic She Connect. I can help you with business advice, farming tips, health information, financial guidance, and much more. What would you like to know?',
+      AppLocale.lg:
+          'Oli otya! Nze omuyambi wo wa AI okuva ku Otic She Connect. Nsobola okukuyamba n\'amagezi g\'obusubuzi, ebyobulimi, amakwate g\'obulamu, ebiragiro by\'ensimbi, n\'ebirala bingi. Oyagala okumanya ki?',
+      AppLocale.sw:
+          'Habari! Mimi ni msaidizi wako wa AI kutoka Otic She Connect. Ninaweza kukusaidia na ushauri wa biashara, vidokezo vya kilimo, habari za afya, mwongozo wa fedha, na mengi zaidi. Ungependa kujua nini?',
     },
     'chat_cleared': {
       AppLocale.en: 'Chat cleared! How can I help you?',
@@ -866,7 +887,7 @@ class S {
     'topic_business_q': {
       AppLocale.en: 'How do I start a small business?',
       AppLocale.lg: 'Ndinda otya obusubuzi obuto?',
-      AppLocale.sw: 'Nianzisheje biashara ndogo vipi?',
+      AppLocale.sw: 'Ninawezaje kuanzisha biashara ndogo?',
     },
     'topic_savings_q': {
       AppLocale.en: 'Tips for saving money',
