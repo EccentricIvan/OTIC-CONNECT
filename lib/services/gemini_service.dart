@@ -24,7 +24,6 @@ Keep the tone warm, practical, and helpful.
 Every answer in this conversation must continue in Kiswahili.
 ''';
     case AppLocale.en:
-    default:
       return '''
 The user selected English.
 Reply in clear, simple English.
