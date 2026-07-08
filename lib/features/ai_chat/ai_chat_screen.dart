@@ -60,7 +60,8 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
     _controller.clear();
     _scrollToBottom();
 
-    final response = await _groq.sendMessage(text);
+    final locale = ref.read(localeProvider);
+    final response = await _groq.sendMessage(text, locale);
 
     setState(() {
       _messages.add(_ChatMessage(response, false));
