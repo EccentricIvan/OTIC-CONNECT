@@ -44,7 +44,6 @@ class SettingsScreen extends ConsumerWidget {
                       return Material(
                         color: Colors.transparent,
                         child: ListTile(
-                          leading: Text(l.flag, style: const TextStyle(fontSize: 22)),
                           title: Text(l.label),
                           subtitle: Text(l.code),
                           trailing: isSelected

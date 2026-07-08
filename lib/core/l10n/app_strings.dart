@@ -3,33 +3,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppLocale {
-  en('English', 'EN', '🇬🇧'),
-  lg('Luganda', 'LG', '🇺🇬'),
-  sw('Kiswahili', 'SW', '🇰🇪'),
+  en('English', 'EN'),
+  lg('Luganda', 'LG'),
+  sw('Kiswahili', 'SW'),
 
   // Additional Ugandan local languages
-  ach('Acholi', 'ACH', '🇺🇬'),
-  alz('Alur', 'ALZ', '🇺🇬'),
-  cgg('Rukiga', 'CGG', '🇺🇬'),
-  teo('Ateso', 'TEO', '🇺🇬'),
-  xog('Lusoga', 'XOG', '🇺🇬'),
-  lgg('Lugbara', 'LGG', '🇺🇬'),
-  myx('Lumasaba', 'MYX', '🇺🇬'),
-  nyn('Runyankole', 'NYN', '🇺🇬'),
-  nyo('Runyoro', 'NYO', '🇺🇬'),
-  ttj('Rutooro', 'TTJ', '🇺🇬'),
-  laj('Lango', 'LAJ', '🇺🇬'),
-  kdj('Karamojong', 'KDJ', '🇺🇬'),
-  kdi('Kumam', 'KDI', '🇺🇬'),
-  adh('Jopadhola', 'ADH', '🇺🇬'),
-  mhi("Ma'di", 'MHI', '🇺🇬'),
-  lsm('Samia', 'LSM', '🇺🇬'),
-  kpz('Kupsabiny', 'KPZ', '🇺🇬');
+  ach('Acholi', 'ACH'),
+  alz('Alur', 'ALZ'),
+  cgg('Rukiga', 'CGG'),
+  teo('Ateso', 'TEO'),
+  xog('Lusoga', 'XOG'),
+  lgg('Lugbara', 'LGG'),
+  myx('Lumasaba', 'MYX'),
+  nyn('Runyankole', 'NYN'),
+  nyo('Runyoro', 'NYO'),
+  ttj('Rutooro', 'TTJ'),
+  laj('Lango', 'LAJ'),
+  kdj('Karamojong', 'KDJ'),
+  kdi('Kumam', 'KDI'),
+  adh('Jopadhola', 'ADH'),
+  mhi("Ma'di", 'MHI'),
+  lsm('Samia', 'LSM'),
+  kpz('Kupsabiny', 'KPZ');
 
-  const AppLocale(this.label, this.code, this.flag);
+  const AppLocale(this.label, this.code);
   final String label;
   final String code;
-  final String flag;
 }
 
 final localeProvider = StateNotifierProvider<LocaleNotifier, AppLocale>((ref) {

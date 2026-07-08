@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/router/app_router.dart';
 import '../../core/l10n/app_strings.dart';
+import '../../db/providers/database_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -60,11 +61,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Future<void> _finish() async {
     if (_saving) return;
     setState(() => _saving = true);
+    await ref.read(userDaoProvider).saveUser(
+          name: _nameController.text.trim(),
+          role: _role,
+          location: _location,
+        );
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('has_profile', true);
-    await prefs.setString('user_name', _nameController.text.trim());
-    if (_role != null) await prefs.setString('user_role', _role!);
-    if (_location != null) await prefs.setString('user_location', _location!);
     ref.read(hasProfileProvider.notifier).state = true;
     if (mounted) context.go('/');
   }
@@ -218,8 +221,6 @@ class _LanguagePage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Text(locale.flag, style: const TextStyle(fontSize: 28)),
-                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
