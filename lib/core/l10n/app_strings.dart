@@ -52,9 +52,9 @@ class S {
   static const _strings = <String, Map<AppLocale, String>>{
     // ── App-wide ──
     'app_name': {
-      AppLocale.en: 'Otic She Connect',
-      AppLocale.lg: 'Otic She Connect',
-      AppLocale.sw: 'Otic She Connect',
+      AppLocale.en: 'Africa AI Connect',
+      AppLocale.lg: 'Africa AI Connect',
+      AppLocale.sw: 'Africa AI Connect',
     },
     'online': {
       AppLocale.en: 'Online',
@@ -331,9 +331,9 @@ class S {
 
     // ── Onboarding ──
     'welcome_to': {
-      AppLocale.en: 'Welcome to\nOtic She Connect',
-      AppLocale.lg: 'Tukusanyukira ku\nOtic She Connect',
-      AppLocale.sw: 'Karibu kwenye\nOtic She Connect',
+      AppLocale.en: 'Welcome to\nAfrica AI Connect',
+      AppLocale.lg: 'Tukusanyukira ku\nAfrica AI Connect',
+      AppLocale.sw: 'Karibu kwenye\nAfrica AI Connect',
     },
     'welcome_desc': {
       AppLocale.en:
@@ -873,11 +873,11 @@ class S {
     },
     'ai_greeting': {
       AppLocale.en:
-          'Hello! I\'m your AI assistant from Otic She Connect. I can help you with business advice, farming tips, health information, financial guidance, and much more. What would you like to know?',
+          'Hello! I\'m your AI assistant from Africa AI Connect. I can help you with business advice, farming tips, health information, financial guidance, and much more. What would you like to know?',
       AppLocale.lg:
-          'Oli otya! Nze omuyambi wo wa AI okuva ku Otic She Connect. Nsobola okukuyamba n\'amagezi g\'obusubuzi, ebyobulimi, amakwate g\'obulamu, ebiragiro by\'ensimbi, n\'ebirala bingi. Oyagala okumanya ki?',
+          'Oli otya! Nze omuyambi wo wa AI okuva ku Africa AI Connect. Nsobola okukuyamba n\'amagezi g\'obusubuzi, ebyobulimi, amakwate g\'obulamu, ebiragiro by\'ensimbi, n\'ebirala bingi. Oyagala okumanya ki?',
       AppLocale.sw:
-          'Habari! Mimi ni msaidizi wako wa AI kutoka Otic She Connect. Ninaweza kukusaidia na ushauri wa biashara, vidokezo vya kilimo, habari za afya, mwongozo wa fedha, na mengi zaidi. Ungependa kujua nini?',
+          'Habari! Mimi ni msaidizi wako wa AI kutoka Africa AI Connect. Ninaweza kukusaidia na ushauri wa biashara, vidokezo vya kilimo, habari za afya, mwongozo wa fedha, na mengi zaidi. Ungependa kujua nini?',
     },
     'chat_cleared': {
       AppLocale.en: 'Chat cleared! How can I help you?',

@@ -182,7 +182,7 @@ class _LanguagePage extends StatelessWidget {
         children: [
           const SizedBox(height: 12),
           Image.asset(
-            'assets/branding/otic_logo.png',
+            'assets/branding/app_icon_mark.png',
             width: 56, height: 56, fit: BoxFit.contain,
           ),
           const SizedBox(height: 20),
@@ -282,7 +282,7 @@ class _WelcomePage extends StatelessWidget {
         children: [
           const SizedBox(height: 12),
           Image.asset(
-            'assets/branding/otic_logo.png',
+            'assets/branding/app_icon_mark.png',
             width: 56, height: 56, fit: BoxFit.contain,
           ),
           const SizedBox(height: 16),

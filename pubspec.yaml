@@ -1,5 +1,5 @@
 name: otic_connect
-description: Otic Connect - Empowering Women Through Digital Inclusion
+description: Africa AI Connect - Empowering Women Through Digital Inclusion
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -47,9 +47,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/branding/otic_logo.png"
-  adaptive_icon_background: "#0A6E6E"
-  adaptive_icon_foreground: "assets/branding/otic_logo.png"
+  image_path: "assets/branding/Africa-AI-Connect-logo.png"
+  adaptive_icon_background: "#FAF1EC"
+  adaptive_icon_foreground: "assets/branding/app_icon_mark.png"
 
 flutter:
   uses-material-design: true

@@ -119,7 +119,7 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     const ListTile(
                       leading: Icon(Icons.info_outline),
-                      title: Text('Otic She Connect'),
+                      title: Text('Africa AI Connect'),
                       subtitle: Text('Version 1.0.0'),
                     ),
                     Material(

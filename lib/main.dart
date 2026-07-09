@@ -41,6 +41,6 @@ class _LocaleLoaderState extends ConsumerState<_LocaleLoader> {
 
   @override
   Widget build(BuildContext context) {
-    return const OticConnectApp();
+    return const AfricaAiConnectApp();
   }
 }

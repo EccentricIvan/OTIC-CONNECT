@@ -228,9 +228,9 @@ class _SideNav extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Image.asset('assets/branding/otic_logo.png', width: 36, height: 36, fit: BoxFit.contain),
+                Image.asset('assets/branding/app_icon_mark.png', width: 36, height: 36, fit: BoxFit.contain),
                 const SizedBox(width: 10),
-                const Text('Otic She Connect', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                const Text('Africa AI Connect', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
               ],
             ),
           ),
@@ -274,12 +274,12 @@ class _AppDrawer extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
               child: Row(
                 children: [
-                  Image.asset('assets/branding/otic_logo.png', width: 40, height: 40, fit: BoxFit.contain),
+                  Image.asset('assets/branding/app_icon_mark.png', width: 40, height: 40, fit: BoxFit.contain),
                   const SizedBox(width: 12),
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Otic She Connect', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                      Text('Africa AI Connect', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                       Text('Connecting Women to Opportunity', style: TextStyle(fontSize: 11, color: AppColors.textHint)),
                     ],
                   ),

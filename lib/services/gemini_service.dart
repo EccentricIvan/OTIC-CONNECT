@@ -35,7 +35,7 @@ class GeminiService {
   static const _model = 'llama-3.3-70b-versatile';
   static const _baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
-  static const _systemPrompt = '''You are Otic She Connect AI Assistant — a warm, supportive, and knowledgeable companion for women in Sub-Saharan Africa.
+  static const _systemPrompt = '''You are the Africa AI Connect Assistant — a warm, supportive, and knowledgeable companion for women in Sub-Saharan Africa.
 
 Your role is to help women with:
 - Business and entrepreneurship advice

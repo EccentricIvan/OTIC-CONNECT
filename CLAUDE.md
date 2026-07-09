@@ -1,7 +1,7 @@
-# Otic Connect
+# Africa AI Connect
 
 ## Project Overview
-Otic Connect is an offline-first, AI-powered digital empowerment ecosystem for women in Sub-Saharan Africa. Built with Flutter, it supports Android, Windows, and Web. It evolved from Otic Studio v3.
+Africa AI Connect is an offline-first, AI-powered digital empowerment ecosystem for women in Sub-Saharan Africa. Built with Flutter, it supports Android, Windows, and Web. It evolved from Otic Studio v3, under the working name "Otic Connect" — some internal identifiers (Dart package name `otic_connect`, Android `applicationId com.oticgroup.otic_connect`, local SQLite filename) intentionally still use the old name to avoid breaking app updates/signing continuity for existing installs. User-facing text, the app icon, and all display names use the new branding.
 
 ## Tech Stack
 - **Framework**: Flutter 3.44+ / Dart 3.12+
@@ -133,17 +133,20 @@ lookup table (`S.tr`, with safe fallback: `locale → English → raw key`).
 CI (`.github/workflows/build.yml`) builds split-per-abi release APKs on
 every push/PR to `main` via `flutter build apk --release --split-per-abi`,
 using the `GROQ_API_KEY` repo secret. Artifacts land as run artifacts
-(`otic-connect-v<run>-arm64` / `-arm32`), not automatically published.
+(`africa-ai-connect-v<run>-arm64` / `-arm32`), not automatically published.
 To hand someone a phone-installable build:
-1. `gh run download <run-id> -n otic-connect-v<run>-arm64 -D <dir>`
+1. `gh run download <run-id> -n africa-ai-connect-v<run>-arm64 -D <dir>`
 2. Zip the APK before distributing — Android Chrome silently kills direct
    `.apk` browser downloads (flagged as a risky file type); a `.zip`
    wrapper avoids this and gets extracted + installed manually
 3. Upload both the raw `.apk` and the `.zip` to the standing GitHub
-   Release tag **`otic-connect-v6`**.
+   Release tag **`africa-ai-connect-v1`** (repo was renamed from
+   `OTIC-CONNECT` to `AFRICA-AI-CONNECT`; the old `otic-connect-v6` tag
+   still exists with legacy download links, GitHub auto-redirects the old
+   repo URL, but use the new tag for anything going forward).
 
 **Use a unique, version-stamped filename every time** (e.g.
-`OticConnect-arm64-v22.apk`), not a fixed name overwritten via `--clobber`.
+`AfricaAiConnect-arm64-v23.apk`), not a fixed name overwritten via `--clobber`.
 A collaborator once got a stale build after a key rotation because their
 browser/GitHub's CDN cached the old file at the same unchanging URL — the
 underlying asset had changed but the URL hadn't, so there was no reliable
