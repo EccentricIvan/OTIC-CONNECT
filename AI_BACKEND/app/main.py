@@ -1,3 +1,4 @@
+from app.routes.feedback import router as feedback_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -25,7 +26,7 @@ app.add_middleware(
 # Register API routes
 app.include_router(translate_router)
 app.include_router(chat_router)
-
+app.include_router(feedback_router)
 
 @app.get("/")
 def home():

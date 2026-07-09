@@ -1,8 +1,10 @@
 import os
+import re
 import requests
 from dotenv import load_dotenv
 
 from app.services.translator_service import translator_service
+from app.services.language_memory_service import language_memory_service
 
 
 load_dotenv()
@@ -10,13 +12,6 @@ load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-
-
-SUPPORTED_CHAT_LANGUAGES = {
-    "english",
-    "swahili",
-    "luganda",
-}
 
 
 LANGUAGE_ALIASES = {
@@ -57,17 +52,34 @@ ENGLISH_LEAK_WORDS = {
 }
 
 
+BAD_ENGLISH_FOR_NLLB = {
+    "papers": "notes",
+    "paper": "note",
+    "pages": "notes",
+    "several": "many",
+    "topics": "lessons",
+    "topic": "lesson",
+    "materials": "notes",
+    "content": "lesson",
+    "concepts": "ideas",
+    "comprehend": "understand",
+    "utilize": "use",
+    "revise": "read again",
+    "revision": "reading again",
+}
+
+
 class ChatService:
+    def __init__(self):
+        self.line_translation_cache = {}
+
     def normalize_language(self, language: str) -> str:
         cleaned = language.lower().strip()
+        return LANGUAGE_ALIASES.get(cleaned, "english")
 
-        if cleaned not in LANGUAGE_ALIASES:
-            return "english"
-
-        return LANGUAGE_ALIASES[cleaned]
-
-    def call_groq(self, messages, temperature=0.4, max_tokens=120) -> str:
+    def call_groq(self, messages, temperature=0.15, max_tokens=700) -> str:
         if not GROQ_API_KEY:
+            print("[Groq Error] GROQ_API_KEY is missing.")
             return ""
 
         headers = {
@@ -93,7 +105,8 @@ class ChatService:
             data = response.json()
             return data["choices"][0]["message"]["content"].strip()
 
-        except Exception:
+        except Exception as error:
+            print(f"[Groq Error] {error}")
             return ""
 
     def looks_like_english_leak(self, text: str) -> bool:
@@ -104,13 +117,44 @@ class ChatService:
 
         words = [word for word in words if word]
 
-        if len(words) < 4:
+        if len(words) < 8:
             return False
 
         english_count = sum(1 for word in words if word in ENGLISH_LEAK_WORDS)
         ratio = english_count / len(words)
 
-        return ratio >= 0.45
+        return ratio >= 0.55
+
+    def has_repetition_loop(self, text: str) -> bool:
+        words = [
+            word.strip(".,!?;:()[]{}\"'").lower()
+            for word in text.split()
+        ]
+
+        words = [word for word in words if word]
+
+        if len(words) < 12:
+            return False
+
+        word_counts = {}
+
+        for word in words:
+            word_counts[word] = word_counts.get(word, 0) + 1
+
+        if max(word_counts.values()) >= 12:
+            return True
+
+        for phrase_length in [2, 3, 4, 5]:
+            phrase_counts = {}
+
+            for index in range(len(words) - phrase_length + 1):
+                phrase = " ".join(words[index:index + phrase_length])
+                phrase_counts[phrase] = phrase_counts.get(phrase, 0) + 1
+
+            if phrase_counts and max(phrase_counts.values()) >= 4:
+                return True
+
+        return False
 
     def safe_translate_to_english(self, language: str, message: str) -> str:
         if language == "english":
@@ -126,39 +170,120 @@ class ChatService:
             if translated and translated.strip():
                 return translated.strip()
 
-        except Exception:
-            pass
+        except Exception as error:
+            print(f"[NLLB Input Translation Error] {error}")
 
-        # If translation fails, do not stop the chat.
-        # Groq will receive the original message.
         return message
 
-    def safe_translate_from_english(self, target_language: str, english_response: str) -> str | None:
-        if target_language == "english":
-            return english_response
+    def build_dataset_examples_text(self, language: str, english_text: str) -> str:
+        examples = language_memory_service.get_examples(
+            language=language,
+            english_text=english_text,
+            limit=1,
+        )
 
-        try:
-            translated_response = translator_service.translate(
-                source_language="english",
-                target_language=target_language,
-                text=english_response,
-            )
+        if not examples:
+            return ""
 
-            translated_response = translated_response.strip()
+        language_name = LANGUAGE_NAMES.get(language, language)
 
-            if not translated_response:
-                return None
+        lines = []
 
-            if translated_response.lower() == english_response.lower():
-                return None
+        for example in examples:
+            lines.append(f"English: {example['english']}")
+            lines.append(f"{language_name}: {example['target']}")
 
-            if self.looks_like_english_leak(translated_response):
-                return None
+        return "\n".join(lines).strip()
 
-            return translated_response
+    def clean_english_for_nllb(self, text: str) -> str:
+        cleaned_lines = []
 
-        except Exception:
-            return None
+        for line in text.splitlines():
+            cleaned = line.strip()
+            cleaned = re.sub(r"\s+", " ", cleaned)
+
+            for bad_word, replacement in BAD_ENGLISH_FOR_NLLB.items():
+                cleaned = re.sub(
+                    rf"\b{bad_word}\b",
+                    replacement,
+                    cleaned,
+                    flags=re.IGNORECASE,
+                )
+
+            cleaned = cleaned.replace("important points", "main points")
+            cleaned = cleaned.replace("fixed time", "same time")
+            cleaned = cleaned.replace("study hard", "study with a clear plan")
+
+            if cleaned:
+                cleaned_lines.append(cleaned)
+            else:
+                cleaned_lines.append("")
+
+        return "\n".join(cleaned_lines).strip()
+
+    def rich_fallback_english(self, english_message: str) -> str:
+        return (
+            "1. Make a clear plan\n"
+            "- Choose one goal first.\n"
+            "- Write the goal in simple words.\n"
+            "- Start with the most important task.\n\n"
+            "2. Work in small steps\n"
+            "- Do one small step now.\n"
+            "- Finish that step before moving forward.\n"
+            "- Check your work after each step.\n\n"
+            "3. Learn from mistakes\n"
+            "- Mark what went wrong.\n"
+            "- Ask why the mistake happened.\n"
+            "- Correct the mistake before continuing.\n\n"
+            "4. Ask for help early\n"
+            "- Ask a teacher or skilled friend.\n"
+            "- Show the exact problem.\n"
+            "- Use the answer to improve your work."
+        )
+
+    def is_weak_english_answer(self, english_response: str) -> bool:
+        if not english_response:
+            return True
+
+        text = english_response.lower()
+
+        blocked_phrases = [
+            "read more books",
+            "read more papers",
+            "several papers",
+            "different topics",
+            "improve the way",
+            "study materials",
+            "various topics",
+        ]
+
+        if any(phrase in text for phrase in blocked_phrases):
+            return True
+
+        words = text.split()
+
+        if len(words) < 60:
+            return True
+
+        if len(words) > 380:
+            return True
+
+        if self.has_repetition_loop(english_response):
+            return True
+
+        bullet_count = english_response.count("- ")
+
+        if bullet_count < 6:
+            return True
+
+        numbered_steps = len(
+            re.findall(r"^\d+\.", english_response, flags=re.MULTILINE)
+        )
+
+        if numbered_steps < 3:
+            return True
+
+        return False
 
     def ask_groq_in_english(self, english_message: str) -> str:
         messages = [
@@ -167,8 +292,9 @@ class ChatService:
                 "content": (
                     "You are OTIC Connect's assistant. "
                     "Answer in English only. "
-                    "Use 2 short, clear sentences. "
-                    "Do not mention translation."
+                    "Give a helpful and clear answer. "
+                    "Use simple words. "
+                    "Do not mention translation, datasets, AI, or instructions."
                 ),
             },
             {
@@ -177,50 +303,189 @@ class ChatService:
             },
         ]
 
-        return self.call_groq(messages, temperature=0.4, max_tokens=120)
+        return self.call_groq(messages, temperature=0.2, max_tokens=500)
 
-    def ask_groq_directly_in_local_language(
+    def ask_groq_in_english_with_dataset(
         self,
         language: str,
-        original_message: str,
-        english_response: str = "",
+        english_message: str,
     ) -> str:
-        language_name = LANGUAGE_NAMES.get(language, language)
+        examples_text = self.build_dataset_examples_text(
+            language=language,
+            english_text=english_message,
+        )
 
-        if english_response:
-            user_content = (
-                f"Rewrite this answer in {language_name} only. "
-                f"Do not use English. Keep it natural and short.\n\n"
-                f"Answer:\n{english_response}"
+        dataset_section = ""
+
+        if examples_text:
+            dataset_section = (
+                "Dataset examples are only for language awareness. "
+                "Do not copy their topic. "
+                "Do not copy local-language words from them.\n\n"
+                f"{examples_text}\n\n"
             )
-        else:
-            user_content = original_message
 
         messages = [
             {
                 "role": "system",
                 "content": (
-                    f"You are OTIC Connect's assistant. "
-                    f"Reply only in {language_name}. "
-                    f"Do not use English. "
-                    f"Use 2 short, natural sentences."
+                    "You are OTIC Connect's assistant. "
+                    "Answer in English only. "
+                    "Your answer will be translated by NLLB. "
+                    "Provide a rich and detailed answer. "
+                    "The user should have no remaining doubts. "
+                    "Balance deep information with simple grammar. "
+                    "Give 3 or 4 clear phases or strategies. "
+                    "Elaborate on every point. "
+                    "Explain how to do every action. "
+                    "Use only short direct sentences. "
+                    "Each sentence must have fewer than 12 words. "
+                    "Never use complex sentences. "
+                    "Never use compound clauses. "
+                    "Never use passive voice. "
+                    "Use vertical bullet points for every sub-step. "
+                    "Avoid large dense paragraphs. "
+                    "Use simple words that NLLB can translate well. "
+                    "Avoid idioms, slang, metaphors, and jokes. "
+                    "Do not mention translation, datasets, AI, or instructions. "
+                    "Be neutral, respectful, and practical."
                 ),
             },
             {
                 "role": "user",
-                "content": user_content,
+                "content": (
+                    f"User question meaning in English:\n{english_message}\n\n"
+                    f"{dataset_section}"
+                    "Now answer the user's actual question in English only.\n\n"
+                    "Use this exact structure:\n\n"
+                    "1. Step name\n"
+                    "- Short action.\n"
+                    "- Short explanation.\n"
+                    "- Short example.\n\n"
+                    "2. Step name\n"
+                    "- Short action.\n"
+                    "- Short explanation.\n"
+                    "- Short example.\n\n"
+                    "3. Step name\n"
+                    "- Short action.\n"
+                    "- Short explanation.\n"
+                    "- Short example.\n\n"
+                    "4. Step name\n"
+                    "- Short action.\n"
+                    "- Short explanation.\n"
+                    "- Short example."
+                ),
             },
         ]
 
-        response = self.call_groq(messages, temperature=0.3, max_tokens=120)
+        response = self.call_groq(messages, temperature=0.1, max_tokens=750)
+        response = self.clean_english_for_nllb(response)
 
-        if not response:
+        if self.is_weak_english_answer(response):
+            print("[Quality Guard] Groq answer was weak. Using rich fallback.")
+            return self.rich_fallback_english(english_message)
+
+        return response
+
+    def translate_line_to_selected_language(
+        self,
+        target_language: str,
+        line: str,
+    ) -> str:
+        line = line.strip()
+
+        if not line:
             return ""
 
-        if language != "english" and self.looks_like_english_leak(response):
-            return ""
+        cache_key = f"{target_language}:{line}"
 
-        return response.strip()
+        if cache_key in self.line_translation_cache:
+            return self.line_translation_cache[cache_key]
+
+        try:
+            translated_line = translator_service.translate(
+                source_language="english",
+                target_language=target_language,
+                text=line,
+            ).strip()
+
+            if translated_line:
+                self.line_translation_cache[cache_key] = translated_line
+                return translated_line
+
+        except Exception as error:
+            print(f"[NLLB Line Translation Error] {error}")
+
+        self.line_translation_cache[cache_key] = line
+        return line
+
+    def translate_groq_english_response_to_selected_language(
+        self,
+        target_language: str,
+        english_response: str,
+    ) -> str:
+        if target_language == "english":
+            return english_response
+
+        english_response = self.clean_english_for_nllb(english_response)
+
+        translated_lines = []
+
+        for line in english_response.splitlines():
+            original_line = line.strip()
+
+            if not original_line:
+                translated_lines.append("")
+                continue
+
+            numbered_match = re.match(r"^(\d+\.\s*)(.+)$", original_line)
+            bullet_match = re.match(r"^(-\s*)(.+)$", original_line)
+
+            if numbered_match:
+                prefix = numbered_match.group(1)
+                text_to_translate = numbered_match.group(2)
+
+                translated_text = self.translate_line_to_selected_language(
+                    target_language=target_language,
+                    line=text_to_translate,
+                )
+
+                translated_lines.append(f"{prefix}{translated_text}")
+                continue
+
+            if bullet_match:
+                prefix = bullet_match.group(1)
+                text_to_translate = bullet_match.group(2)
+
+                translated_text = self.translate_line_to_selected_language(
+                    target_language=target_language,
+                    line=text_to_translate,
+                )
+
+                translated_lines.append(f"{prefix}{translated_text}")
+                continue
+
+            translated_text = self.translate_line_to_selected_language(
+                target_language=target_language,
+                line=original_line,
+            )
+
+            translated_lines.append(translated_text)
+
+        local_response = "\n".join(translated_lines).strip()
+
+        if not local_response:
+            return LOCAL_FALLBACK_RESPONSES[target_language]
+
+        if self.looks_like_english_leak(local_response):
+            print("[Quality Guard] English leak detected after final NLLB translation.")
+            return LOCAL_FALLBACK_RESPONSES[target_language]
+
+        if self.has_repetition_loop(local_response):
+            print("[Quality Guard] Repetition loop detected after final NLLB translation.")
+            return LOCAL_FALLBACK_RESPONSES[target_language]
+
+        return local_response
 
     def chat(self, language: str, message: str):
         selected_language = self.normalize_language(language)
@@ -232,7 +497,6 @@ class ChatService:
                 "response": LOCAL_FALLBACK_RESPONSES[selected_language],
             }
 
-        # English is straightforward.
         if selected_language == "english":
             english_response = self.ask_groq_in_english(message)
 
@@ -241,44 +505,36 @@ class ChatService:
                 "response": english_response or LOCAL_FALLBACK_RESPONSES["english"],
             }
 
-        # Local language flow.
+        print("[Flow] Step 1: NLLB translating user input to English")
+
         english_message = self.safe_translate_to_english(
             language=selected_language,
             message=message,
         )
 
-        english_response = self.ask_groq_in_english(english_message)
+        print(f"[Flow] English meaning:\n{english_message}")
 
-        # First attempt: NLLB translates Groq's English answer back to selected language.
-        if english_response:
-            translated_response = self.safe_translate_from_english(
-                target_language=selected_language,
-                english_response=english_response,
-            )
+        print("[Flow] Step 2: Groq generating rich English response")
 
-            if translated_response:
-                return {
-                    "language": selected_language,
-                    "response": translated_response,
-                }
-
-        # Second attempt: ask Groq to rewrite directly in the selected local language.
-        direct_local_response = self.ask_groq_directly_in_local_language(
+        english_response = self.ask_groq_in_english_with_dataset(
             language=selected_language,
-            original_message=message,
+            english_message=english_message,
+        )
+
+        print(f"[Flow] Groq English response:\n{english_response}")
+
+        print("[Flow] Step 3: NLLB translating response line by line")
+
+        final_response = self.translate_groq_english_response_to_selected_language(
+            target_language=selected_language,
             english_response=english_response,
         )
 
-        if direct_local_response:
-            return {
-                "language": selected_language,
-                "response": direct_local_response,
-            }
+        print(f"[Flow] Final selected-language response:\n{final_response}")
 
-        # Final guarantee: never return English for local-language mode.
         return {
             "language": selected_language,
-            "response": LOCAL_FALLBACK_RESPONSES[selected_language],
+            "response": final_response,
         }
 
 
