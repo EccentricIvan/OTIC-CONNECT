@@ -6,3 +6,6 @@ sentencepiece
 pydantic
 python-dotenv
 requestsdatasets
+peft
+accelerate
+safetensors

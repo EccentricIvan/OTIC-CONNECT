@@ -72,3 +72,12 @@ AI_BACKEND/app/Data/processed/luganda_correction_candidates.csv
 # Hugging Face / local tokens
 HF_TOKEN
 HUGGINGFACE_TOKEN
+AI_BACKEND/app/Data/raw_luganda/
+AI_BACKEND/app/Data/raw_swahili/
+AI_BACKEND/app/Data/finetune_luganda/
+AI_BACKEND/app/Data/finetune_swahili/
+*.zip
+AI_BACKEND/ai_models/
+*.zip
+luganda_adapter_temp/
+swahili_adapter_temp/
