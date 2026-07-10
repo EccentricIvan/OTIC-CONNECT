@@ -690,6 +690,56 @@ class S {
       AppLocale.lg: 'Laba byonna',
       AppLocale.sw: 'Ona yote',
     },
+    'listing_title_hint': {
+      AppLocale.en: 'e.g. Fresh Organic Vegetables',
+      AppLocale.lg: 'okugeza Enva endiirwa ez\'obutonde',
+      AppLocale.sw: 'mf. Mboga za asili',
+    },
+    'listing_price_hint': {
+      AppLocale.en: 'Price (UGX)',
+      AppLocale.lg: 'Omuwendo (UGX)',
+      AppLocale.sw: 'Bei (UGX)',
+    },
+    'select_category_label': {
+      AppLocale.en: 'Category',
+      AppLocale.lg: 'Ekika',
+      AppLocale.sw: 'Aina',
+    },
+    'select_category_error': {
+      AppLocale.en: 'Please select a category',
+      AppLocale.lg: 'Nsaba olondewo ekika',
+      AppLocale.sw: 'Tafadhali chagua aina',
+    },
+    'listing_title_error': {
+      AppLocale.en: 'Please enter a product title',
+      AppLocale.lg: 'Nsaba wandiike erinnya ly\'ekintu',
+      AppLocale.sw: 'Tafadhali ingiza jina la bidhaa',
+    },
+    'listing_price_error': {
+      AppLocale.en: 'Please enter a valid price',
+      AppLocale.lg: 'Nsaba wandiike omuwendo omutuufu',
+      AppLocale.sw: 'Tafadhali ingiza bei sahihi',
+    },
+    'no_listings_yet': {
+      AppLocale.en: 'No listings yet — be the first to list a product!',
+      AppLocale.lg: 'Tewali kintu kyawandiikibwa — beera owasooka okuwandiika ekintu!',
+      AppLocale.sw: 'Hakuna bidhaa bado — kuwa wa kwanza kuorodhesha bidhaa!',
+    },
+    'no_listings_in_category': {
+      AppLocale.en: 'No listings in this category yet',
+      AppLocale.lg: 'Tewali kintu mu kika kino',
+      AppLocale.sw: 'Hakuna bidhaa katika aina hii bado',
+    },
+    'listing_as': {
+      AppLocale.en: 'Listing as',
+      AppLocale.lg: 'Owandiika nga',
+      AppLocale.sw: 'Unaorodhesha kama',
+    },
+    'clear_filter': {
+      AppLocale.en: 'Clear filter',
+      AppLocale.lg: 'Ggyawo okulonda',
+      AppLocale.sw: 'Futa kichujio',
+    },
     'cat_crafts': {
       AppLocale.en: 'Crafts',
       AppLocale.lg: 'Ebikozesebwa emikono',

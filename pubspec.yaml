@@ -36,6 +36,11 @@ dependencies:
   # URL launcher (for external links)
   url_launcher: ^6.2.0
 
+  # File/image picking (marketplace listing photos) — file_picker over
+  # image_picker because it has real Windows desktop support, and this
+  # app is actively developed/tested on Windows, not just Android.
+  file_picker: ^8.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
