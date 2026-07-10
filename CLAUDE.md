@@ -50,6 +50,56 @@ All colors and fonts are tokens in `lib/core/theme/app_colors.dart` and
   Flutter app** — nothing in `lib/` calls it, and it has no deployment
   config. Treat as an unintegrated prototype, not live infrastructure.
 
+## Roadmap — mock data & non-functional buttons to replace
+Full audit as of 2026-07-08. Follow the `users`/`UserDao`/`currentUserProvider`
+pattern (see **Data layer**) for each: a table, a DAO, a provider, then wire
+the screen to it. Ordered by rough priority.
+
+- **Wellbeing "Get Help" button** (`thrive/wellbeing/wellbeing_screen.dart`)
+  — a no-op crisis-support CTA. Small scope (helpline directory + `url_launcher`
+  tel: links, no DB needed), but high-stakes to leave broken. Do this one
+  first regardless of what else is picked.
+- **Learn** (`learn/learn_hub_screen.dart`) — `_Cat` category cards and
+  featured-course cards are `onTap: () {}`; hero stats (course count,
+  points, milestone progress) are hardcoded. Needs `courses` +
+  `user_course_progress` tables.
+- **Skills** (`grow/skills/skills_screen.dart`) — all 4 `FeatureCard`s are
+  no-op, no backing model at all. Same `courses`-style table as Learn.
+- **Marketplace** (`earn/marketplace/marketplace_screen.dart`) — search
+  icon, "List a Product", "See all", and category grid cells are all
+  no-op; `_Listing` is a hardcoded 3-item list. Needs a
+  `marketplace_listings` table (seller, title, price, category, location,
+  created_at) — reasonable next vertical slice.
+- **Mentorship** (`grow/mentorship/mentorship_screen.dart`) — "Connect" and
+  "Apply to Mentor" buttons are no-op; `_Mentor` list is hardcoded. Needs
+  `mentors` + `mentor_connections` tables.
+- **Jobs** (`grow/jobs/jobs_screen.dart`) — search and "Create CV" are
+  no-op; job list items have **no `onTap` at all** (not even a stub — tapping
+  does literally nothing). `_Job` list is hardcoded. Needs a `jobs` table.
+- **Community** (`thrive/community/community_screen.dart`) — "group_add"
+  icon, "Create a Group", "Join", and Like/Comment/Share (×3 per post) are
+  all no-op. Needs `groups` + `group_members` + `community_posts` tables.
+- **Health** (`thrive/health/health_screen.dart`) — resource cards and the
+  "directions" button are no-op; `_Facility` list has **hardcoded distance**
+  (`distKm`) instead of real geolocation math. Needs `health_facilities` +
+  `health_resources` tables.
+- **Financial Hub** (`earn/financial/financial_hub_screen.dart`) — Savings
+  Tracker, Budget Planner, SACCO Directory, and Mobile Money Guide all go
+  nowhere; **zero data model exists** for this pillar at all (greenfield —
+  needs `savings_goals`, `budget_entries`, `sacco_directory` tables).
+- **AI Chat** (`ai_chat/ai_chat_screen.dart`) — messages are in-memory
+  only (`List<_ChatMessage>` in State), lost on screen dispose/app
+  restart. Needs `chat_sessions` + `chat_messages` tables.
+- **Profile** (`profile/profile_screen.dart`) — edit icon is no-op; the
+  "Achievements" badge grid shows 5 badges as if all earned (`_badges`
+  static list, no real unlock tracking). Needs `achievements` +
+  `user_achievements` tables.
+- **Home** (`home/home_screen.dart`) — search and notifications icons are
+  no-op.
+- **Settings** (`settings/settings_screen.dart`) — sync/notification
+  toggles are hardcoded `value: true` with no-op `onChanged`; "Storage
+  usage" and "Terms/Privacy" links go nowhere.
+
 ## Key Pillars
 - **Learn** — courses, digital skills, financial literacy
 - **Earn** — marketplace, financial hub, business tools
