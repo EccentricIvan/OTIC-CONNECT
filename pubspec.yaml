@@ -40,6 +40,9 @@ dependencies:
   # image_picker because it has real Windows desktop support, and this
   # app is actively developed/tested on Windows, not just Android.
   file_picker: ^8.0.0
+  firebase_core: ^4.11.0
+  firebase_auth: ^6.5.4
+  cloud_firestore: ^6.6.0
 
 dev_dependencies:
   flutter_test:

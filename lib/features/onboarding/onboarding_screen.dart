@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -61,10 +63,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Future<void> _finish() async {
     if (_saving) return;
     setState(() => _saving = true);
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final name = _nameController.text.trim();
+    if (firebaseUser != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .set({
+        'name': name,
+        'role': _role,
+        'location': _location,
+        'phoneNumber': firebaseUser.phoneNumber,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    }
     await ref.read(userDaoProvider).saveUser(
-          name: _nameController.text.trim(),
+          name: name,
           role: _role,
           location: _location,
+          firebaseUid: firebaseUser?.uid,
         );
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('has_profile', true);

@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/auth/phone_entry_screen.dart';
+import '../../features/auth/otp_verify_screen.dart';
+import '../../features/auth/providers/auth_providers.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/learn/learn_hub_screen.dart';
 import '../../features/earn/marketplace/marketplace_screen.dart';
@@ -27,11 +30,23 @@ final hasProfileProvider = StateProvider<bool>((ref) {
 });
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final isAuthenticated = ref.watch(isAuthenticatedProvider);
   final hasProfile = ref.watch(hasProfileProvider);
+  final initialLocation = !isAuthenticated
+      ? '/auth/phone'
+      : (hasProfile ? '/' : '/onboarding');
   return GoRouter(
     navigatorKey: _rootKey,
-    initialLocation: hasProfile ? '/' : '/onboarding',
+    initialLocation: initialLocation,
     routes: [
+      GoRoute(
+        path: '/auth/phone',
+        builder: (_, __) => const PhoneEntryScreen(),
+      ),
+      GoRoute(
+        path: '/auth/otp',
+        builder: (_, __) => const OtpVerifyScreen(),
+      ),
       GoRoute(
         path: '/onboarding',
         builder: (_, __) => const OnboardingScreen(),

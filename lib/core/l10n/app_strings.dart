@@ -407,6 +407,68 @@ class S {
       AppLocale.sw: 'Tafadhali ingiza jina lako',
     },
 
+    // ── Auth (phone / OTP) ──
+    'enter_phone_number': {
+      AppLocale.en: 'Enter your phone number',
+      AppLocale.lg: 'Wandiika ennamba yo eya essimu',
+      AppLocale.sw: 'Ingiza nambari yako ya simu',
+    },
+    'phone_number_hint': {
+      AppLocale.en: 'e.g. 700 000 000',
+      AppLocale.lg: 'okugeza 700 000 000',
+      AppLocale.sw: 'mf. 700 000 000',
+    },
+    'send_code': {
+      AppLocale.en: 'Send code',
+      AppLocale.lg: 'Sindika koodi',
+      AppLocale.sw: 'Tuma msimbo',
+    },
+    'enter_otp_code': {
+      AppLocale.en: 'Enter the code we sent you',
+      AppLocale.lg: 'Wandiika koodi gye tukusindikidde',
+      AppLocale.sw: 'Ingiza msimbo tuliokutumia',
+    },
+    'otp_code_hint': {
+      AppLocale.en: '6-digit code',
+      AppLocale.lg: 'Koodi ey\'ennamba 6',
+      AppLocale.sw: 'Msimbo wa tarakimu 6',
+    },
+    'verify_code': {
+      AppLocale.en: 'Verify code',
+      AppLocale.lg: 'Kakasa koodi',
+      AppLocale.sw: 'Thibitisha msimbo',
+    },
+    'resend_code': {
+      AppLocale.en: 'Resend code',
+      AppLocale.lg: 'Ddamu osindike koodi',
+      AppLocale.sw: 'Tuma tena msimbo',
+    },
+    'invalid_phone_number': {
+      AppLocale.en: 'Please enter a valid phone number',
+      AppLocale.lg: 'Nsaba wandiike ennamba entuufu eya essimu',
+      AppLocale.sw: 'Tafadhali ingiza nambari sahihi ya simu',
+    },
+    'invalid_otp_code': {
+      AppLocale.en: 'Please enter the code we sent you',
+      AppLocale.lg: 'Nsaba wandiike koodi gye tukusindikidde',
+      AppLocale.sw: 'Tafadhali ingiza msimbo tuliokutumia',
+    },
+    'otp_send_failed': {
+      AppLocale.en: 'Could not send code. Please try again.',
+      AppLocale.lg: 'Tetusobodde kusindika koodi. Ddamu ogezeeko.',
+      AppLocale.sw: 'Imeshindwa kutuma msimbo. Tafadhali jaribu tena.',
+    },
+    'otp_verify_failed': {
+      AppLocale.en: 'That code didn\'t work. Please try again.',
+      AppLocale.lg: 'Koodi eyo teyakoze. Ddamu ogezeeko.',
+      AppLocale.sw: 'Msimbo huo haukufanya kazi. Tafadhali jaribu tena.',
+    },
+    'windows_recaptcha_note': {
+      AppLocale.en: 'On Windows, you may briefly see a verification step before your code is sent.',
+      AppLocale.lg: 'Ku Windows, oyinza okulaba akadde ak\'okukakasa nga koodi tennasindikwa.',
+      AppLocale.sw: 'Kwenye Windows, huenda ukaona hatua fupi ya uthibitisho kabla msimbo haujatumwa.',
+    },
+
     // ── Roles ──
     'role_entrepreneur': {
       AppLocale.en: 'Entrepreneur',

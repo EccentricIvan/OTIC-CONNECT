@@ -12,7 +12,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -20,6 +20,7 @@ class AppDatabase extends _$AppDatabase {
         onUpgrade: (m, from, to) async {
           if (from < 2) await m.createTable(marketplaceListings);
           if (from < 3) await m.addColumn(marketplaceListings, marketplaceListings.imagePath);
+          if (from < 4) await m.addColumn(users, users.firebaseUid);
         },
       );
 
