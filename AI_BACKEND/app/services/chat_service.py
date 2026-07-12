@@ -1,4 +1,7 @@
-import os
+﻿import os
+import re
+from typing import List
+
 import requests
 from dotenv import load_dotenv
 
@@ -7,16 +10,10 @@ from app.services.translator_service import translator_service
 
 load_dotenv()
 
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-
-
-SUPPORTED_CHAT_LANGUAGES = {
-    "english",
-    "swahili",
-    "luganda",
-}
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 
 LANGUAGE_ALIASES = {
@@ -24,51 +21,30 @@ LANGUAGE_ALIASES = {
     "eng": "english",
     "english": "english",
 
-    "sw": "swahili",
-    "swa": "swahili",
-    "kiswahili": "swahili",
-    "swahili": "swahili",
-
     "lg": "luganda",
     "lug": "luganda",
     "luganda": "luganda",
-}
 
-
-LANGUAGE_NAMES = {
-    "english": "English",
-    "swahili": "Kiswahili",
-    "luganda": "Luganda",
-}
-
-
-LOCAL_FALLBACK_RESPONSES = {
-    "english": "Sorry, I had trouble generating a response. Please try again with a shorter question.",
-    "swahili": "Samahani, nimepata changamoto kidogo. Tafadhali uliza tena kwa maneno mafupi.",
-    "luganda": "Nsonyiwa, waliwo obuzibu obutonotono. Nsaba obuuze nate mu bigambo bitono.",
-}
-
-
-ENGLISH_LEAK_WORDS = {
-    "the", "and", "you", "your", "are", "is", "can", "should",
-    "learn", "study", "help", "with", "this", "that", "to", "of",
-    "in", "for", "good", "better", "practice", "please", "sorry",
-    "question", "answer", "try", "again", "short", "shorter"
+    "sw": "swahili",
+    "swa": "swahili",
+    "swh": "swahili",
+    "kiswahili": "swahili",
+    "swahili": "swahili",
 }
 
 
 class ChatService:
     def normalize_language(self, language: str) -> str:
-        cleaned = language.lower().strip()
+        cleaned = str(language).lower().strip()
 
         if cleaned not in LANGUAGE_ALIASES:
-            return "english"
+            raise ValueError(f"Unsupported language: {language}")
 
         return LANGUAGE_ALIASES[cleaned]
 
-    def call_groq(self, messages, temperature=0.4, max_tokens=120) -> str:
+    def call_groq(self, system_prompt: str, user_prompt: str) -> str:
         if not GROQ_API_KEY:
-            return ""
+            raise RuntimeError("GROQ_API_KEY is missing. Add it to AI_BACKEND/.env")
 
         headers = {
             "Authorization": f"Bearer {GROQ_API_KEY}",
@@ -77,209 +53,152 @@ class ChatService:
 
         payload = {
             "model": GROQ_MODEL,
-            "messages": messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": system_prompt,
+                },
+                {
+                    "role": "user",
+                    "content": user_prompt,
+                },
+            ],
+            "temperature": 0.35,
+            "max_tokens": 420,
         }
 
-        try:
-            response = requests.post(
-                GROQ_URL,
-                headers=headers,
-                json=payload,
-                timeout=120,
-            )
-            response.raise_for_status()
-            data = response.json()
-            return data["choices"][0]["message"]["content"].strip()
+        response = requests.post(
+            GROQ_API_URL,
+            headers=headers,
+            json=payload,
+            timeout=45,
+        )
 
-        except Exception:
-            return ""
+        response.raise_for_status()
+        data = response.json()
 
-    def looks_like_english_leak(self, text: str) -> bool:
-        words = [
-            word.strip(".,!?;:()[]{}\"'").lower()
-            for word in text.split()
-        ]
+        return data["choices"][0]["message"]["content"].strip()
 
-        words = [word for word in words if word]
+    def build_english_system_prompt(self) -> str:
+        return (
+            "You are OTIC CONNECT, a helpful assistant for students and young people. "
+            "Answer with simple, practical, realistic advice. "
+            "Use plain English. "
+            "Avoid repetition. "
+            "Avoid markdown formatting. "
+            "Avoid long sentences."
+        )
 
-        if len(words) < 4:
-            return False
+    def clean_text_for_translation(self, text: str) -> str:
+        text = text.replace("**", "")
+        text = text.replace("*", "")
+        text = text.replace("#", "")
+        text = text.replace("`", "")
+        text = re.sub(r"\n{3,}", "\n\n", text)
+        return text.strip()
 
-        english_count = sum(1 for word in words if word in ENGLISH_LEAK_WORDS)
-        ratio = english_count / len(words)
-
-        return ratio >= 0.45
-
-    def safe_translate_to_english(self, language: str, message: str) -> str:
-        if language == "english":
+    def translate_user_message_to_english(self, message: str, selected_language: str) -> str:
+        if selected_language == "english":
             return message
 
-        try:
+        translated = translator_service.translate(
+            source_language=selected_language,
+            target_language="english",
+            text=message,
+        )
+
+        return translated or message
+
+    def split_for_local_translation(self, text: str) -> List[str]:
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+
+        if lines:
+            return lines[:6]
+
+        sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+        sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+
+        return sentences[:6] if sentences else [text.strip()]
+
+    def translate_structured_english_to_local(self, text: str, target_language: str) -> str:
+        clean_text = self.clean_text_for_translation(text)
+        chunks = self.split_for_local_translation(clean_text)
+        translated_chunks = []
+
+        for chunk in chunks:
+            match = re.match(r"^(\s*(?:[-*•]|\d+[.)])\s*)(.+)$", chunk)
+
+            if match:
+                prefix = match.group(1)
+                content = match.group(2)
+            else:
+                prefix = ""
+                content = chunk
+
             translated = translator_service.translate(
-                source_language=language,
-                target_language="english",
-                text=message,
-            )
-
-            if translated and translated.strip():
-                return translated.strip()
-
-        except Exception:
-            pass
-
-        # If translation fails, do not stop the chat.
-        # Groq will receive the original message.
-        return message
-
-    def safe_translate_from_english(self, target_language: str, english_response: str) -> str | None:
-        if target_language == "english":
-            return english_response
-
-        try:
-            translated_response = translator_service.translate(
                 source_language="english",
                 target_language=target_language,
-                text=english_response,
+                text=content,
             )
 
-            translated_response = translated_response.strip()
+            if translated:
+                translated_chunks.append(f"{prefix}{translated}")
+            else:
+                translated_chunks.append(chunk)
 
-            if not translated_response:
-                return None
+        return "\n".join(translated_chunks).strip()
 
-            if translated_response.lower() == english_response.lower():
-                return None
+    def build_structured_english_answer(self, english_meaning: str) -> str:
+        english_prompt = (
+            f"The user asked this question:\n\n"
+            f"{english_meaning}\n\n"
+            "Answer in plain simple English for translation into a local African language. "
+            "Give exactly 4 numbered points. "
+            "Each point must be one short sentence only. "
+            "Use everyday words. "
+            "Do not use bold text. "
+            "Do not use markdown. "
+            "Do not use headings. "
+            "Do not use idioms. "
+            "Do not repeat the same idea. "
+            "Focus on realistic advice for the user's situation."
+        )
 
-            if self.looks_like_english_leak(translated_response):
-                return None
+        english_response = self.call_groq(
+            system_prompt=self.build_english_system_prompt(),
+            user_prompt=english_prompt,
+        )
 
-            return translated_response
+        return self.clean_text_for_translation(english_response)
 
-        except Exception:
-            return None
-
-    def ask_groq_in_english(self, english_message: str) -> str:
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    "You are OTIC Connect's assistant. "
-                    "Answer in English only. "
-                    "Use 2 short, clear sentences. "
-                    "Do not mention translation."
-                ),
-            },
-            {
-                "role": "user",
-                "content": english_message,
-            },
-        ]
-
-        return self.call_groq(messages, temperature=0.4, max_tokens=120)
-
-    def ask_groq_directly_in_local_language(
-        self,
-        language: str,
-        original_message: str,
-        english_response: str = "",
-    ) -> str:
-        language_name = LANGUAGE_NAMES.get(language, language)
-
-        if english_response:
-            user_content = (
-                f"Rewrite this answer in {language_name} only. "
-                f"Do not use English. Keep it natural and short.\n\n"
-                f"Answer:\n{english_response}"
-            )
-        else:
-            user_content = original_message
-
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    f"You are OTIC Connect's assistant. "
-                    f"Reply only in {language_name}. "
-                    f"Do not use English. "
-                    f"Use 2 short, natural sentences."
-                ),
-            },
-            {
-                "role": "user",
-                "content": user_content,
-            },
-        ]
-
-        response = self.call_groq(messages, temperature=0.3, max_tokens=120)
-
-        if not response:
-            return ""
-
-        if language != "english" and self.looks_like_english_leak(response):
-            return ""
-
-        return response.strip()
-
-    def chat(self, language: str, message: str):
+    def chat(self, message: str, language: str) -> str:
         selected_language = self.normalize_language(language)
-        message = message.strip()
+        message = str(message).strip()
 
         if not message:
-            return {
-                "language": selected_language,
-                "response": LOCAL_FALLBACK_RESPONSES[selected_language],
-            }
+            return "Please enter a message."
 
-        # English is straightforward.
         if selected_language == "english":
-            english_response = self.ask_groq_in_english(message)
-
-            return {
-                "language": "english",
-                "response": english_response or LOCAL_FALLBACK_RESPONSES["english"],
-            }
-
-        # Local language flow.
-        english_message = self.safe_translate_to_english(
-            language=selected_language,
-            message=message,
-        )
-
-        english_response = self.ask_groq_in_english(english_message)
-
-        # First attempt: NLLB translates Groq's English answer back to selected language.
-        if english_response:
-            translated_response = self.safe_translate_from_english(
-                target_language=selected_language,
-                english_response=english_response,
+            return self.call_groq(
+                system_prompt=self.build_english_system_prompt(),
+                user_prompt=message,
             )
 
-            if translated_response:
-                return {
-                    "language": selected_language,
-                    "response": translated_response,
-                }
-
-        # Second attempt: ask Groq to rewrite directly in the selected local language.
-        direct_local_response = self.ask_groq_directly_in_local_language(
-            language=selected_language,
-            original_message=message,
-            english_response=english_response,
+        english_meaning = self.translate_user_message_to_english(
+            message=message,
+            selected_language=selected_language,
         )
 
-        if direct_local_response:
-            return {
-                "language": selected_language,
-                "response": direct_local_response,
-            }
+        english_response = self.build_structured_english_answer(
+            english_meaning=english_meaning,
+        )
 
-        # Final guarantee: never return English for local-language mode.
-        return {
-            "language": selected_language,
-            "response": LOCAL_FALLBACK_RESPONSES[selected_language],
-        }
+        local_response = self.translate_structured_english_to_local(
+            text=english_response,
+            target_language=selected_language,
+        )
+
+        return local_response or english_response
 
 
 chat_service = ChatService()
