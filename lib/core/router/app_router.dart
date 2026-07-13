@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/auth/phone_entry_screen.dart';
 import '../../features/auth/otp_verify_screen.dart';
-import '../../features/auth/providers/auth_providers.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/learn/learn_hub_screen.dart';
 import '../../features/earn/marketplace/marketplace_screen.dart';
@@ -30,11 +29,11 @@ final hasProfileProvider = StateProvider<bool>((ref) {
 });
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final isAuthenticated = ref.watch(isAuthenticatedProvider);
+  // Phone auth isn't live yet (Firebase project isn't on Blaze), so startup
+  // routing doesn't gate on isAuthenticatedProvider — /auth/phone and
+  // /auth/otp stay reachable for later, but don't block anyone today.
   final hasProfile = ref.watch(hasProfileProvider);
-  final initialLocation = !isAuthenticated
-      ? '/auth/phone'
-      : (hasProfile ? '/' : '/onboarding');
+  final initialLocation = hasProfile ? '/' : '/onboarding';
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: initialLocation,
