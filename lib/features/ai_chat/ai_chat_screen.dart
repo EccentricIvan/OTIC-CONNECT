@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/l10n/app_strings.dart';
+import '../../services/api_config.dart';
 import '../../services/gemini_service.dart';
 
 class AiChatScreen extends ConsumerStatefulWidget {
@@ -19,14 +20,21 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
   late List<_ChatMessage> _messages;
   bool _initialized = false;
 
-  String _t(String key) => S.tr(context, ref, key);
+  String _t(String key) => ref.watch(offlineLanguageServiceProvider).t(key);
+  String _chatGreeting() {
+    final languageService = ref.read(offlineLanguageServiceProvider);
+    final greetings = languageService.getChatResponses('greetings');
+    return greetings.isEmpty
+        ? languageService.t('ai_greeting')
+        : greetings.first;
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
       _initialized = true;
-      _messages = [_ChatMessage(_t('ai_greeting'), false)];
+      _messages = [_ChatMessage(_chatGreeting(), false)];
     }
   }
 
@@ -61,10 +69,29 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
     _scrollToBottom();
 
     final locale = ref.read(localeProvider);
-    final response = await _groq.sendMessage(text, locale);
+    final languageService = ref.read(offlineLanguageServiceProvider);
+
+    String response;
+
+    try {
+      final aiResponse = await _groq.sendMessage(text, locale);
+      response =
+          aiResponse.trim().isEmpty
+              ? languageService.getFallbackResponse()
+              : aiResponse;
+    } catch (_) {
+      response = languageService.getFallbackResponse();
+    }
 
     setState(() {
-      _messages.add(_ChatMessage(response, false));
+      _messages.add(
+        _ChatMessage(
+          response.trim().isEmpty
+              ? languageService.getFallbackResponse()
+              : response,
+          false,
+        ),
+      );
       _isLoading = false;
     });
     _scrollToBottom();
@@ -74,13 +101,23 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
     _groq.clearHistory();
     setState(() {
       _messages.clear();
-      _messages.add(_ChatMessage(_t('chat_cleared'), false));
+      _messages.add(_ChatMessage(_chatGreeting(), false));
     });
   }
 
   @override
   Widget build(BuildContext context) {
     ref.watch(localeProvider);
+    ref.watch(offlineLanguageServiceProvider);
+    ref.listen<AppLocale>(localeProvider, (previous, next) {
+      if (previous == next || !_initialized) return;
+      _groq.clearHistory();
+      setState(() {
+        _messages
+          ..clear()
+          ..add(_ChatMessage(_chatGreeting(), false));
+      });
+    });
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -96,25 +133,36 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
           child: Column(
             children: [
               _ChatAppBar(onClear: _clearChat, t: _t),
-              _SuggestedTopics(onTap: (topic) {
-                _controller.text = topic;
-                _send();
-              }, t: _t),
+              _SuggestedTopics(
+                onTap: (topic) {
+                  _controller.text = topic;
+                  _send();
+                },
+                t: _t,
+              ),
+              if (ApiConfig.groqKey.isEmpty) _OfflineNotice(t: _t),
               Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  reverse: true,
-                  itemCount: _messages.length + (_isLoading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (_isLoading && index == 0) {
-                      return _TypingIndicator(t: _t);
-                    }
-                    final msgIndex = _isLoading ? index - 1 : index;
-                    final msg = _messages[_messages.length - 1 - msgIndex];
-                    return _MessageBubble(message: msg);
-                  },
-                ),
+                child:
+                    _messages.isEmpty && !_isLoading
+                        ? _EmptyChatState(t: _t)
+                        : ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          reverse: true,
+                          itemCount: _messages.length + (_isLoading ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (_isLoading && index == 0) {
+                              return _TypingIndicator(t: _t);
+                            }
+                            final msgIndex = _isLoading ? index - 1 : index;
+                            final msg =
+                                _messages[_messages.length - 1 - msgIndex];
+                            return _MessageBubble(message: msg);
+                          },
+                        ),
               ),
               _ChatInput(
                 controller: _controller,
@@ -123,6 +171,69 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                 t: _t,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OfflineNotice extends StatelessWidget {
+  const _OfflineNotice({required this.t});
+  final String Function(String) t;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.earnColor.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.earnColor.withValues(alpha: 0.2)),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.cloud_off_rounded,
+              size: 16,
+              color: AppColors.earnColor,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                t('offline_notice'),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyChatState extends StatelessWidget {
+  const _EmptyChatState({required this.t});
+  final String Function(String) t;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Text(
+          t('empty_chat'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 13,
+            color: AppColors.textHint,
+            height: 1.4,
           ),
         ),
       ),
@@ -142,26 +253,40 @@ class _ChatAppBar extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 38, height: 38,
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
               color: AppColors.chatColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(11),
-              border: Border.all(color: AppColors.chatColor.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.chatColor.withValues(alpha: 0.3),
+              ),
             ),
-            child: const Icon(Icons.smart_toy_rounded, color: AppColors.chatColor, size: 20),
+            child: const Icon(
+              Icons.smart_toy_rounded,
+              color: AppColors.chatColor,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'AI Assistant',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                Text(
+                  t('ai_assistant'),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
                 Text(
                   t('powered_by_groq'),
-                  style: const TextStyle(fontSize: 11, color: AppColors.textHint),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textHint,
+                  ),
                 ),
               ],
             ),
@@ -177,9 +302,19 @@ class _ChatAppBar extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.refresh_rounded, size: 14, color: AppColors.textSecondary),
+                  const Icon(
+                    Icons.refresh_rounded,
+                    size: 14,
+                    color: AppColors.textSecondary,
+                  ),
                   const SizedBox(width: 4),
-                  Text(t('new_chat'), style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                  Text(
+                    t('new_chat'),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -224,7 +359,10 @@ class _SuggestedTopics extends StatelessWidget {
               ),
               child: Text(
                 topics[i],
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ),
           );
@@ -254,7 +392,8 @@ class _TypingIndicator extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: 16, height: 16,
+              width: 16,
+              height: 16,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 color: AppColors.accent.withValues(alpha: 0.7),
@@ -263,7 +402,11 @@ class _TypingIndicator extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               t('thinking'),
-              style: const TextStyle(fontSize: 13, color: AppColors.textHint, fontStyle: FontStyle.italic),
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textHint,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ],
         ),
@@ -311,7 +454,12 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _ChatInput extends StatelessWidget {
-  const _ChatInput({required this.controller, required this.onSend, required this.isLoading, required this.t});
+  const _ChatInput({
+    required this.controller,
+    required this.onSend,
+    required this.isLoading,
+    required this.t,
+  });
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool isLoading;
@@ -320,7 +468,12 @@ class _ChatInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, MediaQuery.of(context).padding.bottom + 8),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        8,
+        16,
+        MediaQuery.of(context).padding.bottom + 8,
+      ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         border: Border(top: BorderSide(color: Color(0x223A2E29))),
@@ -335,12 +488,18 @@ class _ChatInput extends StatelessWidget {
               ),
               child: TextField(
                 controller: controller,
-                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 14,
+                ),
                 decoration: InputDecoration(
-                  hintText: t('ask_anything'),
+                  hintText: t('chat_placeholder'),
                   hintStyle: const TextStyle(color: AppColors.textHint),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                 ),
                 onSubmitted: (_) => onSend(),
                 textInputAction: TextInputAction.send,
@@ -348,24 +507,37 @@ class _ChatInput extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          GestureDetector(
-            onTap: isLoading ? null : onSend,
-            child: Container(
-              width: 44, height: 44,
-              decoration: BoxDecoration(
-                color: isLoading ? const Color(0x223A2E29) : AppColors.accent,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: isLoading ? null : [
-                  BoxShadow(
-                    color: AppColors.accent.withValues(alpha: 0.4),
-                    blurRadius: 8, offset: const Offset(0, 3),
+          Tooltip(
+            message: t('send'),
+            child: Semantics(
+              button: true,
+              label: t('send'),
+              child: GestureDetector(
+                onTap: isLoading ? null : onSend,
+                child: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color:
+                        isLoading ? const Color(0x223A2E29) : AppColors.accent,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow:
+                        isLoading
+                            ? null
+                            : [
+                              BoxShadow(
+                                color: AppColors.accent.withValues(alpha: 0.4),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                   ),
-                ],
-              ),
-              child: Icon(
-                Icons.send_rounded,
-                color: isLoading ? const Color(0x443A2E29) : Colors.white,
-                size: 20,
+                  child: Icon(
+                    Icons.send_rounded,
+                    color: isLoading ? const Color(0x443A2E29) : Colors.white,
+                    size: 20,
+                  ),
+                ),
               ),
             ),
           ),
