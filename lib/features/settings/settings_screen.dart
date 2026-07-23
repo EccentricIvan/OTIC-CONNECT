@@ -30,8 +30,10 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     _ThemeTile(
                       currentMode: themeMode,
-                      onChanged: (mode) =>
-                          ref.read(themeModeProvider.notifier).set(mode),
+                      t: t,
+                      onChanged:
+                          (mode) =>
+                              ref.read(themeModeProvider.notifier).set(mode),
                     ),
                   ],
                 ),
@@ -39,19 +41,38 @@ class SettingsScreen extends ConsumerWidget {
                 _SettingsSection(
                   title: t('language'),
                   children: [
-                    ...AppLocale.values.map((l) {
+                    ...AppLocale.activeLocales.map((l) {
                       final isSelected = locale == l;
                       return Material(
                         color: Colors.transparent,
                         child: ListTile(
                           title: Text(l.label),
                           subtitle: Text(l.code),
-                          trailing: isSelected
-                              ? const Icon(Icons.check_circle, color: AppColors.primary, size: 22)
-                              : null,
+                          trailing:
+                              isSelected
+                                  ? const Icon(
+                                    Icons.check_circle,
+                                    color: AppColors.primary,
+                                    size: 22,
+                                  )
+                                  : null,
                           selected: isSelected,
-                          selectedTileColor: AppColors.primary.withValues(alpha: 0.08),
-                          onTap: () => ref.read(localeProvider.notifier).set(l),
+                          selectedTileColor: AppColors.primary.withValues(
+                            alpha: 0.08,
+                          ),
+                          onTap: () async {
+                            await ref.read(localeProvider.notifier).set(l);
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  ref
+                                      .read(offlineLanguageServiceProvider)
+                                      .t('language_saved'),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       );
                     }),
@@ -63,9 +84,8 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     SwitchListTile(
                       secondary: const Icon(Icons.cloud_sync),
-                      title: const Text('Auto-sync when online'),
-                      subtitle: const Text(
-                          'Sync your progress when connected'),
+                      title: Text(t('auto_sync_when_online')),
+                      subtitle: Text(t('sync_progress_connected')),
                       value: true,
                       onChanged: (v) {},
                     ),
@@ -73,8 +93,8 @@ class SettingsScreen extends ConsumerWidget {
                       color: Colors.transparent,
                       child: ListTile(
                         leading: const Icon(Icons.download),
-                        title: const Text('Download content for offline'),
-                        subtitle: const Text('Last synced: Today'),
+                        title: Text(t('download_content_offline')),
+                        subtitle: Text(t('last_synced_today')),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () {},
                       ),
@@ -83,8 +103,8 @@ class SettingsScreen extends ConsumerWidget {
                       color: Colors.transparent,
                       child: ListTile(
                         leading: const Icon(Icons.storage),
-                        title: const Text('Storage usage'),
-                        subtitle: const Text('45 MB used'),
+                        title: Text(t('storage_usage')),
+                        subtitle: Text(t('storage_usage_value')),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () {},
                       ),
@@ -97,17 +117,15 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     SwitchListTile(
                       secondary: const Icon(Icons.notifications),
-                      title: const Text('Push notifications'),
-                      subtitle: const Text(
-                          'Get updates on opportunities and community'),
+                      title: Text(t('push_notifications')),
+                      subtitle: Text(t('notification_updates_desc')),
                       value: true,
                       onChanged: (v) {},
                     ),
                     SwitchListTile(
                       secondary: const Icon(Icons.campaign),
-                      title: const Text('Community updates'),
-                      subtitle: const Text(
-                          'Posts and activity from your groups'),
+                      title: Text(t('community_updates')),
+                      subtitle: Text(t('community_updates_desc')),
                       value: true,
                       onChanged: (v) {},
                     ),
@@ -117,16 +135,16 @@ class SettingsScreen extends ConsumerWidget {
                 _SettingsSection(
                   title: t('about'),
                   children: [
-                    const ListTile(
-                      leading: Icon(Icons.info_outline),
-                      title: Text('Africa AI Connect'),
-                      subtitle: Text('Version 1.0.0'),
+                    ListTile(
+                      leading: const Icon(Icons.info_outline),
+                      title: const Text('Africa AI Connect'),
+                      subtitle: Text('${t('version')} 1.0.0'),
                     ),
                     Material(
                       color: Colors.transparent,
                       child: ListTile(
                         leading: const Icon(Icons.description_outlined),
-                        title: const Text('Terms of Service'),
+                        title: Text(t('terms_of_service')),
                         trailing: const Icon(Icons.open_in_new, size: 16),
                         onTap: () {},
                       ),
@@ -135,7 +153,7 @@ class SettingsScreen extends ConsumerWidget {
                       color: Colors.transparent,
                       child: ListTile(
                         leading: const Icon(Icons.shield_outlined),
-                        title: const Text('Privacy Policy'),
+                        title: Text(t('privacy_policy')),
                         trailing: const Icon(Icons.open_in_new, size: 16),
                         onTap: () {},
                       ),
@@ -153,8 +171,7 @@ class SettingsScreen extends ConsumerWidget {
 }
 
 class _SettingsSection extends StatelessWidget {
-  const _SettingsSection(
-      {required this.title, required this.children});
+  const _SettingsSection({required this.title, required this.children});
   final String title;
   final List<Widget> children;
 
@@ -175,17 +192,20 @@ class _SettingsSection extends StatelessWidget {
             ),
           ),
         ),
-        Card(
-          child: Column(children: children),
-        ),
+        Card(child: Column(children: children)),
       ],
     );
   }
 }
 
 class _ThemeTile extends StatelessWidget {
-  const _ThemeTile({required this.currentMode, required this.onChanged});
+  const _ThemeTile({
+    required this.currentMode,
+    required this.t,
+    required this.onChanged,
+  });
   final ThemeMode currentMode;
+  final String Function(String) t;
   final void Function(ThemeMode) onChanged;
 
   @override
@@ -195,15 +215,17 @@ class _ThemeTile extends StatelessWidget {
         currentMode == ThemeMode.dark
             ? Icons.dark_mode
             : currentMode == ThemeMode.light
-                ? Icons.light_mode
-                : Icons.brightness_auto,
+            ? Icons.light_mode
+            : Icons.brightness_auto,
       ),
-      title: const Text('Theme'),
-      subtitle: Text(currentMode == ThemeMode.dark
-          ? 'Dark'
-          : currentMode == ThemeMode.light
-              ? 'Light'
-              : 'System'),
+      title: Text(t('theme')),
+      subtitle: Text(
+        currentMode == ThemeMode.dark
+            ? t('dark')
+            : currentMode == ThemeMode.light
+            ? t('light')
+            : t('system'),
+      ),
       trailing: SegmentedButton<ThemeMode>(
         selected: {currentMode},
         onSelectionChanged: (s) => onChanged(s.first),
