@@ -93,25 +93,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
       );
       _isLoading = false;
     });
-    if (reply.usedOffline) {
-      _showOfflineNotice();
-    }
     _scrollToBottom();
-  }
-
-  void _showOfflineNotice() {
-    if (!mounted) return;
-
-    final text = ref.read(offlineLanguageServiceProvider).t('offline_notice');
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.clearSnackBars();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(text),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   void _clearChat() {
@@ -255,7 +237,7 @@ class _ChatAppBar extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  t('powered_by_groq'),
+                  t('ask_ai_assistant_desc'),
                   style: const TextStyle(
                     fontSize: 11,
                     color: AppColors.textHint,

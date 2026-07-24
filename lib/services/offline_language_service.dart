@@ -56,6 +56,21 @@ class _ScoredContentEntry {
   final double score;
 }
 
+@immutable
+class OfflineChatResult {
+  const OfflineChatResult({
+    required this.answer,
+    required this.suggestedQuestions,
+    this.matchedEntryId,
+    this.matchedCategory,
+  });
+
+  final String answer;
+  final List<String> suggestedQuestions;
+  final String? matchedEntryId;
+  final String? matchedCategory;
+}
+
 class OfflineLanguageService extends ChangeNotifier {
   OfflineLanguageService._();
 
@@ -148,7 +163,9 @@ class OfflineLanguageService extends ChangeNotifier {
 
     final messageTerms = _searchTerms(normalizedMessage);
     final contextTerms = _searchTerms(normalizedContext);
-    final isFollowUp = _isFollowUpMessage(normalizedMessage);
+    final isFollowUp = isFollowUpMessage(normalizedMessage);
+    final contextWeight =
+        isFollowUp && !_hasTopicHint(messageTerms) ? 0.85 : 0.35;
     final scoredEntries = <_ScoredContentEntry>[];
 
     for (final entry in _contentEntries) {
@@ -160,7 +177,7 @@ class OfflineLanguageService extends ChangeNotifier {
           normalizedContext.isEmpty
               ? 0.0
               : _scoreContentEntry(entry, normalizedContext, contextTerms);
-      final score = messageScore + (contextScore * (isFollowUp ? 0.85 : 0.35));
+      final score = messageScore + (contextScore * contextWeight);
       final minimumScore = isFollowUp ? 8.0 : _minimumSearchScore;
 
       if (score >= minimumScore && entry.answer.trim().isNotEmpty) {
@@ -184,17 +201,67 @@ class OfflineLanguageService extends ChangeNotifier {
     String userMessage, {
     Iterable<String> contextMessages = const [],
   }) {
+    return getOfflineChatResult(
+      userMessage,
+      contextMessages: contextMessages,
+    ).answer;
+  }
+
+  OfflineChatResult getOfflineChatResult(
+    String userMessage, {
+    Iterable<String> contextMessages = const [],
+    String? previousEntryId,
+    String? previousCategory,
+  }) {
     final matches = searchContent(
       userMessage,
       contextMessages: contextMessages,
-      limit: 1,
+      limit: 6,
     );
-    if (matches.isNotEmpty) {
-      return matches.first.answer;
+    final isFollowUp = isFollowUpMessage(userMessage);
+    final primary = _selectPrimaryEntry(
+      matches,
+      isFollowUp: isFollowUp,
+      previousEntryId: previousEntryId,
+      previousCategory: previousCategory,
+    );
+
+    if (primary == null) {
+      final answer =
+          _firstChatResponse(_chatPack, 'general_help') ??
+          _helpfulFallbackAnswer();
+      return OfflineChatResult(
+        answer: answer,
+        suggestedQuestions: getOfflineSuggestedQuestions(
+          userMessage,
+          contextMessages: contextMessages,
+        ),
+      );
     }
 
-    return _firstChatResponse(_chatPack, 'general_help') ??
-        getFallbackResponse();
+    final related = _relatedEntries(
+      primary,
+      matches,
+      excludedIds: {
+        primary.id,
+        if (isFollowUp && previousEntryId != null) previousEntryId,
+      },
+      limit: 2,
+    );
+    return OfflineChatResult(
+      answer: _composeOfflineAnswer(
+        primary,
+        related,
+        isFollowUp: isFollowUp,
+        isRepeatedTopic: primary.id == previousEntryId,
+      ),
+      suggestedQuestions: getOfflineSuggestedQuestions(
+        userMessage,
+        contextMessages: contextMessages,
+      ),
+      matchedEntryId: primary.id,
+      matchedCategory: primary.category,
+    );
   }
 
   List<String> getOfflineSuggestedQuestions(
@@ -318,6 +385,301 @@ class OfflineLanguageService extends ChangeNotifier {
 
     final first = responses.first.trim();
     return first.isEmpty ? null : first;
+  }
+
+  ContentEntry? _selectPrimaryEntry(
+    List<ContentEntry> matches, {
+    required bool isFollowUp,
+    String? previousEntryId,
+    String? previousCategory,
+  }) {
+    if (matches.isEmpty) return null;
+
+    if (!isFollowUp) return matches.first;
+
+    if (previousCategory != null && previousCategory.trim().isNotEmpty) {
+      final previousCategoryTerms = _searchTerms(previousCategory);
+      for (final entry in matches) {
+        if (entry.id == previousEntryId) continue;
+        if (_hasTermOverlap(
+          previousCategoryTerms,
+          _searchTerms(entry.category),
+        )) {
+          return entry;
+        }
+      }
+    }
+
+    for (final entry in matches) {
+      if (entry.id != previousEntryId) return entry;
+    }
+
+    return matches.first;
+  }
+
+  List<ContentEntry> _relatedEntries(
+    ContentEntry primary,
+    List<ContentEntry> matches, {
+    required Set<String?> excludedIds,
+    required int limit,
+  }) {
+    final related = <ContentEntry>[];
+    final primaryTerms = _searchTerms(primary.category);
+
+    void addEntry(ContentEntry entry) {
+      if (related.length >= limit || excludedIds.contains(entry.id)) return;
+
+      final alreadyAdded = related.any((item) => item.id == entry.id);
+      if (!alreadyAdded) related.add(entry);
+    }
+
+    for (final entry in matches) {
+      if (_hasTermOverlap(primaryTerms, _searchTerms(entry.category))) {
+        addEntry(entry);
+      }
+    }
+
+    for (final entry in _contentEntries) {
+      if (related.length >= limit) break;
+      if (_hasTermOverlap(primaryTerms, _searchTerms(entry.category))) {
+        addEntry(entry);
+      }
+    }
+
+    return List.unmodifiable(related);
+  }
+
+  String _composeOfflineAnswer(
+    ContentEntry primary,
+    List<ContentEntry> related, {
+    required bool isFollowUp,
+    required bool isRepeatedTopic,
+  }) {
+    final parts = <String>[];
+    final bridge = _followUpBridge();
+
+    if (isFollowUp && bridge.isNotEmpty) {
+      parts.add(bridge);
+    }
+
+    if (!isRepeatedTopic || related.isEmpty) {
+      parts.add(primary.answer);
+    }
+
+    final guidance = _categoryGuidance(primary.category);
+    if (guidance.isNotEmpty) {
+      parts.add(guidance);
+    }
+
+    if (related.isNotEmpty) {
+      parts.add(
+        '${_relatedLeadIn()} ${related.map((entry) => entry.answer).join(' ')}',
+      );
+    }
+
+    return parts.where((part) => part.trim().isNotEmpty).join('\n\n');
+  }
+
+  String _followUpBridge() {
+    switch (_currentLanguageCode) {
+      case 'lg':
+        return 'Ka tweyongere ku nsonga eyo.';
+      case 'sw':
+        return 'Tuendelee na mada hiyo.';
+      default:
+        return 'Building on that topic.';
+    }
+  }
+
+  String _relatedLeadIn() {
+    switch (_currentLanguageCode) {
+      case 'lg':
+        return 'Ekirala ekikwatagana nakyo:';
+      case 'sw':
+        return 'Jambo lingine linalohusiana:';
+      default:
+        return 'A related point:';
+    }
+  }
+
+  String _helpfulFallbackAnswer() {
+    switch (_currentLanguageCode) {
+      case 'lg':
+        return 'Nsobola okukuyamba ku busubuzi, bulimi, nsimbi, bulamu, mirimu, obukugu bwa ssimu, n\'ekibiina. Buuza ekibuuzo kimu mu bigambo ebyangu, nja kukuyamba mu mitendera.';
+      case 'sw':
+        return 'Ninaweza kusaidia kuhusu biashara, kilimo, pesa, afya, kazi, ujuzi wa simu, na jamii. Uliza swali moja kwa maneno rahisi, nami nitakusaidia kwa hatua.';
+      default:
+        return 'I can help with business, farming, money, health, jobs, digital skills, online selling, and community questions. Ask one clear question, and I will help step by step.';
+    }
+  }
+
+  String _categoryGuidance(String category) {
+    final normalized = _normalizeForSearch(category);
+
+    if (_categoryContains(normalized, const [
+      'business',
+      'obusubuzi',
+      'biashara',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Kino kikole mu ngeri eyangu: londa bakasitoma b\'oyagala okuweereza, manya ensaasaanya yo, teekawo bbeeyi ekuwa amagoba, era wandiika buli kyotunda.';
+        case 'sw':
+          return 'Ifanye kwa vitendo: tambua wateja unaowalenga, jua gharama zako, weka bei yenye faida, na andika kila unachouza.';
+        default:
+          return 'Make it practical: choose the customers you want to serve, know your costs, set a price that leaves profit, and record every sale.';
+      }
+    }
+
+    if (_categoryContains(normalized, const [
+      'financial',
+      'savings',
+      'money',
+      'ensimbi',
+      'fedha',
+      'akiba',
+      'mobile',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Tandika n\'akatono k\'osobola okukola buli kiseera. Yawula ssente z\'awaka ku z\'omulimu, era weekebereze ensaasaanya buli wiiki.';
+        case 'sw':
+          return 'Anza na kiasi kidogo unachoweza kurudia mara kwa mara. Tenganisha pesa ya nyumbani na ya kazi, kisha kagua matumizi kila wiki.';
+        default:
+          return 'Start with a small habit you can repeat. Separate home money from work money, then review spending every week.';
+      }
+    }
+
+    if (_categoryContains(normalized, const [
+      'farming',
+      'agriculture',
+      'obulimi',
+      'kilimo',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Mu bulimi, tandika n\'ekitundu ekitono, goberera sizoni n\'amazzi g\'olina, era buuza omukugu w\'ebyobulimi nga tonnasaasaanya nnyo.';
+        case 'sw':
+          return 'Katika kilimo, anza na eneo dogo, fuata msimu na maji uliyonayo, na uliza afisa ugani kabla ya kutumia pesa nyingi.';
+        default:
+          return 'For farming, start with a small area, match the season and water you have, and ask an extension worker before spending heavily.';
+      }
+    }
+
+    if (_categoryContains(normalized, const [
+      'health',
+      'nutrition',
+      'obulamu',
+      'afya',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Ku nsonga z\'obulamu, kola ku byangu ebikuuma: amazzi amayonjo, emmere ey\'enjawulo, okuwummula, n\'okufuna omusawo mangu obubonero bwe bweyongera.';
+        case 'sw':
+          return 'Kwa afya, shikilia mambo ya msingi: maji safi, chakula bora, kupumzika, na kutafuta mhudumu wa afya mapema dalili zikizidi.';
+        default:
+          return 'For health, focus on the basics: clean water, balanced meals, rest, and early care if symptoms worsen.';
+      }
+    }
+
+    if (_categoryContains(normalized, const [
+      'job',
+      'career',
+      'cv',
+      'emirimu',
+      'kazi',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Ku mirimu, tegeka CV ennyimpi, laga obukugu bw\'olina, saba emirimu egikukwatako, era oddemu okubuuza mu ngeri ey\'ekitiibwa.';
+        case 'sw':
+          return 'Kwa kazi, andaa CV fupi, onyesha ujuzi ulionao, omba kazi zinazokufaa, na fuatilia kwa heshima.';
+        default:
+          return 'For jobs, prepare a short CV, show the skills you already have, apply for suitable roles, and follow up politely.';
+      }
+    }
+
+    if (_categoryContains(normalized, const [
+      'digital',
+      'phone',
+      'internet',
+      'obukugu',
+      'ssimu',
+      'simu',
+      'intaneti',
+      'yintaneeti',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Ku bukugu bwa ssimu, yiga ekintu kimu buli lunaku: okunoonyereza, obukuumi bwa PIN, okukuba ebifaananyi, oba okuwandiika ebiwandiiko ebyangu.';
+        case 'sw':
+          return 'Kwa ujuzi wa simu, jifunze jambo moja kila siku: kutafuta taarifa, kulinda PIN, kupiga picha wazi, au kuweka rekodi rahisi.';
+        default:
+          return 'For digital skills, practise one small thing each day: searching, PIN safety, clear photos, or simple records.';
+      }
+    }
+
+    if (_categoryContains(normalized, const [
+      'online',
+      'selling',
+      'marketplace',
+      'okutunda',
+      'kuuza',
+      'mtandaoni',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Nga otunda ku mutimbagano, ebifaananyi bitegeerekeke, bbeeyi ebeere mu lwatu, era kakasa okusasulwa nga tonnatwala kintu.';
+        case 'sw':
+          return 'Unapouza mtandaoni, tumia picha zilizo wazi, bei iwe wazi, na thibitisha malipo kabla ya kupeleka bidhaa.';
+        default:
+          return 'When selling online, use clear photos, make the price clear, and confirm payment before delivery.';
+      }
+    }
+
+    if (_categoryContains(normalized, const [
+      'community',
+      'group',
+      'leadership',
+      'ekibiina',
+      'jamii',
+      'kikundi',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Mu kibiina, amateeka amalambulukufu, ebiwandiiko eby\'amazima, n\'okusalawo mu lwatu biyamba abantu okwesigagana.';
+        case 'sw':
+          return 'Katika kikundi, sheria zilizo wazi, rekodi za kweli, na maamuzi ya wazi husaidia watu kuaminiana.';
+        default:
+          return 'In a group, clear rules, honest records, and open decisions help people trust each other.';
+      }
+    }
+
+    if (_categoryContains(normalized, const [
+      'wellbeing',
+      'safety',
+      'stress',
+      'ustawi',
+      'usalama',
+      'msongo',
+      'obukuumi',
+      'situleesi',
+    ])) {
+      switch (_currentLanguageCode) {
+        case 'lg':
+          return 'Bw\'oba owulira situleesi oba obutali bukuumi, sooka ofune ekifo ekikuuma, yogera n\'omuntu gwe weesiga, era tuukirira obuyambi obwesigika.';
+        case 'sw':
+          return 'Ukihisi msongo au hauko salama, tafuta sehemu salama kwanza, zungumza na mtu unayemwamini, na wasiliana na msaada unaoaminika.';
+        default:
+          return 'If you feel stressed or unsafe, first move toward safety, talk to someone you trust, and contact trusted support.';
+      }
+    }
+
+    return '';
+  }
+
+  bool _categoryContains(String normalizedCategory, List<String> terms) {
+    return terms.any(normalizedCategory.contains);
   }
 
   String _supportedOrDefault(String code) {
@@ -491,6 +853,15 @@ class OfflineLanguageService extends ChangeNotifier {
     return false;
   }
 
+  bool _hasTopicHint(Set<String> terms) {
+    if (terms.isEmpty) return false;
+
+    for (final term in terms) {
+      if (_topicHints.contains(term)) return true;
+    }
+    return false;
+  }
+
   Set<String> _searchTerms(String value) {
     final normalized = _normalizeForSearch(value);
     if (normalized.isEmpty) return const {};
@@ -501,11 +872,16 @@ class OfflineLanguageService extends ChangeNotifier {
         .toSet();
   }
 
-  bool _isFollowUpMessage(String normalizedMessage) {
+  bool isFollowUpMessage(String message) {
+    final normalizedMessage = _normalizeForSearch(message);
     if (normalizedMessage.isEmpty) return true;
 
     final terms = _searchTerms(normalizedMessage);
-    if (terms.length <= 2 && normalizedMessage.length <= 32) return true;
+    if (terms.length <= 2 &&
+        normalizedMessage.length <= 32 &&
+        !_hasTopicHint(terms)) {
+      return true;
+    }
 
     return _followUpPhrases.any(normalizedMessage.contains);
   }
@@ -540,6 +916,87 @@ class OfflineLanguageService extends ChangeNotifier {
     'nipe mifano',
     'vipi kuhusu',
     'ninawezaje kuanza',
+  };
+
+  static const _topicHints = {
+    'business',
+    'entrepreneur',
+    'customer',
+    'profit',
+    'sales',
+    'market',
+    'money',
+    'saving',
+    'savings',
+    'budget',
+    'mobile',
+    'sacco',
+    'farming',
+    'agriculture',
+    'crop',
+    'crops',
+    'soil',
+    'pests',
+    'health',
+    'medical',
+    'pregnancy',
+    'nutrition',
+    'job',
+    'jobs',
+    'career',
+    'cv',
+    'digital',
+    'phone',
+    'internet',
+    'online',
+    'community',
+    'group',
+    'safety',
+    'stress',
+    'biashara',
+    'mjasiriamali',
+    'faida',
+    'fedha',
+    'pesa',
+    'akiba',
+    'bajeti',
+    'kilimo',
+    'mazao',
+    'udongo',
+    'wadudu',
+    'afya',
+    'daktari',
+    'ujauzito',
+    'kazi',
+    'ujuzi',
+    'simu',
+    'intaneti',
+    'mtandaoni',
+    'jamii',
+    'kikundi',
+    'usalama',
+    'msongo',
+    'obusubuzi',
+    'bakasitoma',
+    'magoba',
+    'ensimbi',
+    'ssente',
+    'okutereka',
+    'obulimi',
+    'ebirime',
+    'ettaka',
+    'obuwuka',
+    'obulamu',
+    'omusawo',
+    'olubuto',
+    'emirimu',
+    'obukugu',
+    'ssimu',
+    'yintaneeti',
+    'mutimbagano',
+    'ekibiina',
+    'obukuumi',
+    'situleesi',
   };
 
   static const _stopWords = {

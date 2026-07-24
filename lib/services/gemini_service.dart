@@ -80,6 +80,9 @@ Guidelines:
 
   final List<Map<String, String>> _history = [];
   String? _historyLanguageCode;
+  String? _lastMatchedEntryId;
+  String? _lastMatchedCategory;
+  String? _currentTopic;
 
   Future<ChatReply> sendMessage(
     String message,
@@ -102,11 +105,11 @@ Guidelines:
     _history.add({'role': 'user', 'content': message});
     _trimHistory();
 
-    if (!ApiConfig.hasGroqKey || await _isOffline()) {
+    if (!ApiConfig.hasOnlineAiConfig || await _isOffline()) {
       return _offlineReplyFor(message);
     }
 
-    final contextMessages = _recentContextMessages(excludeLast: true);
+    final contextMessages = _topicContextMessages(excludeLast: true);
     final referenceContext = languageService.buildGroqContext(
       message,
       contextMessages: contextMessages,
@@ -130,6 +133,73 @@ Guidelines:
       ..._history,
     ];
 
+    if (ApiConfig.hasGroqKey) {
+      final reply = await _sendDirectGroqReply(
+        messages,
+        languageService,
+        message,
+        contextMessages,
+      );
+      if (reply != null) return reply;
+    }
+
+    if (ApiConfig.hasChatBackend) {
+      final reply = await _sendBackendReply(
+        message,
+        effectiveLocale,
+        languageService,
+        contextMessages,
+        referenceContext,
+      );
+      if (reply != null) return reply;
+    }
+
+    return _offlineReplyFor(message);
+  }
+
+  void clearHistory() {
+    _history.clear();
+    _lastMatchedEntryId = null;
+    _lastMatchedCategory = null;
+    _currentTopic = null;
+  }
+
+  Future<bool> _isOffline() async {
+    try {
+      final results = await Connectivity().checkConnectivity();
+      if (results.isEmpty) return false;
+      return results.every((result) => result == ConnectivityResult.none);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  ChatReply _offlineReplyFor(String message) {
+    final languageService = OfflineLanguageService.instance;
+    final contextMessages = _topicContextMessages(excludeLast: true);
+    final offlineResult = languageService.getOfflineChatResult(
+      message,
+      contextMessages: contextMessages,
+      previousEntryId: _lastMatchedEntryId,
+      previousCategory: _lastMatchedCategory,
+    );
+    _updateTopicFromOfflineResult(offlineResult);
+
+    _history.add({'role': 'assistant', 'content': offlineResult.answer});
+    _trimHistory();
+    return ChatReply(
+      answer: offlineResult.answer,
+      suggestedQuestions: offlineResult.suggestedQuestions,
+      usedOffline: true,
+    );
+  }
+
+  Future<ChatReply?> _sendDirectGroqReply(
+    List<Map<String, String>> messages,
+    OfflineLanguageService languageService,
+    String message,
+    Iterable<String> contextMessages,
+  ) async {
     try {
       final response = await http
           .post(
@@ -147,65 +217,150 @@ Guidelines:
           )
           .timeout(const Duration(seconds: 30));
 
-      if (response.statusCode != 200) {
-        return _offlineReplyFor(message);
-      }
+      if (response.statusCode != 200) return null;
 
       final data = jsonDecode(response.body);
       final rawText =
           data['choices']?[0]?['message']?['content']?.toString().trim() ?? '';
 
-      if (rawText.isEmpty) {
-        return _offlineReplyFor(message);
-      }
+      if (rawText.isEmpty) return null;
 
-      final reply = _parseGroqReply(
+      return _completeOnlineReply(
         rawText,
         languageService,
         message,
         contextMessages,
       );
-      _history.add({'role': 'assistant', 'content': reply.answer});
-      _trimHistory();
-      return reply;
     } catch (_) {
-      return _offlineReplyFor(message);
+      return null;
     }
   }
 
-  void clearHistory() {
-    _history.clear();
-  }
+  Future<ChatReply?> _sendBackendReply(
+    String message,
+    AppLocale effectiveLocale,
+    OfflineLanguageService languageService,
+    Iterable<String> contextMessages,
+    String referenceContext,
+  ) async {
+    final endpoint = ApiConfig.chatBackendUri;
+    if (endpoint == null) return null;
 
-  Future<bool> _isOffline() async {
     try {
-      final results = await Connectivity().checkConnectivity();
-      if (results.isEmpty) return false;
-      return results.every((result) => result == ConnectivityResult.none);
+      final response = await http
+          .post(
+            endpoint,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'message': _buildBackendMessage(
+                message,
+                contextMessages,
+                referenceContext,
+                effectiveLocale,
+              ),
+              'language': _backendLanguageFor(effectiveLocale),
+            }),
+          )
+          .timeout(const Duration(seconds: 35));
+
+      if (response.statusCode != 200) return null;
+
+      final data = jsonDecode(response.body);
+      if (data is! Map<String, dynamic>) return null;
+
+      final rawText = _firstNonEmptyText([
+        data['answer'],
+        data['reply'],
+        data['response'],
+      ]);
+
+      if (rawText.isEmpty) return null;
+
+      return _completeOnlineReply(
+        rawText,
+        languageService,
+        message,
+        contextMessages,
+      );
     } catch (_) {
-      return false;
+      return null;
     }
   }
 
-  ChatReply _offlineReplyFor(String message) {
-    final languageService = OfflineLanguageService.instance;
-    final contextMessages = _recentContextMessages(excludeLast: true);
-    final answer = languageService.getOfflineChatReply(
+  ChatReply _completeOnlineReply(
+    String rawText,
+    OfflineLanguageService languageService,
+    String message,
+    Iterable<String> contextMessages,
+  ) {
+    final reply = _parseGroqReply(
+      rawText,
+      languageService,
       message,
-      contextMessages: contextMessages,
+      contextMessages,
     );
-    final suggestedQuestions = languageService.getOfflineSuggestedQuestions(
-      message,
-      contextMessages: contextMessages,
-    );
-
-    _history.add({'role': 'assistant', 'content': answer});
+    _updateTopicFromSearch(languageService, message, contextMessages);
+    _history.add({'role': 'assistant', 'content': reply.answer});
     _trimHistory();
-    return ChatReply(
-      answer: answer,
-      suggestedQuestions: suggestedQuestions,
-      usedOffline: true,
-    );
+    return reply;
+  }
+
+  String _buildBackendMessage(
+    String message,
+    Iterable<String> contextMessages,
+    String referenceContext,
+    AppLocale effectiveLocale,
+  ) {
+    final buffer =
+        StringBuffer()
+          ..writeln('Selected language code: ${effectiveLocale.name}.')
+          ..writeln(
+            'Answer naturally and helpfully in the selected language. '
+            'Use the recent conversation to understand follow-up questions.',
+          );
+
+    if (contextMessages.isNotEmpty) {
+      buffer
+        ..writeln()
+        ..writeln('Recent conversation context:');
+      for (final context in contextMessages) {
+        buffer.writeln('- $context');
+      }
+    }
+
+    if (referenceContext.trim().isNotEmpty) {
+      buffer
+        ..writeln()
+        ..writeln(referenceContext);
+    }
+
+    buffer
+      ..writeln()
+      ..writeln('Current user message:')
+      ..writeln(message)
+      ..writeln()
+      ..writeln('Suggest 2 or 3 useful follow-up questions if appropriate.');
+
+    return buffer.toString().trim();
+  }
+
+  String _backendLanguageFor(AppLocale locale) {
+    switch (locale) {
+      case AppLocale.lg:
+        return 'luganda';
+      case AppLocale.sw:
+        return 'swahili';
+      case AppLocale.en:
+        return 'english';
+    }
+  }
+
+  String _firstNonEmptyText(Iterable<Object?> values) {
+    for (final value in values) {
+      final text = value?.toString().trim() ?? '';
+      if (text.isNotEmpty) return text;
+    }
+    return '';
   }
 
   ChatReply _parseGroqReply(
@@ -314,6 +469,44 @@ Guidelines:
     return List.unmodifiable(merged.take(3));
   }
 
+  void _updateTopicFromOfflineResult(OfflineChatResult result) {
+    if (result.matchedEntryId == null || result.matchedCategory == null) {
+      return;
+    }
+
+    _lastMatchedEntryId = result.matchedEntryId;
+    _lastMatchedCategory = result.matchedCategory;
+    _currentTopic = result.matchedCategory;
+  }
+
+  void _updateTopicFromSearch(
+    OfflineLanguageService languageService,
+    String message,
+    Iterable<String> contextMessages,
+  ) {
+    final matches = languageService.searchContent(
+      message,
+      contextMessages: contextMessages,
+      limit: 1,
+    );
+    if (matches.isEmpty) return;
+
+    final entry = matches.first;
+    _lastMatchedEntryId = entry.id;
+    _lastMatchedCategory = entry.category;
+    _currentTopic = '${entry.category}: ${entry.question}';
+  }
+
+  List<String> _topicContextMessages({required bool excludeLast}) {
+    final messages = <String>[
+      if (_currentTopic != null && _currentTopic!.trim().isNotEmpty)
+        'current topic: $_currentTopic',
+      ..._recentContextMessages(excludeLast: excludeLast),
+    ];
+
+    return List.unmodifiable(messages);
+  }
+
   List<String> _recentContextMessages({required bool excludeLast}) {
     final end =
         excludeLast && _history.isNotEmpty
@@ -328,11 +521,17 @@ Guidelines:
       final role = item['role'] ?? 'message';
       final content = item['content'] ?? '';
       if (content.trim().isNotEmpty) {
-        messages.add('$role: $content');
+        messages.add('$role: ${_summarizeForContext(content)}');
       }
     }
 
     return List.unmodifiable(messages);
+  }
+
+  String _summarizeForContext(String content) {
+    final normalized = content.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (normalized.length <= 220) return normalized;
+    return '${normalized.substring(0, 220)}...';
   }
 
   void _trimHistory() {
