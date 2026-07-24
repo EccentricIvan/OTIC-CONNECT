@@ -10,16 +10,54 @@ class LearnHubScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(localeProvider);
-    String t(String key) => S.tr(context, ref, key);
+    final languageService = ref.watch(offlineLanguageServiceProvider);
+    String t(String key) => languageService.t(key);
 
     final categories = [
-      _Cat(t('cat_digital'), t('cat_digital_desc'), Icons.computer, AppColors.skillsColor, 8, progress: 0.4),
-      _Cat(t('cat_finance_lit'), t('cat_finance_lit_desc'), Icons.account_balance, AppColors.financeColor, 6, progress: 0.15),
-      _Cat(t('cat_entrepreneur'), t('cat_entrepreneur_desc'), Icons.rocket_launch, AppColors.earnColor, 10),
-      _Cat(t('cat_agri'), t('cat_agri_desc'), Icons.agriculture, AppColors.agricultureColor, 7),
-      _Cat(t('cat_health_nut'), t('cat_health_nut_desc'), Icons.favorite, AppColors.thriveColor, 5),
-      _Cat(t('cat_leadership'), t('cat_leadership_desc'), Icons.emoji_events, AppColors.growColor, 4),
+      _Cat(
+        t('cat_digital'),
+        t('cat_digital_desc'),
+        Icons.computer,
+        AppColors.skillsColor,
+        8,
+        progress: 0.4,
+      ),
+      _Cat(
+        t('cat_finance_lit'),
+        t('cat_finance_lit_desc'),
+        Icons.account_balance,
+        AppColors.financeColor,
+        6,
+        progress: 0.15,
+      ),
+      _Cat(
+        t('cat_entrepreneur'),
+        t('cat_entrepreneur_desc'),
+        Icons.rocket_launch,
+        AppColors.earnColor,
+        10,
+      ),
+      _Cat(
+        t('cat_agri'),
+        t('cat_agri_desc'),
+        Icons.agriculture,
+        AppColors.agricultureColor,
+        7,
+      ),
+      _Cat(
+        t('cat_health_nut'),
+        t('cat_health_nut_desc'),
+        Icons.favorite,
+        AppColors.thriveColor,
+        5,
+      ),
+      _Cat(
+        t('cat_leadership'),
+        t('cat_leadership_desc'),
+        Icons.emoji_events,
+        AppColors.growColor,
+        4,
+      ),
     ];
 
     final featured = categories.take(3).toList();
@@ -41,25 +79,33 @@ class LearnHubScreen extends ConsumerWidget {
                     const SizedBox(height: 24),
                     _SectionLabel(t('featured_courses')),
                     const SizedBox(height: 12),
-                    _FeaturedCourses(courses: featured),
+                    _FeaturedCourses(courses: featured, t: t),
                     const SizedBox(height: 24),
                     _SectionLabel(t('browse_topics')),
                     const SizedBox(height: 4),
                     Text(
                       t('practical_skills_sub'),
-                      style: const TextStyle(fontSize: 13, color: AppColors.textHint),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textHint,
+                      ),
                     ),
                     const SizedBox(height: 14),
-                    ...categories.map((c) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: _CategoryCard(cat: c, t: t),
-                    )),
+                    ...categories.map(
+                      (c) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: _CategoryCard(cat: c, t: t),
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     _SectionLabel(t('ai_learning_assistant')),
                     const SizedBox(height: 4),
                     Text(
                       t('ai_learning_desc'),
-                      style: const TextStyle(fontSize: 13, color: AppColors.textHint),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textHint,
+                      ),
                     ),
                     const SizedBox(height: 14),
                     _AiCard(t: t, onTap: () => context.go('/ai-chat')),
@@ -86,7 +132,8 @@ class _LearnAppBar extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40, height: 40,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: const Color(0x183A2E29),
               borderRadius: BorderRadius.circular(12),
@@ -94,7 +141,11 @@ class _LearnAppBar extends StatelessWidget {
             ),
             child: IconButton(
               padding: EdgeInsets.zero,
-              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary, size: 20),
+              icon: const Icon(
+                Icons.arrow_back_rounded,
+                color: AppColors.textPrimary,
+                size: 20,
+              ),
               onPressed: () => context.go('/'),
             ),
           ),
@@ -105,22 +156,34 @@ class _LearnAppBar extends StatelessWidget {
               children: [
                 Text(
                   t('learn'),
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
                 Text(
                   t('learn_desc'),
-                  style: const TextStyle(fontSize: 12, color: AppColors.textHint),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textHint,
+                  ),
                 ),
               ],
             ),
           ),
           Container(
-            width: 40, height: 40,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: AppColors.learnColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.menu_book_rounded, color: AppColors.learnColor, size: 22),
+            child: const Icon(
+              Icons.menu_book_rounded,
+              color: AppColors.learnColor,
+              size: 22,
+            ),
           ),
         ],
       ),
@@ -157,21 +220,35 @@ class _LearnHero extends StatelessWidget {
                 Text(
                   t('knowledge_is_power'),
                   style: const TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary, height: 1.2,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                    height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   t('knowledge_is_power_desc'),
-                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, height: 1.5),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                    height: 1.5,
+                  ),
                 ),
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    _StatChip(Icons.menu_book_rounded, '6 ${t("courses")}', AppColors.learnColor),
+                    _StatChip(
+                      Icons.menu_book_rounded,
+                      '6 ${t("courses")}',
+                      AppColors.learnColor,
+                    ),
                     const SizedBox(width: 8),
-                    _StatChip(Icons.star_rounded, '450 ${t("points")}', AppColors.gold),
+                    _StatChip(
+                      Icons.star_rounded,
+                      '450 ${t("points")}',
+                      AppColors.gold,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 14),
@@ -179,23 +256,31 @@ class _LearnHero extends StatelessWidget {
                   children: [
                     Text(
                       t('next_milestone'),
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textHint),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textHint,
+                      ),
                     ),
                     const Spacer(),
                     const Text(
                       '450 / 500',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.gold),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.gold,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 5),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(3),
-                  child: LinearProgressIndicator(
+                  child: const LinearProgressIndicator(
                     value: 0.9,
                     minHeight: 5,
-                    backgroundColor: const Color(0x1A3A2E29),
-                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.gold),
+                    backgroundColor: Color(0x1A3A2E29),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.gold),
                   ),
                 ),
               ],
@@ -203,13 +288,20 @@ class _LearnHero extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           Container(
-            width: 60, height: 60,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               color: AppColors.learnColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.learnColor.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.learnColor.withValues(alpha: 0.3),
+              ),
             ),
-            child: const Icon(Icons.menu_book_rounded, color: AppColors.learnColor, size: 30),
+            child: const Icon(
+              Icons.menu_book_rounded,
+              color: AppColors.learnColor,
+              size: 30,
+            ),
           ),
         ],
       ),
@@ -236,7 +328,14 @@ class _StatChip extends StatelessWidget {
         children: [
           Icon(icon, size: 13, color: color),
           const SizedBox(width: 4),
-          Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -272,7 +371,8 @@ class _CategoryCard extends StatelessWidget {
                     child: Row(
                       children: [
                         Container(
-                          width: 48, height: 48,
+                          width: 48,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: cat.color.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(14),
@@ -290,7 +390,9 @@ class _CategoryCard extends StatelessWidget {
                                     child: Text(
                                       cat.title,
                                       style: const TextStyle(
-                                        fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -298,14 +400,21 @@ class _CategoryCard extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 9,
+                                      vertical: 3,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: cat.color,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
                                       '${cat.count} ${t("lessons")}',
-                                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -313,7 +422,10 @@ class _CategoryCard extends StatelessWidget {
                               const SizedBox(height: 3),
                               Text(
                                 cat.subtitle,
-                                style: const TextStyle(fontSize: 12, color: AppColors.textHint),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textHint,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -325,7 +437,9 @@ class _CategoryCard extends StatelessWidget {
                                     value: cat.progress,
                                     minHeight: 3,
                                     backgroundColor: const Color(0x1A3A2E29),
-                                    valueColor: AlwaysStoppedAnimation<Color>(cat.color),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      cat.color,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -333,7 +447,11 @@ class _CategoryCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Icon(Icons.chevron_right_rounded, color: Color(0x553A2E29), size: 20),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          color: Color(0x553A2E29),
+                          size: 20,
+                        ),
                       ],
                     ),
                   ),
@@ -348,8 +466,9 @@ class _CategoryCard extends StatelessWidget {
 }
 
 class _FeaturedCourses extends StatelessWidget {
-  const _FeaturedCourses({required this.courses});
+  const _FeaturedCourses({required this.courses, required this.t});
   final List<_Cat> courses;
+  final String Function(String) t;
 
   @override
   Widget build(BuildContext context) {
@@ -377,7 +496,8 @@ class _FeaturedCourses extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                     color: c.color.withValues(alpha: 0.3),
-                    blurRadius: 12, offset: const Offset(0, 6),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
@@ -385,7 +505,8 @@ class _FeaturedCourses extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 36, height: 36,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.22),
                       borderRadius: BorderRadius.circular(11),
@@ -396,14 +517,16 @@ class _FeaturedCourses extends StatelessWidget {
                   Text(
                     c.title,
                     style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '${c.count} lessons',
+                    '${c.count} ${t("lessons")}',
                     style: const TextStyle(fontSize: 11, color: Colors.white70),
                   ),
                 ],
@@ -437,23 +560,31 @@ class _AiCard extends StatelessWidget {
             ],
           ),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.chatColor.withValues(alpha: 0.25)),
+          border: Border.all(
+            color: AppColors.chatColor.withValues(alpha: 0.25),
+          ),
         ),
         child: Row(
           children: [
             Container(
-              width: 52, height: 52,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
                 color: AppColors.chatColor,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.chatColor.withValues(alpha: 0.4),
-                    blurRadius: 10, offset: const Offset(0, 4),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
-              child: const Icon(Icons.chat_rounded, color: Colors.white, size: 26),
+              child: const Icon(
+                Icons.chat_rounded,
+                color: Colors.white,
+                size: 26,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -463,13 +594,19 @@ class _AiCard extends StatelessWidget {
                   Text(
                     t('ask_ai_assistant'),
                     style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     t('ask_ai_assistant_desc'),
-                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.4),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                      height: 1.4,
+                    ),
                   ),
                 ],
               ),
@@ -480,7 +617,11 @@ class _AiCard extends StatelessWidget {
                 color: AppColors.chatColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 16),
+              child: const Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
             ),
           ],
         ),
@@ -498,7 +639,9 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       text.toUpperCase(),
       style: const TextStyle(
-        fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.2,
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.2,
         color: AppColors.textHint,
       ),
     );
@@ -506,7 +649,14 @@ class _SectionLabel extends StatelessWidget {
 }
 
 class _Cat {
-  const _Cat(this.title, this.subtitle, this.icon, this.color, this.count, {this.progress = 0});
+  const _Cat(
+    this.title,
+    this.subtitle,
+    this.icon,
+    this.color,
+    this.count, {
+    this.progress = 0,
+  });
   final String title;
   final String subtitle;
   final IconData icon;

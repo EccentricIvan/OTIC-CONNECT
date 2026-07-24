@@ -1,0 +1,109 @@
+{
+  "language": "en",
+  "entries": [
+    {
+      "id": "en_greetings",
+      "category": "greetings",
+      "question": "How can the assistant start a helpful conversation?",
+      "answer": "Hello. I am here with you. Ask me about business, farming, money, jobs, health, digital skills, online selling, or community support, and I will answer in simple practical steps.",
+      "keywords": ["hello", "hi", "greetings", "start", "help"],
+      "phrases": ["hello", "hi", "what can you help with"]
+    },
+    {
+      "id": "en_business_start",
+      "category": "business entrepreneurship",
+      "question": "How do I start a small business?",
+      "answer": "Start with a real need people have near you. Choose one simple product or service, calculate the cost, set a fair price, test with a few customers, and write down every sale and expense before you expand.",
+      "keywords": ["business", "start", "entrepreneur", "profit", "customer", "price", "cost"],
+      "phrases": ["start a small business", "small business", "business idea", "how do i start a business"]
+    },
+    {
+      "id": "en_business_records",
+      "category": "business entrepreneurship",
+      "question": "What records should I keep for my business?",
+      "answer": "Keep a simple notebook or phone note with money in, money out, stock bought, stock sold, debts, and customer orders. Check it weekly so you know if the business is making profit.",
+      "keywords": ["records", "bookkeeping", "profit", "sales", "expenses", "stock", "orders"],
+      "phrases": ["business records", "track sales", "record expenses", "know my profit"]
+    },
+    {
+      "id": "en_savings_budget",
+      "category": "financial literacy savings budgeting",
+      "question": "How can I save money when income is small?",
+      "answer": "Save a small amount each time money comes in, even if it is little. Separate home money from business money, list your needs before spending, avoid unnecessary debt, and use a trusted savings group if available.",
+      "keywords": ["saving", "savings", "budget", "money", "income", "debt", "sacco", "group"],
+      "phrases": ["save money", "saving money", "small income", "budget my money", "savings group", "sacco"]
+    },
+    {
+      "id": "en_mobile_money_safety",
+      "category": "financial literacy mobile money safety",
+      "question": "How do I use mobile money safely?",
+      "answer": "Keep your PIN secret, confirm the phone number before sending, do not share one-time codes, and be careful with messages claiming you have won money. If you send to the wrong number, contact the provider quickly.",
+      "keywords": ["mobile money", "pin", "fraud", "scam", "send", "wrong number", "code"],
+      "phrases": ["mobile money safety", "keep my pin safe", "wrong number", "mobile money scam"]
+    },
+    {
+      "id": "en_farming_crops",
+      "category": "agriculture farming crops",
+      "question": "How do I choose the best crops for my area?",
+      "answer": "Choose crops that match your season, soil, water access, and local market demand. Start with a small area, ask local extension workers or experienced farmers, and keep records of seed, labour, harvest, and sales.",
+      "keywords": ["farming", "agriculture", "crop", "crops", "soil", "season", "water", "market", "harvest"],
+      "phrases": ["best crops", "crops for my area", "farming advice", "what should i plant"]
+    },
+    {
+      "id": "en_farming_pests",
+      "category": "agriculture farming pests",
+      "question": "What should I do when pests attack my crops?",
+      "answer": "Inspect the crop early, remove badly affected plants if needed, use clean tools, and ask an extension worker or trusted agro-input dealer before spraying. Use the correct dose and protect your skin, eyes, and food.",
+      "keywords": ["pests", "crop disease", "spray", "insects", "extension worker", "agro-input", "dose"],
+      "phrases": ["pests on crops", "crop disease", "insects eating crops", "when to spray"]
+    },
+    {
+      "id": "en_online_selling",
+      "category": "online selling marketplace",
+      "question": "How can I sell my products online?",
+      "answer": "Use clear photos, a short description, price, quantity, location, and delivery option. Reply quickly, confirm payment before delivery, and keep a record of each order so you know what sells best.",
+      "keywords": ["sell online", "online selling", "marketplace", "photos", "delivery", "orders", "price"],
+      "phrases": ["sell online", "selling online", "online marketplace", "take product photos", "list a product"]
+    },
+    {
+      "id": "en_digital_skills",
+      "category": "digital skills learning",
+      "question": "What digital skills should I learn first?",
+      "answer": "Start with phone safety, internet search, WhatsApp or email communication, taking clear photos, mobile money basics, and simple record keeping. Practise one small skill every day until it feels easy.",
+      "keywords": ["digital skills", "phone", "internet", "whatsapp", "email", "photos", "record keeping"],
+      "phrases": ["digital skills", "learn phone skills", "internet basics", "what should i learn first"]
+    },
+    {
+      "id": "en_jobs_cv",
+      "category": "jobs career cv",
+      "question": "How do I prepare for a job application?",
+      "answer": "Prepare a short CV with your name, phone number, skills, work history, training, and references. Apply for jobs that match your skills, follow up politely, and keep learning while you wait.",
+      "keywords": ["job", "jobs", "cv", "career", "application", "skills", "references", "training"],
+      "phrases": ["prepare a cv", "job application", "find a job", "looking for work", "career advice"]
+    },
+    {
+      "id": "en_health_serious",
+      "category": "health nutrition safety",
+      "question": "When should I seek medical help?",
+      "answer": "Seek medical help quickly for severe pain, heavy bleeding, breathing trouble, pregnancy concerns, a child who is very weak, or symptoms that are getting worse. For daily health, use clean water, balanced meals, rest, and early care.",
+      "keywords": ["health", "medical", "doctor", "pregnancy", "child", "bleeding", "pain", "nutrition"],
+      "phrases": ["medical help", "health advice", "pregnancy concern", "child is sick", "severe pain"]
+    },
+    {
+      "id": "en_wellbeing_safety",
+      "category": "wellbeing safety support",
+      "question": "What can I do when I feel stressed or unsafe?",
+      "answer": "Pause, breathe slowly, and talk to someone you trust. If you feel unsafe, move to a safer place if you can and contact trusted support or emergency services. You do not have to handle danger alone.",
+      "keywords": ["stress", "unsafe", "danger", "wellbeing", "support", "emergency", "trusted person"],
+      "phrases": ["feel stressed", "not safe", "feel unsafe", "need support", "emergency help"]
+    },
+    {
+      "id": "en_community_group",
+      "category": "community leadership groups",
+      "question": "How do we build a strong women's group?",
+      "answer": "Agree on a clear purpose, simple rules, meeting times, roles, and honest records. Start with a small trusted group, make decisions openly, and review progress often so every member feels included.",
+      "keywords": ["community", "group", "women", "leadership", "rules", "records", "meetings"],
+      "phrases": ["women's group", "community group", "start a group", "lead a group", "strong group"]
+    }
+  ]
+}

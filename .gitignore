@@ -81,3 +81,11 @@ AI_BACKEND/ai_models/
 *.zip
 luganda_adapter_temp/
 swahili_adapter_temp/
+# Local AI model/runtime assets
+nllb_600m_base/
+luganda_full_temp/
+swahili_full_temp/
+AI_BACKEND/ai_models/
+*.zip
+AI_BACKEND/.env
+.env

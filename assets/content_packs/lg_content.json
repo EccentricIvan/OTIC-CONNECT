@@ -1,0 +1,109 @@
+{
+  "language": "lg",
+  "entries": [
+    {
+      "id": "lg_greetings",
+      "category": "okulamusa",
+      "question": "Omuyambi ayinza atya okutandika emboozi ey'omugaso?",
+      "answer": "Gyebale ko. Ndi wano okukuyamba. Buuza ku busubuzi, bulimi, nsimbi, mirimu, bulamu, bukugu bwa ssimu, okutunda ku mutimbagano, oba obuyambi bw'ekibiina, nja kuddamu mu mitendera egyangu.",
+      "keywords": ["gyebale", "oli otya", "okulamusa", "tandika", "yamba"],
+      "phrases": ["gyebale", "oli otya", "oyinza kunyamba mu ki"]
+    },
+    {
+      "id": "lg_business_start",
+      "category": "obusubuzi okutandika",
+      "question": "Ntandika ntya obusubuzi obutono?",
+      "answer": "Tandika n'ekyetaago abantu kye balina okumpi naawe. Londa ekintu oba empeereza emu ennyangu, bala ssente z'osaasaanya, teekawo bbeeyi ey'obwenkanya, gezaako ku bakasitoma abatono, era wandiika buli kutunda n'ensaasaanya nga tonnagaziya.",
+      "keywords": ["obusubuzi", "tandika", "omusubuzi", "magoba", "bakasitoma", "bbeeyi", "ssente"],
+      "phrases": ["tandika obusubuzi", "obusubuzi obutono", "amagezi g'obusubuzi", "ntandika ntya obusubuzi"]
+    },
+    {
+      "id": "lg_business_records",
+      "category": "obusubuzi ebiwandiiko",
+      "question": "Biwandiiko ki bye nsaanidde okukuuma mu busubuzi?",
+      "answer": "Kuuma akatabo oba note mu ssimu eraga ssente eziyingira, ezifuluma, stock eguliddwa, stock etundiddwa, amabanja, ne oda za bakasitoma. Bikebere buli wiiki omanye oba ofuna amagoba.",
+      "keywords": ["ebiwandiiko", "okubala", "magoba", "okutunda", "ensaasaanya", "stock", "oda"],
+      "phrases": ["ebiwandiiko by'obusubuzi", "wandiika okutunda", "wandiika ensaasaanya", "manyira amagoba"]
+    },
+    {
+      "id": "lg_savings_budget",
+      "category": "ensimbi okutereka okubala",
+      "question": "Nnyinza ntya okutereka ssente nga nfuna ntono?",
+      "answer": "Buli lw'ofuna ssente, terekako akatono ne bwe kaba katono. Yawula ssente za waka ku za busubuzi, wandiika ebyetaago nga tonnasaasaanya, weewale amabanja agatetaagisa, era kozesa ekibiina ky'okutereka ekesigika bwe kibaawo.",
+      "keywords": ["okutereka", "ensimbi", "ssente", "okubala", "sacco", "amabanja", "ekibiina"],
+      "phrases": ["tereka ssente", "okutereka ensimbi", "nfuna ntono", "bala ssente", "sacco"]
+    },
+    {
+      "id": "lg_mobile_money_safety",
+      "category": "mobile money obukuumi",
+      "question": "Nkozesa ntya mobile money mu bukuumi?",
+      "answer": "Kuuma PIN yo nga ya kyama, kakasa ennamba nga tonnasindika, togaba koodi ezikujjira omulundi gumu, era weegendereze obubaka obugamba nti owangudde ssente. Bw'osindika ku nnamba enkyamu, tuukirira kampuni mangu.",
+      "keywords": ["mobile money", "pin", "obulimba", "scam", "sindika", "ennamba enkyamu", "koodi"],
+      "phrases": ["obukuumi bwa mobile money", "kuuma pin", "ennamba enkyamu", "obulimba bwa mobile money"]
+    },
+    {
+      "id": "lg_farming_crops",
+      "category": "obulimi ebirime",
+      "question": "Nnalonda ntya ebirime ebisinga mu kitundu kyange?",
+      "answer": "Londa ebirime ebigendera ku sizoni, ettaka, amazzi g'olina, n'akatale akali okumpi. Tandika ku kitundu kitono, buuza omukugu w'ebyobulimi oba abalimi abalina obumanyirivu, era wandiika ensigo, abakozi, amakungula, n'okutunda.",
+      "keywords": ["obulimi", "ebirime", "ettaka", "sizoni", "amazzi", "akatale", "amakungula"],
+      "phrases": ["ebirime ebisinga", "ebirime mu kitundu", "amagezi g'obulimi", "nsimbe ki"]
+    },
+    {
+      "id": "lg_farming_pests",
+      "category": "obulimi obuwuka endwadde",
+      "question": "Nkola ki obuwuka bwe bulumba ebirime?",
+      "answer": "Kebera ekirime bukyali, ggyamu ebirime ebyakosebwa ennyo bwe kiba kyetaagisa, kozesa ebikozesebwa ebiyonjo, era buuza omukugu w'ebyobulimi oba omutunzi w'eddagala omwesigwa nga tonnasira. Kozesa omuwendo ogutuufu era kuuma olususu, amaaso, n'emmere.",
+      "keywords": ["obuwuka", "endwadde", "eddagala", "okusira", "omukugu", "ebirime", "omuwendo"],
+      "phrases": ["obuwuka ku birime", "endwadde z'ebirime", "obuwuka bulya ebirime", "ddi lwe nsira"]
+    },
+    {
+      "id": "lg_online_selling",
+      "category": "okutunda ku mutimbagano akatale",
+      "question": "Ntunda ntya ebintu byange ku mutimbagano?",
+      "answer": "Kozesa ebifaananyi ebitegeerekeka, okunnyonnyola okumpi, bbeeyi, obungi, ekifo, n'engeri y'okutuusa ekintu. Ddamu bakasitoma mangu, kakasa okusasulwa nga tonnatwala kintu, era wandiika buli oda omanye ebisinga okutunda.",
+      "keywords": ["okutunda ku mutimbagano", "akatale", "ebifaananyi", "bbeeyi", "oda", "okutuusa", "bakasitoma"],
+      "phrases": ["tunda ku mutimbagano", "okutunda online", "akatale ku mutimbagano", "wandiika ekintu", "ebifaananyi by'ebintu"]
+    },
+    {
+      "id": "lg_digital_skills",
+      "category": "obukugu bwa ssimu yintaneeti",
+      "question": "Bukugu bwa digital ki bwe nsaanidde okusooka okuyiga?",
+      "answer": "Tandika n'obukuumi bwa ssimu, okunoonyereza ku yintaneeti, okuwuliziganya ku WhatsApp oba email, okukuba ebifaananyi ebirungi, mobile money, n'okuwandiika ebiwandiiko ebyangu. Weegezeemu ekintu kimu buli lunaku okutuusa lwe kiba kyangu.",
+      "keywords": ["obukugu bwa digital", "ssimu", "yintaneeti", "whatsapp", "email", "ebifaananyi", "ebiwandiiko"],
+      "phrases": ["obukugu bwa digital", "yiga ssimu", "ebisookerwako ku yintaneeti", "nsooke kuyiga ki"]
+    },
+    {
+      "id": "lg_jobs_cv",
+      "category": "emirimu cv obukugu",
+      "question": "Nteekateeka ntya okusaba omulimu?",
+      "answer": "Tegeka CV ennyimpi erimu erinnya lyo, ennamba ya ssimu, obukugu, emirimu gy'okoze, okutendekebwa, n'abayinza okukukakasa. Saba emirimu egikwatagana n'obukugu bwo, ddamu okwebuuza mu ngeri ey'obuntubulamu, era weeyongere okuyiga.",
+      "keywords": ["omulimu", "emirimu", "cv", "okusaba", "obukugu", "okutendekebwa", "abajulizi"],
+      "phrases": ["tegeka cv", "okusaba omulimu", "noonya omulimu", "amagezi g'emirimu", "nnoonya omulimu"]
+    },
+    {
+      "id": "lg_health_serious",
+      "category": "obulamu ebyokulya obukuumi",
+      "question": "Ddi lwe nsaanidde okunoonya omusawo?",
+      "answer": "Noonya obujjanjabi mangu bw'oba n'obulumi obw'amaanyi, okuvaamu omusaayi omungi, okuzibuwa okussa, ensonga z'olubuto, omwana anaafuye ennyo, oba obubonero obweyongera. Mu bulamu bwa buli lunaku, kozesa amazzi amayonjo, emmere ey'enjawulo, okuwummula, n'okufuna obujjanjabi bukyali.",
+      "keywords": ["obulamu", "omusawo", "olubuto", "omwana", "omusaayi", "obulumi", "emmere"],
+      "phrases": ["noonya omusawo", "amagezi g'obulamu", "ensonga z'olubuto", "omwana mulwadde", "obulumi obw'amaanyi"]
+    },
+    {
+      "id": "lg_wellbeing_safety",
+      "category": "embeera ennungi obukuumi obuyambi",
+      "question": "Nkola ki bwe mpulira situleesi oba nga siri mukuumi?",
+      "answer": "Yimiriramu, ssa omukka mpola, era yogera n'omuntu gwe weesiga. Bw'owulira nga toli mukuumi, genda mu kifo ekisinga obukuumi bwe kisoboka era tuukirira obuyambi obwesigika oba empeereza z'obudduukirize. Tosaanidde kukola kino wekka.",
+      "keywords": ["situleesi", "siri mukuumi", "akabi", "obuyambi", "obudduukirize", "omuntu gwe weesiga"],
+      "phrases": ["mpulira situleesi", "siri mukuumi", "njagala obuyambi", "akabi", "obuyambi obw'amangu"]
+    },
+    {
+      "id": "lg_community_group",
+      "category": "ekibiina obukulembeze abakazi",
+      "question": "Tuzimba tutya ekibiina ky'abakazi ekinywevu?",
+      "answer": "Mukkiriziganye ku kigendererwa ekitegeerekeka, amateeka amangu, ebiseera by'okusisinkana, obuvunaanyizibwa, n'ebiwandiiko eby'amazima. Tandika n'abantu abeesigika abatono, musalewo mu lwatu, era mwekebejje entambula buli kiseera buli omu awulire ng'alimu.",
+      "keywords": ["ekibiina", "abakazi", "obukulembeze", "amateeka", "ebiwandiiko", "okusisinkana"],
+      "phrases": ["ekibiina ky'abakazi", "ekibiina ekinywevu", "tandika ekibiina", "kulembera ekibiina", "ekibiina kyange"]
+    }
+  ]
+}
