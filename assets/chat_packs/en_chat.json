@@ -51,6 +51,9 @@
     "Tell me what you want to buy or sell, the quantity, and the price. I can help you think it through.",
     "Check quality, total cost, transport, and payment method before agreeing to a sale."
   ],
+  "general_help": [
+    "I can help with business, farming, money, health, jobs, digital skills, online selling, and community questions. Ask one question in simple words, and I will answer with practical steps."
+  ],
   "fallback": [
     "I have not understood clearly. Please say it again using simple words, and I will help step by step."
   ]

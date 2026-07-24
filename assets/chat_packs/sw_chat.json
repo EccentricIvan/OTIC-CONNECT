@@ -51,6 +51,9 @@
     "Niambie unachotaka kununua au kuuza, kiasi, na bei. Ninaweza kukusaidia kufikiria hatua inayofuata.",
     "Kagua ubora, gharama yote, usafiri, na njia ya malipo kabla ya kukubaliana na mauzo."
   ],
+  "general_help": [
+    "Ninaweza kusaidia kuhusu biashara, kilimo, pesa, afya, kazi, ujuzi wa kidijitali, kuuza mtandaoni, na maswali ya jamii. Uliza swali moja kwa maneno rahisi, nami nitajibu kwa hatua za vitendo."
+  ],
   "fallback": [
     "Sijaelewa vizuri. Tafadhali rudia kwa maneno rahisi, nami nitakusaidia hatua kwa hatua."
   ]

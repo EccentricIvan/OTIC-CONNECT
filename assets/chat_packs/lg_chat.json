@@ -51,6 +51,9 @@
     "Nnyonnyola ky'oyagala okugula oba okutunda, obungi, n'omuwendo. Nsobola okukuyamba okukilowoozaako.",
     "Kebera omutindo, omuwendo gwonna, entambula, n'engeri y'okusasula nga tonnakkiriza kutunda oba kugula."
   ],
+  "general_help": [
+    "Nsobola okukuyamba ku busubuzi, bulimi, nsimbi, bulamu, mirimu, bukugu bwa ssimu, okutunda ku mutimbagano, n'ekibiina. Buuza ekibuuzo kimu mu bigambo ebyangu, nja kuddamu mu mitendera egy'omugaso."
+  ],
   "fallback": [
     "Sinnategeera bulungi. Ddamu okigambe mu bigambo ebyangu, nja kukuyamba mutendera ku mutendera."
   ]

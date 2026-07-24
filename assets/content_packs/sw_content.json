@@ -1,0 +1,109 @@
+{
+  "language": "sw",
+  "entries": [
+    {
+      "id": "sw_greetings",
+      "category": "salamu",
+      "question": "Msaidizi anawezaje kuanza mazungumzo yenye msaada?",
+      "answer": "Habari. Niko hapa kukusaidia. Uliza kuhusu biashara, kilimo, pesa, kazi, afya, ujuzi wa kidijitali, kuuza mtandaoni, au msaada wa jamii, nami nitajibu kwa hatua rahisi za vitendo.",
+      "keywords": ["habari", "salamu", "hello", "anza", "msaada"],
+      "phrases": ["habari", "hello", "unaweza kunisaidia nini"]
+    },
+    {
+      "id": "sw_business_start",
+      "category": "biashara ujasiriamali",
+      "question": "Ninawezaje kuanzisha biashara ndogo?",
+      "answer": "Anza na hitaji halisi la watu walio karibu nawe. Chagua bidhaa au huduma moja rahisi, hesabu gharama, weka bei ya haki, jaribu kwa wateja wachache, na andika kila mauzo na matumizi kabla ya kupanua.",
+      "keywords": ["biashara", "anza", "mjasiriamali", "faida", "mteja", "bei", "gharama"],
+      "phrases": ["anzisha biashara", "biashara ndogo", "wazo la biashara", "ninawezaje kuanzisha biashara"]
+    },
+    {
+      "id": "sw_business_records",
+      "category": "biashara rekodi",
+      "question": "Ni rekodi gani ninapaswa kuweka kwa biashara yangu?",
+      "answer": "Weka daftari au kumbukumbu ya simu ya pesa zinazoingia, pesa zinazotoka, bidhaa ulizonunua, bidhaa ulizouza, madeni, na oda za wateja. Iangalie kila wiki ili ujue kama biashara inapata faida.",
+      "keywords": ["rekodi", "uandishi", "faida", "mauzo", "matumizi", "bidhaa", "oda"],
+      "phrases": ["rekodi za biashara", "andika mauzo", "andika matumizi", "kujua faida yangu"]
+    },
+    {
+      "id": "sw_savings_budget",
+      "category": "fedha akiba bajeti",
+      "question": "Ninawezaje kuweka akiba wakati kipato ni kidogo?",
+      "answer": "Tenga kiasi kidogo kila unapopata pesa, hata kama ni kidogo. Tenganisha pesa ya nyumbani na ya biashara, andika mahitaji kabla ya kutumia, epuka madeni yasiyo ya lazima, na tumia kikundi cha akiba kinachoaminika kama kipo.",
+      "keywords": ["akiba", "kuweka akiba", "bajeti", "pesa", "kipato", "deni", "sacco", "kikundi"],
+      "phrases": ["weka akiba", "kuweka akiba", "kipato kidogo", "bajeti ya pesa", "kikundi cha akiba", "sacco"]
+    },
+    {
+      "id": "sw_mobile_money_safety",
+      "category": "fedha simu usalama",
+      "question": "Ninawezaje kutumia pesa kwa simu kwa usalama?",
+      "answer": "Weka PIN yako siri, hakikisha nambari kabla ya kutuma, usishiriki misimbo ya mara moja, na kuwa mwangalifu na ujumbe unaosema umeshinda pesa. Ukituma kwa nambari isiyo sahihi, wasiliana na mtoa huduma haraka.",
+      "keywords": ["pesa kwa simu", "mobile money", "pin", "utapeli", "tuma", "nambari isiyo sahihi", "msimbo"],
+      "phrases": ["usalama wa mobile money", "linda pin", "nambari isiyo sahihi", "utapeli wa mobile money"]
+    },
+    {
+      "id": "sw_farming_crops",
+      "category": "kilimo mazao",
+      "question": "Ninachaguaje mazao bora kwa eneo langu?",
+      "answer": "Chagua mazao yanayolingana na msimu, udongo, upatikanaji wa maji, na mahitaji ya soko la karibu. Anza na eneo dogo, uliza afisa ugani au wakulima wenye uzoefu, na weka rekodi za mbegu, kazi, mavuno, na mauzo.",
+      "keywords": ["kilimo", "mazao", "udongo", "msimu", "maji", "soko", "mavuno"],
+      "phrases": ["mazao bora", "mazao kwa eneo langu", "ushauri wa kilimo", "nipande nini"]
+    },
+    {
+      "id": "sw_farming_pests",
+      "category": "kilimo wadudu magonjwa",
+      "question": "Nifanye nini wadudu wakishambulia mazao yangu?",
+      "answer": "Kagua mazao mapema, ondoa mimea iliyoathirika sana ikiwa inahitajika, tumia vifaa safi, na uliza afisa ugani au muuzaji mwaminifu wa pembejeo kabla ya kunyunyizia dawa. Tumia kipimo sahihi na linda ngozi, macho, na chakula.",
+      "keywords": ["wadudu", "ugonjwa wa mazao", "dawa", "nyunyizia", "afisa ugani", "pembejeo", "kipimo"],
+      "phrases": ["wadudu kwenye mazao", "ugonjwa wa mazao", "wadudu wanakula mazao", "wakati wa kunyunyizia"]
+    },
+    {
+      "id": "sw_online_selling",
+      "category": "kuuza mtandaoni soko",
+      "question": "Ninawezaje kuuza bidhaa zangu mtandaoni?",
+      "answer": "Tumia picha zilizo wazi, maelezo mafupi, bei, kiasi, eneo, na njia ya kufikisha bidhaa. Jibu wateja haraka, thibitisha malipo kabla ya kupeleka bidhaa, na andika kila oda ili ujue kinachouzwa zaidi.",
+      "keywords": ["kuuza mtandaoni", "soko", "picha", "bei", "oda", "fikisha", "wateja"],
+      "phrases": ["uza mtandaoni", "kuuza online", "soko la mtandaoni", "orodhesha bidhaa", "picha za bidhaa"]
+    },
+    {
+      "id": "sw_digital_skills",
+      "category": "ujuzi kidijitali simu intaneti",
+      "question": "Ni ujuzi gani wa kidijitali nijifunze kwanza?",
+      "answer": "Anza na usalama wa simu, kutafuta taarifa kwenye intaneti, kuwasiliana kwa WhatsApp au email, kupiga picha wazi, misingi ya mobile money, na kuweka rekodi rahisi. Fanya mazoezi ya ujuzi mmoja mdogo kila siku hadi uwe rahisi.",
+      "keywords": ["ujuzi wa kidijitali", "simu", "intaneti", "whatsapp", "email", "picha", "rekodi"],
+      "phrases": ["ujuzi wa kidijitali", "jifunze kutumia simu", "misingi ya intaneti", "nijifunze nini kwanza"]
+    },
+    {
+      "id": "sw_jobs_cv",
+      "category": "kazi cv ujuzi",
+      "question": "Ninajiandaaje kuomba kazi?",
+      "answer": "Andaa CV fupi yenye jina lako, nambari ya simu, ujuzi, historia ya kazi, mafunzo, na watu wa kukutambulisha. Omba kazi zinazolingana na ujuzi wako, fuatilia kwa heshima, na endelea kujifunza.",
+      "keywords": ["kazi", "cv", "ajira", "maombi", "ujuzi", "mafunzo", "wadhamini"],
+      "phrases": ["andaa cv", "kuomba kazi", "tafuta kazi", "ushauri wa kazi", "natafuta kazi"]
+    },
+    {
+      "id": "sw_health_serious",
+      "category": "afya lishe usalama",
+      "question": "Ni wakati gani nitafute msaada wa daktari?",
+      "answer": "Tafuta huduma ya afya haraka kwa maumivu makali, kutokwa damu nyingi, shida ya kupumua, masuala ya ujauzito, mtoto aliye dhaifu sana, au dalili zinazozidi. Kwa afya ya kila siku, tumia maji safi, chakula bora, pumzika, na tafuta huduma mapema.",
+      "keywords": ["afya", "daktari", "ujauzito", "mtoto", "damu", "maumivu", "lishe"],
+      "phrases": ["tafuta daktari", "ushauri wa afya", "masuala ya ujauzito", "mtoto mgonjwa", "maumivu makali"]
+    },
+    {
+      "id": "sw_wellbeing_safety",
+      "category": "ustawi usalama msaada",
+      "question": "Nifanye nini nikihisi msongo au siko salama?",
+      "answer": "Simama kidogo, pumua polepole, na zungumza na mtu unayemwamini. Ukihisi hauko salama, nenda sehemu salama kama unaweza na wasiliana na msaada unaoaminika au huduma za dharura. Si lazima ushughulikie hatari peke yako.",
+      "keywords": ["msongo", "siko salama", "hatari", "ustawi", "msaada", "dharura", "mtu ninayemwamini"],
+      "phrases": ["nahisi msongo", "siko salama", "nahitaji msaada", "hatari", "msaada wa dharura"]
+    },
+    {
+      "id": "sw_community_group",
+      "category": "jamii uongozi vikundi",
+      "question": "Tunajengaje kikundi imara cha wanawake?",
+      "answer": "Kubalianeni lengo wazi, sheria rahisi, muda wa mikutano, majukumu, na rekodi za kweli. Anzeni na kikundi kidogo cha watu wanaoaminika, fanyeni maamuzi kwa uwazi, na pitieni maendeleo mara kwa mara ili kila mwanachama ajisikie amehusishwa.",
+      "keywords": ["jamii", "kikundi", "wanawake", "uongozi", "sheria", "rekodi", "mikutano"],
+      "phrases": ["kikundi cha wanawake", "kikundi imara", "anzisha kikundi", "ongoza kikundi", "kikundi changu"]
+    }
+  ]
+}

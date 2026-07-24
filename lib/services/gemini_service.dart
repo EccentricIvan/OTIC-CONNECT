@@ -75,9 +75,12 @@ Guidelines:
       return _offlineReplyFor(message);
     }
 
+    final referenceContext = languageService.buildGroqContext(message);
     final messages = [
       {'role': 'system', 'content': getAiLanguageInstruction(effectiveLocale)},
       {'role': 'system', 'content': _systemPrompt},
+      if (referenceContext.isNotEmpty)
+        {'role': 'system', 'content': referenceContext},
       ..._history,
     ];
 
@@ -101,8 +104,12 @@ Guidelines:
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final text =
-            data['choices']?[0]?['message']?['content'] ??
-            languageService.getFallbackResponse();
+            data['choices']?[0]?['message']?['content']?.toString().trim() ??
+            '';
+
+        if (text.isEmpty) {
+          return _offlineReplyFor(message);
+        }
 
         _history.add({'role': 'assistant', 'content': text});
         return text;
@@ -129,58 +136,8 @@ Guidelines:
 
   String _offlineReplyFor(String message) {
     final languageService = OfflineLanguageService.instance;
-    final category = _offlineCategoryFor(message);
-
-    if (category == null) {
-      final reply = languageService.getFallbackResponse();
-      _history.add({'role': 'assistant', 'content': reply});
-      return reply;
-    }
-
-    final responses = languageService.getChatResponses(category);
-    if (responses.isEmpty) {
-      final reply = languageService.getFallbackResponse();
-      _history.add({'role': 'assistant', 'content': reply});
-      return reply;
-    }
-
-    final index = (message.hashCode & 0x7fffffff) % responses.length;
-    final reply = responses[index];
+    final reply = languageService.getOfflineChatReply(message);
     _history.add({'role': 'assistant', 'content': reply});
     return reply;
-  }
-
-  String? _offlineCategoryFor(String message) {
-    final lower = message.toLowerCase();
-
-    if (lower.contains('hello') ||
-        lower.contains('hi') ||
-        lower.contains('habari') ||
-        lower.contains('agandi') ||
-        lower.contains('gyebale')) {
-      return 'greetings';
-    }
-
-    if (lower.contains('study') ||
-        lower.contains('learn') ||
-        lower.contains('school') ||
-        lower.contains('read') ||
-        lower.contains('soma') ||
-        lower.contains('shoma')) {
-      return 'study_advice';
-    }
-
-    if (lower.contains('buy') ||
-        lower.contains('sell') ||
-        lower.contains('store') ||
-        lower.contains('market') ||
-        lower.contains('price') ||
-        lower.contains('gula') ||
-        lower.contains('tunda') ||
-        lower.contains('soko')) {
-      return 'store_help';
-    }
-
-    return null;
   }
 }
