@@ -1,15 +1,30 @@
 import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
+
 import '../core/l10n/app_strings.dart';
 import 'api_config.dart';
 import 'offline_language_service.dart';
+
+class ChatReply {
+  const ChatReply({
+    required this.answer,
+    required this.suggestedQuestions,
+    required this.usedOffline,
+  });
+
+  final String answer;
+  final List<String> suggestedQuestions;
+  final bool usedOffline;
+}
 
 String getAiLanguageInstruction(AppLocale locale) {
   switch (locale) {
     case AppLocale.lg:
       return '''
 The user selected Luganda / Oluganda.
+Selected language code: lg.
 You must always reply in clear, natural Luganda.
 Do not switch to English unless the user explicitly asks.
 If a technical word has no natural Luganda translation, keep the technical word in English and explain it simply in Luganda.
@@ -19,6 +34,7 @@ Every answer in this conversation must continue in Luganda.
     case AppLocale.sw:
       return '''
 The user selected Kiswahili.
+Selected language code: sw.
 You must always reply in clear, natural Kiswahili.
 Do not switch to English unless the user explicitly asks.
 If a technical word has no natural Kiswahili translation, keep the technical word in English and explain it simply in Kiswahili.
@@ -28,7 +44,8 @@ Every answer in this conversation must continue in Kiswahili.
     case AppLocale.en:
       return '''
 The user selected English.
-Reply in clear, simple English.
+Selected language code: en.
+Reply in clear, natural, simple English.
 ''';
   }
 }
@@ -36,49 +53,78 @@ Reply in clear, simple English.
 class GeminiService {
   static const _model = 'llama-3.3-70b-versatile';
   static const _baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
+  static const _maxHistoryMessages = 12;
+  static const _contextHistoryMessages = 8;
 
   static const _systemPrompt =
-      '''You are the Africa AI Connect Assistant — a warm, supportive, and knowledgeable companion for women in Sub-Saharan Africa.
+      '''You are the Africa AI Connect Assistant, a warm, supportive, and knowledgeable companion for women in Sub-Saharan Africa.
 
 Your role is to help women with:
 - Business and entrepreneurship advice
 - Agricultural tips and farming guidance
-- Financial literacy (savings, budgeting, mobile money, SACCOs)
+- Financial literacy: savings, budgeting, mobile money, and SACCOs
 - Health and nutrition information
 - Digital skills guidance
 - Job and career advice
 - Community building and leadership
 
 Guidelines:
-- Be warm, encouraging, and practical
-- Give concise, actionable advice
-- Use simple language accessible to all literacy levels
-- Be culturally sensitive to East African context
-- When discussing health topics, recommend consulting a healthcare professional for serious concerns
-- Celebrate their efforts and progress
-- Keep responses under 200 words unless asked for detail''';
+- Be warm, encouraging, and practical.
+- Give thoughtful, actionable advice with enough detail to be genuinely useful.
+- Use simple language accessible to all literacy levels.
+- Be culturally sensitive to East African context.
+- When discussing health topics, recommend consulting a healthcare professional for serious concerns.
+- Preserve conversation flow and treat short follow-up questions as connected to the recent topic.
+- Suggest 2 or 3 helpful follow-up questions related to the user's current topic.
+- Keep responses focused unless asked for detail.''';
 
-  final List<Map<String, dynamic>> _history = [];
+  final List<Map<String, String>> _history = [];
+  String? _historyLanguageCode;
 
-  Future<String> sendMessage(String message, AppLocale selectedLocale) async {
+  Future<ChatReply> sendMessage(
+    String message,
+    AppLocale selectedLocale,
+  ) async {
     final languageService = OfflineLanguageService.instance;
     if (languageService.currentLanguageCode != selectedLocale.name) {
       await languageService.loadLanguage(selectedLocale.name);
     }
+
     final effectiveLocale = AppLocale.fromLanguageCode(
       languageService.currentLanguageCode,
     );
+    final selectedLanguageCode = effectiveLocale.name;
+    if (_historyLanguageCode != selectedLanguageCode) {
+      clearHistory();
+      _historyLanguageCode = selectedLanguageCode;
+    }
 
     _history.add({'role': 'user', 'content': message});
+    _trimHistory();
 
     if (!ApiConfig.hasGroqKey || await _isOffline()) {
       return _offlineReplyFor(message);
     }
 
-    final referenceContext = languageService.buildGroqContext(message);
+    final contextMessages = _recentContextMessages(excludeLast: true);
+    final referenceContext = languageService.buildGroqContext(
+      message,
+      contextMessages: contextMessages,
+    );
     final messages = [
       {'role': 'system', 'content': getAiLanguageInstruction(effectiveLocale)},
       {'role': 'system', 'content': _systemPrompt},
+      {
+        'role': 'system',
+        'content':
+            'Return valid JSON only with this exact shape: '
+            '{"answer":"...","suggestedQuestions":["...","..."]}. '
+            'The answer and suggestedQuestions must be in the selected '
+            'language ($selectedLanguageCode). Include 2 or 3 suggestions. '
+            'Use the recent conversation history to understand follow-up '
+            'questions. If the provided reference context is relevant, ground '
+            'your answer in it and do not contradict it.',
+      },
       if (referenceContext.isNotEmpty)
         {'role': 'system', 'content': referenceContext},
       ..._history,
@@ -95,27 +141,33 @@ Guidelines:
             body: jsonEncode({
               'model': _model,
               'messages': messages,
-              'temperature': 0.7,
-              'max_tokens': 512,
+              'temperature': 0.65,
+              'max_tokens': 900,
             }),
           )
           .timeout(const Duration(seconds: 30));
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final text =
-            data['choices']?[0]?['message']?['content']?.toString().trim() ??
-            '';
-
-        if (text.isEmpty) {
-          return _offlineReplyFor(message);
-        }
-
-        _history.add({'role': 'assistant', 'content': text});
-        return text;
-      } else {
+      if (response.statusCode != 200) {
         return _offlineReplyFor(message);
       }
+
+      final data = jsonDecode(response.body);
+      final rawText =
+          data['choices']?[0]?['message']?['content']?.toString().trim() ?? '';
+
+      if (rawText.isEmpty) {
+        return _offlineReplyFor(message);
+      }
+
+      final reply = _parseGroqReply(
+        rawText,
+        languageService,
+        message,
+        contextMessages,
+      );
+      _history.add({'role': 'assistant', 'content': reply.answer});
+      _trimHistory();
+      return reply;
     } catch (_) {
       return _offlineReplyFor(message);
     }
@@ -128,16 +180,164 @@ Guidelines:
   Future<bool> _isOffline() async {
     try {
       final results = await Connectivity().checkConnectivity();
+      if (results.isEmpty) return false;
       return results.every((result) => result == ConnectivityResult.none);
     } catch (_) {
       return false;
     }
   }
 
-  String _offlineReplyFor(String message) {
+  ChatReply _offlineReplyFor(String message) {
     final languageService = OfflineLanguageService.instance;
-    final reply = languageService.getOfflineChatReply(message);
-    _history.add({'role': 'assistant', 'content': reply});
-    return reply;
+    final contextMessages = _recentContextMessages(excludeLast: true);
+    final answer = languageService.getOfflineChatReply(
+      message,
+      contextMessages: contextMessages,
+    );
+    final suggestedQuestions = languageService.getOfflineSuggestedQuestions(
+      message,
+      contextMessages: contextMessages,
+    );
+
+    _history.add({'role': 'assistant', 'content': answer});
+    _trimHistory();
+    return ChatReply(
+      answer: answer,
+      suggestedQuestions: suggestedQuestions,
+      usedOffline: true,
+    );
+  }
+
+  ChatReply _parseGroqReply(
+    String rawText,
+    OfflineLanguageService languageService,
+    String message,
+    Iterable<String> contextMessages,
+  ) {
+    final decoded = _tryDecodeJsonObject(rawText);
+    if (decoded != null) {
+      final answer = decoded['answer']?.toString().trim() ?? '';
+      final suggestions = _readSuggestedQuestions(
+        decoded['suggestedQuestions'],
+      );
+      final supplementedSuggestions = _supplementSuggestions(
+        suggestions,
+        languageService,
+        message,
+        contextMessages,
+      );
+
+      if (answer.isNotEmpty) {
+        return ChatReply(
+          answer: answer,
+          suggestedQuestions: supplementedSuggestions,
+          usedOffline: false,
+        );
+      }
+    }
+
+    return ChatReply(
+      answer: rawText,
+      suggestedQuestions: _supplementSuggestions(
+        const [],
+        languageService,
+        message,
+        contextMessages,
+      ),
+      usedOffline: false,
+    );
+  }
+
+  Map<String, dynamic>? _tryDecodeJsonObject(String rawText) {
+    Object? decoded;
+    try {
+      decoded = jsonDecode(rawText);
+    } catch (_) {
+      final start = rawText.indexOf('{');
+      final end = rawText.lastIndexOf('}');
+      if (start < 0 || end <= start) return null;
+
+      try {
+        decoded = jsonDecode(rawText.substring(start, end + 1));
+      } catch (_) {
+        return null;
+      }
+    }
+
+    return decoded is Map<String, dynamic> ? decoded : null;
+  }
+
+  List<String> _readSuggestedQuestions(Object? value) {
+    if (value is! List) return const [];
+
+    return List.unmodifiable(
+      value
+          .map((item) => item.toString().trim())
+          .where((item) => item.isNotEmpty)
+          .take(3),
+    );
+  }
+
+  List<String> _supplementSuggestions(
+    List<String> suggestions,
+    OfflineLanguageService languageService,
+    String message,
+    Iterable<String> contextMessages,
+  ) {
+    final merged = <String>[];
+
+    void addSuggestion(String suggestion) {
+      final trimmed = suggestion.trim();
+      if (trimmed.isEmpty) return;
+
+      final exists = merged.any(
+        (item) => item.toLowerCase().trim() == trimmed.toLowerCase(),
+      );
+      if (!exists) merged.add(trimmed);
+    }
+
+    for (final suggestion in suggestions) {
+      addSuggestion(suggestion);
+    }
+
+    if (merged.length < 2) {
+      for (final suggestion in languageService.getOfflineSuggestedQuestions(
+        message,
+        contextMessages: contextMessages,
+        limit: 3,
+      )) {
+        addSuggestion(suggestion);
+        if (merged.length >= 3) break;
+      }
+    }
+
+    return List.unmodifiable(merged.take(3));
+  }
+
+  List<String> _recentContextMessages({required bool excludeLast}) {
+    final end =
+        excludeLast && _history.isNotEmpty
+            ? _history.length - 1
+            : _history.length;
+    final start =
+        end > _contextHistoryMessages ? end - _contextHistoryMessages : 0;
+    final messages = <String>[];
+
+    for (var index = start; index < end; index += 1) {
+      final item = _history[index];
+      final role = item['role'] ?? 'message';
+      final content = item['content'] ?? '';
+      if (content.trim().isNotEmpty) {
+        messages.add('$role: $content');
+      }
+    }
+
+    return List.unmodifiable(messages);
+  }
+
+  void _trimHistory() {
+    while (_history.length > _maxHistoryMessages) {
+      _history.removeAt(0);
+    }
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/l10n/app_strings.dart';
-import '../../services/api_config.dart';
 import '../../services/gemini_service.dart';
 
 class AiChatScreen extends ConsumerStatefulWidget {
@@ -34,7 +33,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
     super.didChangeDependencies();
     if (!_initialized) {
       _initialized = true;
-      _messages = [_ChatMessage(_chatGreeting(), false)];
+      _messages = [_ChatMessage.assistant(_chatGreeting())];
     }
   }
 
@@ -57,12 +56,12 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
     });
   }
 
-  Future<void> _send() async {
-    final text = _controller.text.trim();
+  Future<void> _send([String? suggestedQuestion]) async {
+    final text = (suggestedQuestion ?? _controller.text).trim();
     if (text.isEmpty || _isLoading) return;
 
     setState(() {
-      _messages.add(_ChatMessage(text, true));
+      _messages.add(_ChatMessage.user(text));
       _isLoading = true;
     });
     _controller.clear();
@@ -71,37 +70,55 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
     final locale = ref.read(localeProvider);
     final languageService = ref.read(offlineLanguageServiceProvider);
 
-    String response;
+    ChatReply reply;
 
     try {
-      final aiResponse = await _groq.sendMessage(text, locale);
-      response =
-          aiResponse.trim().isEmpty
-              ? languageService.getFallbackResponse()
-              : aiResponse;
+      reply = await _groq.sendMessage(text, locale);
     } catch (_) {
-      response = languageService.getFallbackResponse();
+      reply = ChatReply(
+        answer: languageService.getOfflineChatReply(text),
+        suggestedQuestions: languageService.getOfflineSuggestedQuestions(text),
+        usedOffline: true,
+      );
     }
 
     setState(() {
       _messages.add(
-        _ChatMessage(
-          response.trim().isEmpty
+        _ChatMessage.assistant(
+          reply.answer.trim().isEmpty
               ? languageService.getFallbackResponse()
-              : response,
-          false,
+              : reply.answer,
+          suggestedQuestions: reply.suggestedQuestions,
         ),
       );
       _isLoading = false;
     });
+    if (reply.usedOffline) {
+      _showOfflineNotice();
+    }
     _scrollToBottom();
+  }
+
+  void _showOfflineNotice() {
+    if (!mounted) return;
+
+    final text = ref.read(offlineLanguageServiceProvider).t('offline_notice');
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.clearSnackBars();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(text),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   void _clearChat() {
     _groq.clearHistory();
     setState(() {
       _messages.clear();
-      _messages.add(_ChatMessage(_chatGreeting(), false));
+      _messages.add(_ChatMessage.assistant(_chatGreeting()));
     });
   }
 
@@ -115,7 +132,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
       setState(() {
         _messages
           ..clear()
-          ..add(_ChatMessage(_chatGreeting(), false));
+          ..add(_ChatMessage.assistant(_chatGreeting()));
       });
     });
 
@@ -133,14 +150,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
           child: Column(
             children: [
               _ChatAppBar(onClear: _clearChat, t: _t),
-              _SuggestedTopics(
-                onTap: (topic) {
-                  _controller.text = topic;
-                  _send();
-                },
-                t: _t,
-              ),
-              if (ApiConfig.groqKey.isEmpty) _OfflineNotice(t: _t),
+              _SuggestedTopics(onTap: _send, t: _t),
               Expanded(
                 child:
                     _messages.isEmpty && !_isLoading
@@ -160,7 +170,10 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                             final msgIndex = _isLoading ? index - 1 : index;
                             final msg =
                                 _messages[_messages.length - 1 - msgIndex];
-                            return _MessageBubble(message: msg);
+                            return _MessageBubble(
+                              message: msg,
+                              onSuggestionTap: _isLoading ? null : _send,
+                            );
                           },
                         ),
               ),
@@ -172,46 +185,6 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _OfflineNotice extends StatelessWidget {
-  const _OfflineNotice({required this.t});
-  final String Function(String) t;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppColors.earnColor.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.earnColor.withValues(alpha: 0.2)),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.cloud_off_rounded,
-              size: 16,
-              color: AppColors.earnColor,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                t('offline_notice'),
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -416,36 +389,95 @@ class _TypingIndicator extends StatelessWidget {
 }
 
 class _MessageBubble extends StatelessWidget {
-  const _MessageBubble({required this.message});
+  const _MessageBubble({required this.message, required this.onSuggestionTap});
   final _ChatMessage message;
+  final void Function(String question)? onSuggestionTap;
 
   @override
   Widget build(BuildContext context) {
     final isUser = message.isUser;
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.sizeOf(context).width * 0.78,
         ),
+        child: Column(
+          crossAxisAlignment:
+              isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isUser ? AppColors.accent : const Color(0x223A2E29),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isUser ? 16 : 4),
+                  bottomRight: Radius.circular(isUser ? 4 : 16),
+                ),
+                border:
+                    isUser ? null : Border.all(color: const Color(0x183A2E29)),
+              ),
+              child: Text(
+                message.text,
+                style: TextStyle(
+                  color: isUser ? Colors.white : AppColors.textSecondary,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            if (!isUser && message.suggestedQuestions.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, bottom: 6),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children:
+                      message.suggestedQuestions.map((question) {
+                        return _SuggestionChip(
+                          question: question,
+                          onTap:
+                              onSuggestionTap == null
+                                  ? null
+                                  : () => onSuggestionTap!(question),
+                        );
+                      }).toList(),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SuggestionChip extends StatelessWidget {
+  const _SuggestionChip({required this.question, required this.onTap});
+
+  final String question;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 34),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isUser ? AppColors.accent : const Color(0x223A2E29),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isUser ? 16 : 4),
-            bottomRight: Radius.circular(isUser ? 4 : 16),
-          ),
-          border: isUser ? null : Border.all(color: const Color(0x183A2E29)),
+          color: AppColors.chatColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.chatColor.withValues(alpha: 0.2)),
         ),
         child: Text(
-          message.text,
-          style: TextStyle(
-            color: isUser ? Colors.white : AppColors.textSecondary,
-            fontSize: 14,
-            height: 1.5,
+          question,
+          style: const TextStyle(
+            fontSize: 12,
+            color: AppColors.textSecondary,
+            height: 1.3,
           ),
         ),
       ),
@@ -548,7 +580,24 @@ class _ChatInput extends StatelessWidget {
 }
 
 class _ChatMessage {
-  const _ChatMessage(this.text, this.isUser);
+  const _ChatMessage._(this.text, this.isUser, this.suggestedQuestions);
+
+  factory _ChatMessage.user(String text) {
+    return _ChatMessage._(text, true, const []);
+  }
+
+  factory _ChatMessage.assistant(
+    String text, {
+    List<String> suggestedQuestions = const [],
+  }) {
+    return _ChatMessage._(
+      text,
+      false,
+      List.unmodifiable(suggestedQuestions.take(3)),
+    );
+  }
+
   final String text;
   final bool isUser;
+  final List<String> suggestedQuestions;
 }

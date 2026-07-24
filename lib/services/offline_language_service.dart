@@ -135,22 +135,35 @@ class OfflineLanguageService extends ChangeNotifier {
     return List.unmodifiable(_contentEntries);
   }
 
-  List<ContentEntry> searchContent(String userMessage, {int limit = 3}) {
+  List<ContentEntry> searchContent(
+    String userMessage, {
+    int limit = 3,
+    Iterable<String> contextMessages = const [],
+  }) {
     if (limit <= 0 || _contentEntries.isEmpty) return const [];
 
     final normalizedMessage = _normalizeForSearch(userMessage);
-    if (normalizedMessage.isEmpty) return const [];
+    final normalizedContext = _normalizeForSearch(contextMessages.join(' '));
+    if (normalizedMessage.isEmpty && normalizedContext.isEmpty) return const [];
 
     final messageTerms = _searchTerms(normalizedMessage);
+    final contextTerms = _searchTerms(normalizedContext);
+    final isFollowUp = _isFollowUpMessage(normalizedMessage);
     final scoredEntries = <_ScoredContentEntry>[];
 
     for (final entry in _contentEntries) {
-      final score = _scoreContentEntry(
-        entry,
-        normalizedMessage,
-        messageTerms,
-      );
-      if (score >= _minimumSearchScore && entry.answer.trim().isNotEmpty) {
+      final messageScore =
+          normalizedMessage.isEmpty
+              ? 0.0
+              : _scoreContentEntry(entry, normalizedMessage, messageTerms);
+      final contextScore =
+          normalizedContext.isEmpty
+              ? 0.0
+              : _scoreContentEntry(entry, normalizedContext, contextTerms);
+      final score = messageScore + (contextScore * (isFollowUp ? 0.85 : 0.35));
+      final minimumScore = isFollowUp ? 8.0 : _minimumSearchScore;
+
+      if (score >= minimumScore && entry.answer.trim().isNotEmpty) {
         scoredEntries.add(_ScoredContentEntry(entry, score));
       }
     }
@@ -167,8 +180,15 @@ class OfflineLanguageService extends ChangeNotifier {
     );
   }
 
-  String getOfflineChatReply(String userMessage) {
-    final matches = searchContent(userMessage, limit: 1);
+  String getOfflineChatReply(
+    String userMessage, {
+    Iterable<String> contextMessages = const [],
+  }) {
+    final matches = searchContent(
+      userMessage,
+      contextMessages: contextMessages,
+      limit: 1,
+    );
     if (matches.isNotEmpty) {
       return matches.first.answer;
     }
@@ -177,8 +197,73 @@ class OfflineLanguageService extends ChangeNotifier {
         getFallbackResponse();
   }
 
-  String buildGroqContext(String userMessage) {
-    final entries = searchContent(userMessage, limit: 3);
+  List<String> getOfflineSuggestedQuestions(
+    String userMessage, {
+    Iterable<String> contextMessages = const [],
+    int limit = 3,
+  }) {
+    if (limit <= 0 || _contentEntries.isEmpty) return const [];
+
+    final matches = searchContent(
+      userMessage,
+      contextMessages: contextMessages,
+      limit: 5,
+    );
+    final suggestions = <String>[];
+
+    void addQuestion(ContentEntry entry) {
+      final question = entry.question.trim();
+      if (question.isEmpty) return;
+
+      final normalizedQuestion = _normalizeForSearch(question);
+      final normalizedMessage = _normalizeForSearch(userMessage);
+      final alreadyAdded = suggestions.any(
+        (item) => _normalizeForSearch(item) == normalizedQuestion,
+      );
+
+      if (alreadyAdded || normalizedQuestion == normalizedMessage) return;
+
+      suggestions.add(question);
+    }
+
+    if (matches.isNotEmpty) {
+      final topicTerms = _searchTerms(matches.first.category);
+      for (final entry in _contentEntries) {
+        if (suggestions.length >= limit) break;
+        if (entry.id == matches.first.id) continue;
+        if (_hasTermOverlap(topicTerms, _searchTerms(entry.category))) {
+          addQuestion(entry);
+        }
+      }
+
+      for (final entry in matches) {
+        if (suggestions.length >= limit) break;
+        addQuestion(entry);
+      }
+    }
+
+    for (final entry in _contentEntries) {
+      if (suggestions.length >= limit) break;
+      if (_normalizeForSearch(entry.category).contains('greeting') ||
+          _normalizeForSearch(entry.category).contains('salamu') ||
+          _normalizeForSearch(entry.category).contains('okulamusa')) {
+        continue;
+      }
+      addQuestion(entry);
+    }
+
+    return List.unmodifiable(suggestions.take(limit));
+  }
+
+  String buildGroqContext(
+    String userMessage, {
+    Iterable<String> contextMessages = const [],
+  }) {
+    final entries = searchContent(
+      userMessage,
+      contextMessages: contextMessages,
+      limit: 3,
+    );
     if (entries.isEmpty) return '';
 
     final buffer =
@@ -397,6 +482,15 @@ class OfflineLanguageService extends ChangeNotifier {
     return score > cap ? cap : score.toDouble();
   }
 
+  bool _hasTermOverlap(Set<String> first, Set<String> second) {
+    if (first.isEmpty || second.isEmpty) return false;
+
+    for (final term in first) {
+      if (second.contains(term)) return true;
+    }
+    return false;
+  }
+
   Set<String> _searchTerms(String value) {
     final normalized = _normalizeForSearch(value);
     if (normalized.isEmpty) return const {};
@@ -405,6 +499,15 @@ class OfflineLanguageService extends ChangeNotifier {
         .split(' ')
         .where((term) => term.length > 1 && !_stopWords.contains(term))
         .toSet();
+  }
+
+  bool _isFollowUpMessage(String normalizedMessage) {
+    if (normalizedMessage.isEmpty) return true;
+
+    final terms = _searchTerms(normalizedMessage);
+    if (terms.length <= 2 && normalizedMessage.length <= 32) return true;
+
+    return _followUpPhrases.any(normalizedMessage.contains);
   }
 
   String _normalizeForSearch(String value) {
@@ -416,6 +519,28 @@ class OfflineLanguageService extends ChangeNotifier {
         .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
   }
+
+  static const _followUpPhrases = {
+    'explain more',
+    'tell me more',
+    'give examples',
+    'more examples',
+    'what about',
+    'how can i start',
+    'how do i start',
+    'next step',
+    'steps',
+    'ekirala',
+    'nnyonnyola',
+    'ongera okunnyonnyola',
+    'mpa ebyokulabirako',
+    'ntandika ntya',
+    'hatua',
+    'eleza zaidi',
+    'nipe mifano',
+    'vipi kuhusu',
+    'ninawezaje kuanza',
+  };
 
   static const _stopWords = {
     'a',
